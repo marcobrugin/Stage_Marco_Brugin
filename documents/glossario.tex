@@ -1,0 +1,41 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Welcome to Overleaf --- just edit your LaTeX on the left,
+% and we'll compile it for you on the right. If you open the
+% 'Share' menu, you can invite other users to edit at the same
+% time. See www.overleaf.com/learn for more info. Enjoy!
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{glossaries}
+
+\makeglossaries
+
+\newglossaryentry{latex}
+{
+    name=,
+    description={}
+}
+
+
+
+\title{Glossario}
+
+\author{Marco Brugin}
+\date{\today}
+
+\begin{document}
+\maketitle
+\begin{abstract}
+    
+
+Il documento contiene la descrizione di alcuni termini specifici del dominio di riferimento dello stage svoltosi presso l'azienda \textit{Sync Lab s.r.l.}.
+\end{abstract}
+\clearpage
+\tableofcontents
+\clearpage
+\glsaddall{}
+\printglossary[nonumberlist]
+
+\end{document}
