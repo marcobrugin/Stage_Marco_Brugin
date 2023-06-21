@@ -150,6 +150,31 @@ Inoltre grazie ad un' architettura \textbf{EDA} si va a rimuovere l'accopiamento
 Con il termine di \textbf{Middleware} si va ad intendere un insieme di pacchetti software che molte applicazioni utilizzano per comunicare tra di loro. Il \textbf{Middleware} funge da ponte tra tecnologie differenti in modo da poterle totalmente integrare.\\
 L'architettura sottostante ad un \textbf{Middleware} non è altro che una \textbf{data-pipeline} nella quale i dati passano da una applicazione in connessione all'altra. \\
 La chiave di utilizzo di un \textbf{Middleware} è che fornisce disaccopiamento tra i vari stadi di una \textbf{data-pipeline}.
+\section{Panoramica design pattern architetturali}
+\subsection{Layered-Architecture}
+È un modello architetturale basato su più livelli orrizontali, in cui ciascuno svolge un compito specifico e ha detrminata responsabilità. Sebbene il pattern in sè non indichi il numero di livelli da utilizzare, è usuale creare architetture con al più quattro livelli: presentazione, business, persistenza e database.
+In tale archittetura ogni livello è del tutto separato dagli altri: le modifiche apportate ad un livello non generano cambiamenti agli altri, per questo si parla di livelli isolati.
+La comunicazione tra i livelli avviene in dall'alto verso il basso e in generale attraverso livelli chiusi: il passaggio delle informazione tra due o più livelli deve attraversare tutti i livelli intermedi.
+
+\subsection{Client-server}
+Nel pattern architetturale client-server ci sono due componenti essenziali: il client, che richiede un servizio o una prestazione, e il server che la fornisce. Il client espone porte di richesta, mentre il server espone porte di servizio. In tale architettura vige un tipo di collegamento Request-Response.
+Uno dei principali vantaggi di tale pattern architetturale il calcolo centralizzato dei dati.
+\pagebreak
+\subsection{Pipe-filter}
+Il modello architetturale \textbf{Pipe-Fileter} è caraterrizzato da trasformazioni successive del flusso di dati.
+\\
+I dati dall'origine vengono inviati dall'origine verso le porte di input del primo filtro, dove viene eseguita la prima elaborazione, quindi il prodotto dell'elaborazione viene fornito dallì'output all'input del filtro successivo e così via.
+\\
+Il fattore importante in tale pattern architetturale è l'ordine con cui vengono eseguiti tali filtri.
+\subsection{Broker}
+Il \textbf{Broker} pattern architetturale che può essere utilizzzato per sistemi software disaccopiati e distribuiti che interagiscono tramite chiamate remote.
+Il pattern è formato da tre agenti:
+\begin{itemize}
+    \item il client: che accede a funzionalità del server inviadno ricbhieste al broker;
+    \item il server che mette a disposizione del client i propri servizzi attraverso il broker;
+    \item il broker: riceve le richieste dai cleint e una volta trovato il server appropiato inoltra la richiesta e trasmette il risultato al client.
+\end{itemize}
+\section{Publisher-Subscriber}
 \bibliographystyle{IEEEtran}
 \bibliography{https://Kafka.apache.org/documentation/}
 
