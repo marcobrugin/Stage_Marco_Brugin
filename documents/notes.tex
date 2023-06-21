@@ -65,26 +65,26 @@
     \item monitoraggio sanitario 
     \item ovunque ci sia la necessità di trattare grandi moli di dati efficientemente
 \end{itemize}
-\section{Apache Kafka}
-Kafka è una piattaforma open source che combina 3 funzionalità in modo da poter soddisfare i casi d'uso sopra citati:
+\section{Apache \textbf{Kafka}}
+\textbf{Kafka} è una piattaforma open source che combina 3 funzionalità in modo da poter soddisfare i casi d'uso sopra citati:
 \begin{itemize}
     \item pubblica e sottoscrive flussi di eventi, importandoli ed 	esportandoli da altri sistemi;
     \item archivia tali flussi in modo affidabile e duraturo;	
     \item elabora flussi di eventi in real time o in modo retrospettivo.
 \end{itemize}
 \subsection{Utilizzo}
-Kafka opera su una architettura distribuita. Può essere distribuito e utilizzato in vari modi tra cui virtual machine e container, on-promise, o servizi cloud.
+\textbf{Kafka} opera su una architettura distribuita. Può essere distribuito e utilizzato in vari modi tra cui virtual machine e container, on-promise, o servizi cloud.
 
 \subsection{Funzionamento}
-Kafka nasce come sistema distribuito che opera su nodi che comunicano tramite protocollo \textbf{TCP} ad alte prestazioni. Data la sua natura distribuita implementa capacità di fault tollerance con rimpiazzo dei nodi guasti. 
-Kafka è costituito da due componenti essenziali: server e client.
+\textbf{Kafka} nasce come sistema distribuito che opera su nodi che comunicano tramite protocollo \textbf{TCP} ad alte prestazioni. Data la sua natura distribuita implementa capacità di fault tollerance con rimpiazzo dei nodi guasti. 
+\textbf{Kafka} è costituito da due componenti essenziali: server e client.
 \subsubsection{Server}
-Kafka viene eseguito come un cluster di uno o più server. Alcuni fanno da \textbf{broker}: livello di archiviazione. Altri assolvono il compito di \textbf{Kafka Connect}: importano e esportano i dati sotto forma di  flussi di eventi che permette di interagire con altri sistemi esistenti.
+\textbf{Kafka} viene eseguito come un cluster di uno o più server. Alcuni fanno da \textbf{broker}: livello di archiviazione. Altri assolvono il compito di \textbf{\textbf{Kafka} Connect}: importano e esportano i dati sotto forma di  flussi di eventi che permette di interagire con altri sistemi esistenti.
 \subsubsection{Client}
 Consentono di scrivere applicazioni distribuite e microservizi che leggono, scrivono ed elaborano flussi di eventi in parallelo, su larga scala e con fault tollerance anche in caso di problemi di rete o guasti della macchina.
 Esitono molti client per diversi linguaggi di programmazione.
 \subsection{Garanzie di funzionamento}
-In Kafka esistono produttori e consumatori che producono e sottoscrivono eventi. 
+In \textbf{Kafka} esistono produttori e consumatori che producono e sottoscrivono eventi. 
 Gli uni sono sono indipendenti l'uno dall'altro, ciò permette di raggiungere alcune delle seguenti garanzie:
 \begin{itemize}
     \item \textbf{Al massimo una volta}: i messaggipossono andare persi ma mai riconsegnati;
@@ -94,14 +94,31 @@ Gli uni sono sono indipendenti l'uno dall'altro, ciò permette di raggiungere al
 \subsection{Gestione degli eventi}
 Gli eventi sono organizzati in topic o argomenti. Gli eventi possono essere letti da più consumatori. 
 Un evento anche se consumato non viene eliminato, può essere impostato un timeout di mantenimento dell'evento.
-I topic sono partizionati su più nodi. Tale partizionamento consente ai client di leggere e scrivere dati da/a molti broker. Quando un nuovo evento viene emesso questo si aggiunge all rispettiva partizione. Sarà \textbf{Kafka} a garantire che gli eventi vengano letti nell'ordine in cui sono stati scritti.
+I topic sono partizionati su più nodi. Tale partizionamento consente ai client di leggere e scrivere dati da/a molti broker. Quando un nuovo evento viene emesso questo si aggiunge all rispettiva partizione. Sarà \textbf{\textbf{Kafka}} a garantire che gli eventi vengano letti nell'ordine in cui sono stati scritti.
 \subsection{Interfacce presentì}
-\subsubsection{Kafka Producer}
+\subsubsection{\textbf{Kafka} Producer}
 L’interfaccia Producer permette alle applicazioni di inviare i flussi di dati ai broker di un cluster di Apache per categorizzarli e salvarli (nei topic già citati).
-\subsubsection{Kafka Consumer}
-L’interfaccia Consumer consente ai consumatori di Apache Kafka di  ricevere l’accesso ai dati, salvati nei topic di un cluster.
- \subsubsection{Kafka Connect}
-    L’interfaccia Connect  consente di impostare produttori e consumatori riutilizzabili che collegano i topic di Kafka con le applicazioni o le banche dati esistenti.
+\subsubsection{\textbf{Kafka} Consumer}
+L’interfaccia Consumer consente ai consumatori di Apache \textbf{Kafka} di  ricevere l’accesso ai dati, salvati nei topic di un cluster.
+ \subsubsection{\textbf{Kafka} Connect}
+    L’interfaccia Connect  consente di impostare produttori e consumatori riutilizzabili che collegano i topic di \textbf{Kafka} con le applicazioni o le banche dati esistenti.
+\subsection{Casi d'uso}
+\subsubsection{Messaggistica}
+I broker di messaggi vengono utilizzati per disaccoppiare l'elaborazione del messaggio dal produttore dello stesso.
+\textbf{Kafka} rispetto ai sistemi di messaggistica tradizionale ha una migliore velocità, partizionamento integrato e tolleranza agli errori.
+L'utilizzo è basso, ma in ambiti in cui si richiede una bassa latenza, le garanzie fornite da \textbf{Kafka} sono alla pari dei tradizionali sistemi di messagistica, che lo rendono lo rendono una buona soluzione per applicazioni di elaborazione di messaggi su larga scala.
+\subsubsection{Monitoraggio di siti web}
+È il caso d'uso d'origine di \textbf{Kafka} , ha la caratteristica di generare un elevato volume di messaggi. Lo scopo era quello di ricostruire le attività degli utenti come insieme di eventi genrati dalle azioni dell'utente.
+\subsubsection{Metrica}
+Indica l'aggregazione di dati di monitoraggio provenienti da varie fonti per eseguire statistiche.
+\subsubsection{Aggregazione di registri}
+\textbf{Kafka} ha anche la capacità di estrarre i dati dai file di log fisici e fornisce una astrazione di tali sotto forma di flusso di messaggi. Ciò permette di garantire una più bassa latenza di elaborazione e supporto per più origini dati.
+\subsubsection{Elaborazione del flusso}
+È possibile andare a creare una  data-pipeline in cui i dati grezzi vengono consumati dagli argomenti di \textbf{Kafka}, aggregati, trasformati fino ad ottenere unn dato elaborato.
+\subsubsection{Approvvigionamento di eventi}
+È possibile utilizzare  di \textbf{Kafka} in aplicazioni cui cambiamenti di stato vengono registrati come sequenze di record in ordine temporale. \textbf{Kafka} permette il supporto per dati di registro memorizzati molto grandi tanto che lo rende un ottimo back-end di tali applicazioni. 
+\subsubsection{Registro commit}
+\textbf{Kafka} può fungere da sorta di log di commit esterno per un sistema distribuito. Il registro aiuta a replicare i dati tra i nodi e funge da meccanismo di risincronizzazione per consentire ai nodi non riusciti di ripristinare i propri dati.
 \newpage
 
 % ------------------------------------------------------------------------------
@@ -109,7 +126,7 @@ L’interfaccia Consumer consente ai consumatori di Apache Kafka di  ricevere l�
 % ------------------------------------------------------------------------------
 
 \bibliographystyle{IEEEtran}
-\bibliography{References.bib}
+\bibliography{https://Kafka.apache.org/documentation/}
 
 % ------------------------------------------------------------------------------
 
