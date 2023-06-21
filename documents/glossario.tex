@@ -12,14 +12,51 @@
 
 \makeglossaries
 
-
-
-\newglossaryentry{glossaries}
+\newglossaryentry{Evento}
 {
-    name=,
-    description={}
+    name=Evento,
+    description={è la rappresentazione logica (segnali) che indicano che  è successo qualcosa (un cambiamento di stato). Ogni evento è costituito da: una chiave, un valore, un timestamp e altri metadati facoltativi}
 }
-
+\newglossaryentry{Produttori (producer)}
+{
+    name=Produttori (producer),
+    description={agenti che svolgono l'azione di  pubblicare eventi su Kafka.}
+}
+\newglossaryentry{Consumatori (consumer)}
+{
+    name=Consumatori (consumer),
+    description={agenti che rivestono l'operazione di  sottoscrizione a categorie di eventi e gli elaborano}
+}
+\newglossaryentry{Editori}
+{
+    name=Editori,
+    description={agenti che hanno il compito di estrarre  il dato dall'evento e lo 	archiviano}
+    
+}
+\newglossaryentry{Sottoscrittori}
+{
+    name=Sottoscrittori,
+    description={agenti che hanno il compito di  consumare e risponde all'evento generato con una azione in grado di gestirla }
+    
+}
+\newglossaryentry{Origini}
+{
+    name=Origini,
+    description={indica l'origine del dato, da dove viene prodotto}
+    
+}
+\newglossaryentry{Sink}
+{
+    name=Sink,
+    description={agente che indicano la destinazione del dato}
+    
+}
+\newglossaryentry{Event Handler}
+{
+    name=Event Handler,
+    description={un gestore di eventi è una routine di callback che opera in modo asincrono una volta che si verifica un evento}
+    
+}
 \title{Glossario}
 \author{Marco Brugin}
 \date{\today}
