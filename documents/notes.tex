@@ -56,8 +56,52 @@
 \tableofcontents
 \newpage
 
-\section{Intro}
+\section{Streaming ad eventi}
+È una pratica di acquisizione dei dati in tempo reale da fonti di eventi come database, flussi di eventi; memorizando tutto ciò per un recupero futuro di tali informazioni, reagendo a flussi di eventi in tempo reale. Inoltre garantisce un flusso  continuo di info corrette nel posto giusto e  al momento giusto.
+\subsection{Utilizzi}
+\begin{itemize}
+    \item per transazioni
+    \item per servizzi IOT di vario genere
+    \item monitoraggio sanitario 
+    \item ovunque ci sia la necessità di trattare grandi moli di dati efficientemente
+\end{itemize}
+\section{Apache Kafka}
+Kafka è una piattaforma open source che combina 3 funzionalità in modo da poter soddisfare i casi d'uso sopra citati:
+\begin{itemize}
+    \item pubblica e sottoscrive flussi di eventi, importandoli ed 	esportandoli da altri sistemi;
+    \item archivia tali flussi in modo affidabile e duraturo;	
+    \item elabora flussi di eventi in real time o in modo retrospettivo.
+\end{itemize}
+\subsection{Utilizzo}
+Kafka opera su una architettura distribuita. Può essere distribuito e utilizzato in vari modi tra cui virtual machine e container, on-promise, o servizi cloud.
 
+\subsection{Funzionamento}
+Kafka nasce come sistema distribuito che opera su nodi che comunicano tramite protocollo \textbf{TCP} ad alte prestazioni. Data la sua natura distribuita implementa capacità di fault tollerance con rimpiazzo dei nodi guasti. 
+Kafka è costituito da due componenti essenziali: server e client.
+\subsubsection{Server}
+Kafka viene eseguito come un cluster di uno o più server. Alcuni fanno da \textbf{broker}: livello di archiviazione. Altri assolvono il compito di \textbf{Kafka Connect}: importano e esportano i dati sotto forma di  flussi di eventi che permette di interagire con altri sistemi esistenti.
+\subsubsection{Client}
+Consentono di scrivere applicazioni distribuite e microservizi che leggono, scrivono ed elaborano flussi di eventi in parallelo, su larga scala e con fault tollerance anche in caso di problemi di rete o guasti della macchina.
+Esitono molti client per diversi linguaggi di programmazione.
+\subsection{Garanzie di funzionamento}
+In Kafka esistono produttori e consumatori che producono e sottoscrivono eventi. 
+Gli uni sono sono indipendenti l'uno dall'altro, ciò permette di raggiungere alcune delle seguenti garanzie:
+\begin{itemize}
+    \item \textbf{Al massimo una volta}: i messaggipossono andare persi ma mai riconsegnati;
+    \item \textbf{Almeno una volta}: i mesaggi non 		vengono mai persi ma possono essere 		riconsegnati;
+    \item \textbf{Una solo volta}: i messaggi non  		vanno persi e sono consegnati una 		sola volta; è la garanzia maggiormente desiderabile.
+\end{itemize}
+\subsection{Gestione degli eventi}
+Gli eventi sono organizzati in topic o argomenti. Gli eventi possono essere letti da più consumatori. 
+Un evento anche se consumato non viene eliminato, può essere impostato un timeout di mantenimento dell'evento.
+I topic sono partizionati su più nodi. Tale partizionamento consente ai client di leggere e scrivere dati da/a molti broker. Quando un nuovo evento viene emesso questo si aggiunge all rispettiva partizione. Sarà \textbf{Kafka} a garantire che gli eventi vengano letti nell'ordine in cui sono stati scritti.
+\subsection{Interfacce presentì}
+\subsubsection{Kafka Producer}
+L’interfaccia Producer permette alle applicazioni di inviare i flussi di dati ai broker di un cluster di Apache per categorizzarli e salvarli (nei topic già citati).
+\subsubsection{Kafka Consumer}
+L’interfaccia Consumer consente ai consumatori di Apache Kafka di  ricevere l’accesso ai dati, salvati nei topic di un cluster.
+ \subsubsection{Kafka Connect}
+    L’interfaccia Connect  consente di impostare produttori e consumatori riutilizzabili che collegano i topic di Kafka con le applicazioni o le banche dati esistenti.
 \newpage
 
 % ------------------------------------------------------------------------------
