@@ -103,10 +103,18 @@ L’interfaccia Consumer consente ai consumatori di Apache \textbf{Kafka} di  ri
  \subsubsection{\textbf{Kafka} Connect}
     L’interfaccia Connect  consente di impostare produttori e consumatori riutilizzabili che collegano i topic di \textbf{Kafka} con le applicazioni o le banche dati esistenti.
 \subsection{Casi d'uso}
+\subsubsection{Notifica dell'evento}
+\textbf{Kafka} permette di trasmette semplicemente eventi per avvisare altri sistemi di un cambiamento nel suo dominio.
+\subsubsection{Trasferimento di stato portato da eventi}
+In questo utilizzo il destinatario dell'evento ottiene anche i dati di cui ha bisogno per eseguire azioni aggiuntive sui dati richiesti.
+\subsubsection{Approvvigionamento di eventi}
+In questo caso il sistema consente di descrivere ogni cambiamento di stato in un sistema come un evento, con ogni evento registrato in sequenza cronologica. Di conseguenza, il flusso di eventi stesso diventa la principale fonte di verità del sistema.
+\subsection{Applicazioni}
 \subsubsection{Messaggistica}
 I broker di messaggi vengono utilizzati per disaccoppiare l'elaborazione del messaggio dal produttore dello stesso.
 \textbf{Kafka} rispetto ai sistemi di messaggistica tradizionale ha una migliore velocità, partizionamento integrato e tolleranza agli errori.
 L'utilizzo è basso, ma in ambiti in cui si richiede una bassa latenza, le garanzie fornite da \textbf{Kafka} sono alla pari dei tradizionali sistemi di messagistica, che lo rendono lo rendono una buona soluzione per applicazioni di elaborazione di messaggi su larga scala.
+
 \subsubsection{Monitoraggio di siti web}
 È il caso d'uso d'origine di \textbf{Kafka} , ha la caratteristica di generare un elevato volume di messaggi. Lo scopo era quello di ricostruire le attività degli utenti come insieme di eventi genrati dalle azioni dell'utente.
 \subsubsection{Metrica}
@@ -119,11 +127,14 @@ Indica l'aggregazione di dati di monitoraggio provenienti da varie fonti per ese
 È possibile utilizzare  di \textbf{Kafka} in aplicazioni cui cambiamenti di stato vengono registrati come sequenze di record in ordine temporale. \textbf{Kafka} permette il supporto per dati di registro memorizzati molto grandi tanto che lo rende un ottimo back-end di tali applicazioni. 
 \subsubsection{Registro commit}
 \textbf{Kafka} può fungere da sorta di log di commit esterno per un sistema distribuito. Il registro aiuta a replicare i dati tra i nodi e funge da meccanismo di risincronizzazione per consentire ai nodi non allineati di ripristinare i propri dati.
-\newpage
 
-% ------------------------------------------------------------------------------
-% Reference and Cited Works
-% ------------------------------------------------------------------------------
+\subsection{Apache Kafka VS EDA}
+L'emissione di un evento indica che qualcosa è accaduto e può essere visto come un agglomerato di dati atomico in grado di soddisfare l'evento stesso. 
+\textbf{Kafka} è un sistema di streaming di eventi che gestisce un flusso continuo di eventi. Inoltre Kafka memorizza tali in modo duraturo per il successivo recupero, analisi o elaborazione in tempo reale e li inoltri a varie destinazioni secondo necessità.
+\\
+D'altra parte in una \textbf{EDA} (Event Driven Architecture) viene generati degli eventi che un agente acquisisce e risponde a tale evento.
+per utilizzare \textbf{Kafka} in un sistema \textbf{EDA} la chiave è andare a sfruttare il disaccopiamento: invece di effetuare un polling continuo di verifica della presenza di nuovi dati, basterà ascoltare il verificarsi di un evento per agire. Inoltre grazie all'approcio sviluppato da \textbf{Kafka} un evento una volta soddisfatto non viene eliminato, ma conservato per un periodo ti tempo predeterminato, pertanto un evento potrà essere letto da più consumatori e potrà essere utilizzato per soddisfare una varietà di richieste.
+
 
 \bibliographystyle{IEEEtran}
 \bibliography{https://Kafka.apache.org/documentation/}
