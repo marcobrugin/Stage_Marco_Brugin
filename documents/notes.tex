@@ -134,11 +134,20 @@ L'emissione di un evento indica che qualcosa è accaduto e può essere visto com
 \\
 D'altra parte in una \textbf{EDA} (Event Driven Architecture) viene generati degli eventi che un agente acquisisce e risponde a tale evento.
 per utilizzare \textbf{Kafka} in un sistema \textbf{EDA} la chiave è andare a sfruttare il disaccopiamento: invece di effetuare un polling continuo di verifica della presenza di nuovi dati, basterà ascoltare il verificarsi di un evento per agire. Inoltre grazie all'approcio sviluppato da \textbf{Kafka} un evento una volta soddisfatto non viene eliminato, ma conservato per un periodo ti tempo predeterminato, pertanto un evento potrà essere letto da più consumatori e potrà essere utilizzato per soddisfare una varietà di richieste.
-
-
+\section{Even Driven Architecture}
+L'\textbf{Even Driven Architecture} è un pattern archietteturale basato su eventi: degli agenti, che sono in grado di ricevere tali eventi, agiranno solo nel momento in cui questi ultimi si verificheranno. 
+Una architettura basato su eventi fornisce una serie di altri vantaggi basati sul disaccopiamento tra il produttore e il consumatore dell'evento, i quali, nel momento dell'emissione di quest'ultimo non è necessario siano sincroni ma possono andare a sfruttare una comunicazione di tipo asincrona. 
+\subsection{Casi d'uso}
+\subsection{Integrazioni esterne}
+In molti sistemi quando di verifica un evento è necessario interagire con un servizio esterno. Grazie ad una architettura ad eventi, ogni servizio sarà indipendente l'uno dall'altro, così che se un servizio riscontra problemi nella sua esecuzione gli altri non ne risenteranno, data la loro indipendenza. Inoltre anche l'aggiunta di nuovi servizi ha nessun impatto. 
+\subsection{Flussi di lavoro}
+L'archiettetura \textbf{EDA} può essere anche impiegata nell'orchestrazione di un flusso di lavoro; nel quale ogni servizio è responsabile di un part del flusso indipendentemente dagli altri. Il fattore chiave è andare ad eseguire il rispettivo servizio all'emissione di un determinato evento.
+\subsection{Trasferimento di Stato}
+La modifica di un dato è un altro caso d'uso in cui l'architettura \textbf{EDA} può essere utilizzato per segnalare in tempo reale il mutamento di un dato in una detrminata struttura dati.
+\subsection{Accoppiamento temporale}
+Inoltre grazie ad un' architettura \textbf{EDA} si va a rimuovere l'accopiamento temporale tra chi efettua una chiamata e chi va a risponde a quest'ultima.
 \bibliographystyle{IEEEtran}
 \bibliography{https://Kafka.apache.org/documentation/}
-\bibliography{https://hevodata.com/learn/kafka-event-driven-architecture/}
 
 % ------------------------------------------------------------------------------
 
