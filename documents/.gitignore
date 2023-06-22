@@ -17,3 +17,4 @@
 *.out
 *.synctex.gz
 *.log
+*.synctex.gz(busy)
