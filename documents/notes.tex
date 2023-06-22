@@ -142,8 +142,11 @@ Il parametro replica.lag.max.messages, decide la differenza consentita tra \text
 Tutti i nodi che sono attivi e sincronizzati formano l' \textbf{In-Sync Replica Set}(\textbf{ISR}).\\
 Ora, se tutti i nodi in sincronizzazione hanno applicato un messaggio ai rispettivi log, questo messaggio viene considerato confermato e quindi inviato ai consumatori. In questo modo, \textbf{Kafka} garantisce che un messaggio di cui è stato eseguito il commit non andrà perso, purché sia presente almeno una replica attiva e sincronizzata, in ogni momento.\\
 Un nodo non sincronizzato può ricongiungersi all'\textbf{ISR} se può risincronizzarsi completamente di nuovo, anche se ha perso alcuni dati a causa del suo arresto anomalo.
-
 \subsection{Kraft}
+\textbf{Apache Kafka Raft (KRaft)} è il protocollo di consenso introdotto per rimuovere la dipendenza di \textbf{Apache Kafka} da \textbf{ZooKeeper} per la gestione dei metadati. Ciò semplifica enormemente l'architettura di \textbf{Kafka} consolidando la responsabilità dei metadati all'interno di \textbf{Kafka} stesso, anziché suddividerla tra due diversi sistemi: \textbf{ZooKeeper e Kafka}.\\
+\textbf{KRaft} utilizza un modello di archiviazione di origine evento che garantisce che le macchine a stati interni possano sempre essere ricreate accuratamente. Il registro eventi utilizzato per archiviare questo stato
+ viene periodicamente abbreviato da istantanee per garantire che il registro non possa crescere all'infinito.\\ Gli altri nodi all'interno del quorum seguono il leader  rispondendo agli eventi che crea e memorizza nel suo registro. Pertanto, se un nodo si ferma a causa di un evento di partizionamento, ad esempio, può recuperare rapidamente eventuali eventi persi accedendo al registro quando si ricongiunge. \\
+ La natura basata sugli eventi del protocollo KRaft significa che, a differenza del leader basato su ZooKeeper, il leader del quorum non ha bisogno di caricare lo stato da ZooKeeper prima che diventi attivo. Quando la leadership cambia, il nuovo leader attivo ha già tutti i record di metadati impegnati in memoria. Inoltre, lo stesso meccanismo guidato dagli eventi utilizzato nel protocollo KRaft viene utilizzato per tenere traccia dei metadati nel cluster. 
 \subsection{Casi d'uso}
 \subsubsection{Notifica dell'evento}
 \textbf{Kafka} permette di trasmette semplicemente eventi per avvisare altri sistemi di un cambiamento nel suo dominio.
