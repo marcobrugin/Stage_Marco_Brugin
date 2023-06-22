@@ -102,6 +102,34 @@ L’interfaccia Producer permette alle applicazioni di inviare i flussi di dati 
 L’interfaccia Consumer consente ai consumatori di Apache \textbf{Kafka} di  ricevere l’accesso ai dati, salvati nei topic di un cluster.
  \subsubsection{\textbf{Kafka} Connect}
     L’interfaccia Connect  consente di impostare produttori e consumatori riutilizzabili che collegano i topic di \textbf{Kafka} con le applicazioni o le banche dati esistenti.
+\subsection{Replicas}
+Con il termine di \textbf{Kafka Replication} significa disporre di più copie dei dati, distribuite su più server/broker.
+Ciò aiuta a mantenere alti livelli di disponibilità in caso di guasto. \\Le repliche sono permesse  a livello di partizione. kafka ne designa una chimata leader mentre le altre  sono partizioni follower o \textbf{in-sync}. Il numero totale di repliche incluso il leader costituisce il fattore di replicazione.
+Il leader è responsabile della ricezione e dell'invio dei dati, per quella partizione.
+Per mantenere questi cluster e gli argomenti/partizioni all'interno, Kafka ha un servizio centralizzato chiamato \textbf{Zookeeper}.
+
+\subsection{Retention}
+Con \textbf{Retention} in \textbf{Kafka} si intende la possibilità di controllare la dimensione dei registri degli argomenti ed evitare di superare le dimensioni del disco esistente.\\La conservazione può essere configurata o controllata in base alla dimensione dei log o in base alla durata configurata.
+Tale configurazione può essere impostata a grana fine o a grana grossa per ogni argomento o per tutti gli argomenti.\\
+\subsubsection{Retention basata sul tempo}
+Una volta raggiunto il tempo di conservazione configurato per il segmento, questo viene contrassegnato per l'eliminazione o la compattazione in base al criterio di pulizia configurato. Il periodo di conservazione predefinito per i segmenti è di 7 giorni.
+In ordine di importanza i parametri configurabili per la    \textbf{Retention} basata sul tempo sono in ordine di importanza e valutazione:
+\begin{enumerate}
+    \item log.retention.ms;
+    \item log.retention.minutes;
+    \item log.retention.hours.
+\end{enumerate}
+Nel momento in cui un parametro di livello di priorità superiore non è impostato si segue ciò che indica quello di livello appena inferiore.
+\subsubsection{Retention basata sulle dimensione}
+In questo caso si va 
+configurare la dimensione massima di una struttura di dati di registro per una partizione di argomento. Una volta che la dimensione del registro raggiunge questa dimensione, inizia a rimuovere i segmenti dalla sua fine.
+\\
+In ordine di importanza i parametri configurabili per la    \textbf{Retention} basata dimensione sono in ordine di importanza e valutazione:
+\begin{enumerate}
+    \item log.segment.bytes: la dimensione massima di un singolo file di registro;
+    \item log.retention.check.interval.ms: la frequenza in millisecondi con cui la pulizia del registro verifica se un registro è idoneo per l'eliminazione;
+    \item log.segment.delete.delay.ms: la quantità di tempo da attendere prima di eliminare un file dal file system.
+\end{enumerate}
 \subsection{Casi d'uso}
 \subsubsection{Notifica dell'evento}
 \textbf{Kafka} permette di trasmette semplicemente eventi per avvisare altri sistemi di un cambiamento nel suo dominio.
@@ -242,6 +270,7 @@ Con il termine \textbf{distribuito} si va ad intendere un'architettura nella qua
     \caption{Confronto tra architetture centralizzate e distribuite}
     
 \end{figure}
+\section{Zookeeper}
 \bibliographystyle{IEEEtran}
 \bibliography{https://Kafka.apache.org/documentation/}
 \bibliography{https://ably.com/topic/pub-sub#the-pub-sub-model-explained}
