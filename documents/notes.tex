@@ -215,6 +215,18 @@ Infatti per elaborare dati in streaming provenienti da sistemi come \textbf{Kafk
     \item 
     \textbf{Latenza}: data l'enorme mole di dati prodotti, se questi ultimi non vengono gestiti in tempo reale perdono di rillevanza e diventano inutilizzabili.
 \end{itemize}
+\clearpage
+\subsection{Alta affidabilità}
+Il concetto di alta affidabilità è essenzialmente alla capacità di un sistema di funzionare continuamente senza guasti in un detrminato periodo di tempo.\\
+Per garantire tali prestazioni in generale è necessario seguire i seguenti principi:
+\begin{itemize}
+    \item \textbf{Crossover affidabile}: creazione di ridondanza eseguendo l atto di passare dal componente X al componente Y senza perdere dati o influire sulle prestazioni;
+    \item \textbf{Bilancio del carico}:
+    tecnica attraverso  la quale si va a ridristribuire
+    il carico di elaborazione da su tutte le risorse del sistema in modo tale che nessuna sia sovraccaricata;
+    \item \textbf{Rillevazione e gestione automatica dei guasti}:
+    i guasti devono essere visibili e i  sistemi devono disporre di un sistema deve essere provvisto di un sistema automatico in grado di gestirli autonomamente.
+\end{itemize}
 \bibliographystyle{IEEEtran}
 \bibliography{https://Kafka.apache.org/documentation/}
 \bibliography{https://ably.com/topic/pub-sub#the-pub-sub-model-explained}
