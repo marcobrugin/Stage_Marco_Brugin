@@ -130,6 +130,20 @@ In ordine di importanza i parametri configurabili per la    \textbf{Retention} b
     \item log.retention.check.interval.ms: la frequenza in millisecondi con cui la pulizia del registro verifica se un registro è idoneo per l'eliminazione;
     \item log.segment.delete.delay.ms: la quantità di tempo da attendere prima di eliminare un file dal file system.
 \end{enumerate}
+\subsection{Zookeeper}
+\textbf{Zookeeper} si occupa della sincronizzazione tra i cluster distribuiti e ne gestisce le configurazioni, il controllo e la denominazione.\\
+Il protocollo \textbf{Zookeeper Atomic Broadcast (ZAB)} è il cervello dell'intero sistema.\\
+Ogni replica o nodo invia a intervalli regolari un messaggio \textit{ Keep-Alive} a Zookeeper, informando così \textbf{Zookeeper} che è vivo e funzionante. \\
+Se ebtro un tempo prestabilito il messaggio non viene ricevuto si presume che il nodo sia morto e se era un leadere se ne elegge un altro.\\
+\textbf{Zookeeper} permette di definire dei parametri che consentono di capire quando un nodo è guasto e quanto i nodi follower sono in ritardo rispetto al leader.\\
+Il parametro zookeeper.session.timeout.ms millisecondi è impostato su 6000 per impostazione predefinita: indica che ,se il leader non riceve l'evento \textit{ Keep-Alive} entro quel periodo temporale, detiene che quel nodo sia morto.\\
+Il parametro replica.lag.max.messages, decide la differenza consentita tra \textbf{Replica's Offset
+}e \textbf{Leader's Offset}. Se questa differenza è maggiore di replica.lag.max.message-1, il nodo viene considerato in ritardo e viene rimosso dall'elenco dei nodi in sincronizzazione dal leader. \\
+Tutti i nodi che sono attivi e sincronizzati formano l' \textbf{In-Sync Replica Set}(\textbf{ISR}).\\
+Ora, se tutti i nodi in sincronizzazione hanno applicato un messaggio ai rispettivi log, questo messaggio viene considerato confermato e quindi inviato ai consumatori. In questo modo, \textbf{Kafka} garantisce che un messaggio di cui è stato eseguito il commit non andrà perso, purché sia presente almeno una replica attiva e sincronizzata, in ogni momento.\\
+Un nodo non sincronizzato può ricongiungersi all'\textbf{ISR} se può risincronizzarsi completamente di nuovo, anche se ha perso alcuni dati a causa del suo arresto anomalo.
+
+\subsection{Kraft}
 \subsection{Casi d'uso}
 \subsubsection{Notifica dell'evento}
 \textbf{Kafka} permette di trasmette semplicemente eventi per avvisare altri sistemi di un cambiamento nel suo dominio.
@@ -270,7 +284,7 @@ Con il termine \textbf{distribuito} si va ad intendere un'architettura nella qua
     \caption{Confronto tra architetture centralizzate e distribuite}
     
 \end{figure}
-\section{Zookeeper}
+
 \bibliographystyle{IEEEtran}
 \bibliography{https://Kafka.apache.org/documentation/}
 \bibliography{https://ably.com/topic/pub-sub#the-pub-sub-model-explained}
