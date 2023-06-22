@@ -87,7 +87,7 @@ Esitono molti client per diversi linguaggi di programmazione.
 In \textbf{Kafka} esistono produttori e consumatori che producono e sottoscrivono eventi. 
 Gli uni sono sono indipendenti l'uno dall'altro, ciò permette di raggiungere alcune delle seguenti garanzie:
 \begin{itemize}
-    \item \textbf{Al massimo una volta}: i messaggipossono andare persi ma mai riconsegnati;
+    \item \textbf{Al massimo una volta}: i messaggipossono andare persi ma mai riconsegnati. Infatti si potrebbe verificare un guasto ad un singolo broker o un errore della rete nel momento dell'invio di un messaggio. Il messaggio stesso verrà recapitato una e una sola volta.
     \item \textbf{Almeno una volta}: i mesaggi non 		vengono mai persi ma possono essere 		riconsegnati;
     \item \textbf{Una solo volta}: i messaggi non  		vanno persi e sono consegnati una 		sola volta; è la garanzia maggiormente desiderabile.
 \end{itemize}
@@ -238,7 +238,7 @@ Con il termine \textbf{distribuito} si va ad intendere un'architettura nella qua
 \subsection{Confronto Architetture centralizzate e distribuite }
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=0.5]{images/central_vs_distribution.png}
+\includegraphics[scale=0.5]{images/central_vs_distribution.png}
     \caption{Confronto tra architetture centralizzate e distribuite}
     
 \end{figure}
