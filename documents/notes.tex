@@ -175,9 +175,21 @@ Il pattern è formato da tre agenti:
     \item il broker: riceve le richieste dai cleint e una volta trovato il server appropiato inoltra la richiesta e trasmette il risultato al client.
 \end{itemize}
 \section{Publisher-Subscriber}
+Il pattern architetturale \textbf{Publisher-Subscriber} è un modello di progettazione software, utilizzato nei sistemi distribuiti, che impiegano una comunicazione asincrona tra i vari componenti.\\
+Sebbene vada ad utilizare tecniche già preesistenti come la sottoscrizione e l'accodamento di messaggi, la  chiave di sucesso di tale pattern è il totale disoccopiamento delle componenti: i componenti non sono a conoscenza dell'identità e della presenza degli altri.\\
+Il modello Pub-SUb è nato dalla necessità del rendere i sistemi ridimensionabili in modo dinamico.
+\subsection{Architettura}
+Il Pub-Sub fornisce un sistema di scambio di messaggi tra editori e sottoscrittori. Lo scambio tra questi ultimi non avviene in modo diretto tra gli agenti appena illustrati, ma viene utilizzato un intermediario che raggruppa i messaggi per argomento e fornisce disaccopiamento tra le componenti.
+\subsection{Vantaggi}
+\begin{itemize}
+    \item \textbf{Debole accopiamento tra le componenti}: che rende il sistema più flessibile e modificabile dinamicamente;
+    \item \textbf{Elevata scalabilità}: non esiste limite al numero di publisher e subscriber che possano comunicare;
+    \item \textbf{Utilizzo della comunicazione ascincrona ad eventi}: non necessità della sicnrona degli attori coninvolti nella comunicazione;
+    \item \textbf{Indipendente dal protocollo di comunicazione}: è integrabile con qualsiasi protocollo di comunicazione e stack tecnologico.
+\end{itemize}
 \bibliographystyle{IEEEtran}
 \bibliography{https://Kafka.apache.org/documentation/}
-
+\bibliography{https://ably.com/topic/pub-sub#the-pub-sub-model-explained}
 % ------------------------------------------------------------------------------
 
 \end{document}
