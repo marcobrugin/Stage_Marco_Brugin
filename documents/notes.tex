@@ -187,9 +187,37 @@ Il Pub-Sub fornisce un sistema di scambio di messaggi tra editori e sottoscritto
     \item \textbf{Utilizzo della comunicazione ascincrona ad eventi}: non necessità della sicnrona degli attori coninvolti nella comunicazione;
     \item \textbf{Indipendente dal protocollo di comunicazione}: è integrabile con qualsiasi protocollo di comunicazione e stack tecnologico.
 \end{itemize}
+\section{Streaming Data pipelines}
+Con il termine di 
+\textbf{data-pipelines} si intende un software che consente il fluire automatico di dati da un punto ad un altro del sistema.
+Di solito le origini sono molteplici e generano dati ad altissima velocità.
+\\
+L'architettura che sta dietro a una \textbf{data-pilenes} consente di consumare, elebaorare, archiviare dati in tempo reale, man mano che vengono generati.
+Tutto ciò consente analisi e reazioni più veloci ad esigenze sorte.
+\\
+In generale nelle pipeline dati tradizionali estraggono, trasformano e caricano i dati prima che possano essere utilizzati.
+Ma data la enorme mole di dati che le \textbf{Streaming Data pipelines} sono sottoposte, tutto ciò non è possibile.
+\subsection{Architettura}
+Infatti per elaborare dati in streaming provenienti da sistemi come \textbf{Kafka} è necssario creare due livelli per l'elaborazione dati: 
+\begin{itemize}
+    \item \textbf{Archiviazione}:
+    questo livello consente la memorizzazione
+    dei dati, permettendo letture e scritture a basso costo in termini computazionali mantenendo l'ordine di arrivo dei dati;
+    \item \textbf{Lavorazione}: elabora e consuma i dati del livello di archiviazione andando a segnalare a quest'ultimo i dati non più necessari.
+\end{itemize}
+\subsection{Obiettivi}
+\begin{itemize}
+    \item \textbf{Scalabilità}: il volume dei dati può crescere notevolmente nel tempo quindi è necessario archiviare i dati in un \textbf{data warehouse};
+    \item \textbf{Durata e consistenza}: è importante considerare che i dati letti potrebbero essere già modificati o obsoleti, quindi è fondamentale disporre di strumenti di monitoraggio del flusso dati nel tempo;
+    \item \textbf{Ordinare}: l'archiettura deve essere in grado di individuare la sequenza dei dati nel flusso;
+    \item 
+    \textbf{Tolleranza ai guasti}: lo streaming dei dati non smettono mai di fluire da varie sorgenti e il sitema deve prevenire le interuuzioni di alcuni sorgentii;
+    \item 
+    \textbf{Latenza}: data l'enorme mole di dati prodotti, se questi ultimi non vengono gestiti in tempo reale perdono di rillevanza e diventano inutilizzabili.
+\end{itemize}
 \bibliographystyle{IEEEtran}
 \bibliography{https://Kafka.apache.org/documentation/}
 \bibliography{https://ably.com/topic/pub-sub#the-pub-sub-model-explained}
-% ------------------------------------------------------------------------------
+
 
 \end{document}
