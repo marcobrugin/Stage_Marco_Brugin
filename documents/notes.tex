@@ -1,5 +1,5 @@
 \documentclass{article}
-
+\usepackage{listings}
 \usepackage{amsmath, amsthm, amssymb, amsfonts}
 \usepackage{thmtools}
 \usepackage{graphicx}
@@ -287,10 +287,32 @@ Con il termine \textbf{distribuito} si va ad intendere un'architettura nella qua
     \caption{Confronto tra architetture centralizzate e distribuite}
     
 \end{figure}
+\section{Implementazione}
+\subsection{Apache kafka}
+Le note riportate si riferiscono ad un sistema operativo Linux dove è già stata scaricata una versione di \textbf{Apache Kafka}. I comandi devono essere eseguiti dalla cartella di installazione.
+\begin{itemize}
+    \item mandare in esecuzione il gestore \textbf{Zookeeper}
+    \begin{lstlisting}
+    bin/zookeeper-server-start.sh config/zookeeper.properties\end{lstlisting}
+    \item mandare in esecuzione il \textbf{Broker}
+    \begin{lstlisting}
+    bin/kafka-server-start.sh config/server.properties\end{lstlisting}
+    \item creare un nuovo \textbf{topic} name
+   \noindent \begin{lstlisting}
+   bin/kafka-topics.sh--create --topic topic--name--bootstrap-serverIP:port server \end{lstlisting}
+   \item creare un \textbf{produttore} 
+   \begin{lstlisting}
+   bin/kafka-console-producer.sh --topic topic--name --bootstrap-server IP:port server \end{lstlisting}
+   \item creare un \textbf{consumatore}
+   \begin{lstlisting}
+   bin/kafka-console-consumer.sh--topic topic--name--from-beginning --bootstrap-server IP:port server
+   \end{lstlisting}
+
+\end{itemize}
 
 \bibliographystyle{IEEEtran}
 \bibliography{https://Kafka.apache.org/documentation/}
 \bibliography{https://ably.com/topic/pub-sub#the-pub-sub-model-explained}
-
+\bibliography{https://kafka.apache.org/quickstart}
 
 \end{document}
