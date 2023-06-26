@@ -370,13 +370,13 @@ Infine unisce i risultati di tutti i risultati elebaorati per fornire un'unica r
 \subsection{MiddleManager}
 È un processo di lavoro che esegue le attività inviate. SOno separate per mantenere l'isolamento delle risorse e dei log.
 \section{Test}
-\subsection{High AVaibility}
+\subsection{High Avaibility}
 Per andare a testare l'alta affidabilità, si è andati a creare un cluster di nodi formato da: 1 nodo Zookeeper, 3 nodi broker (Kafka1, Kafka2,Kafka3) e si è andati ad istanziare un produttore e consumatore collegati al broker Kafka1. Ora per testare l'alta affidabilità basta simulare un malfunzionamento e verificare se i messaggi che il broker Kafka1 non è riuscito ad inviare al consumatore sono accessibili attraverso i server Kafka2 e Kafka3. 
 \subsubsection{Svolgimento}
 \begin{itemize}
     \item Come prima operazione si è andati a creare un cluster di 3 nodi Kafka e un nodo ZooKeeper utilizzando Docker Compose.
 \end{itemize}
-\begin{figure}[h]
+\begin{figure}[H]
     \centering
     \includegraphics[scale=0.5]{images/cluster.png}
     \caption{Creazione del cluster}
@@ -385,7 +385,7 @@ Per andare a testare l'alta affidabilità, si è andati a creare un cluster di n
 \begin{itemize}
     \item Creazione del topic "test".
 \end{itemize}
-\begin{figure}[h]
+\begin{figure}[H]
     \centering
     \includegraphics[scale=0.5]{images/create_topic.png}
     \caption{Creazione del topic}
@@ -394,13 +394,13 @@ Per andare a testare l'alta affidabilità, si è andati a creare un cluster di n
 \begin{itemize}
     \item Creazione di produttore e consumatore.
 \end{itemize}
-\begin{figure}[h]
+\begin{figure}[H]
     \centering
     \includegraphics[scale=0.5]{images/produttore.png}
     \caption{Creazione del produttore}
     \label{fig:my_label}
 \end{figure}
-\begin{figure}[h]
+\begin{figure}[H]
     \centering
     \includegraphics[scale=0.5]{images/consumatore.png}
     \caption{Creazione del consumatore}
@@ -409,7 +409,7 @@ Per andare a testare l'alta affidabilità, si è andati a creare un cluster di n
 \begin{itemize}
     \item Se il nodo Kafka1 viene spento, il produttore e consumatore possono continuare a comunicare collegandosi o al nodo Kafka2 o al nodo Kafka3.
 \end{itemize}
-\begin{figure}[h]
+\begin{figure}[H]
     \centering
     \includegraphics[scale=0.5]{images/test_di_high_avaibility.png}
     \caption{Test di alta affidabilità}
