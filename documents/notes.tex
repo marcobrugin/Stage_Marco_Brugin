@@ -342,13 +342,37 @@ In generale è consigliato andare a creare un cluster che ospita:
     \item i server dati (Historicals e MiddleManager):
     per gestire i dati effettivi nel tuo cluster,traggono grandi vantaggi da CPU, RAM e SSD;
     \item i server di interrogazione:
-    i \textbf{Druid Broker} accettano le richieste e le distribuiscono al resto del cluster, facoltativamente, mantengono una cache delle query in memoria.
+    i \textbf{Druid Broker} accettano le richieste e le distribuiscono al resto del cluster, è possibile anche mantenere una cache delle query in memoria.
 \end{itemize}
-
+\subsection{L'architettura}
+Druid ha un'architettura distribuita progettata per essere compatibile con il cloud. È possibile andare ridimensionare i servizi per avere la massima flessibilità. Inoltre una architettura di questo tipo è maggiormente tollerante ai guasti, un malfunzionamento di una componente non influisce immediatamente sulle altre.
+\begin{figure}[h]
+    \centering
+    \includegraphics[scale=0.5]{images/druid_architecture.png}
+    \caption{Architettura Druid}
+    \label{fig:my_label}
+\end{figure}
+\subsection{Servizzi offerti}
+\subsubsection{Servizio di coordinamento}
+Ha il compito di gestire la disponibilità dei dati dei l cluster.
+\textbf{Druid Coordinator} comunica ai processi storici di caricare o rilasciare segmenti in base alle configurazioni.
+Inoltre è responsabile del caricamento di nuovi segmenti, dell'eliminazione di segmenti obsoleti,della garanzia che i segmenti siano "replicati" (ovvero, caricati su più nodi storici diversi) un numero corretto (configurato) di volte e dello spostamento ("bilanciamento") dei segmenti tra Historical nodi per mantenere quest'ultimo caricato uniformemente.
+\textbf{Druid Coordinator} prima di eseguire le varie operazioni valuta lo stato attuale del cluster. Inoltre come gli altri servizzi mantiene una connessione a un cluster \textbf{Zookeeper} per le informazioni sul cluster corrente. Infine il servizio di cooordinamento ha anche una connessione ad un databse contenente l'elenco dei segmenti utilizzati.
+\subsubsection{Servizio di Overlord}
+ È responsabile dell'accettazione delle attività, del coordinamento della distribuzione delle attività, della creazione di blocchi attorno alle attività e della restituzione degli stati ai chiamanti. È possibile eseguirlo sia in modalità locale, per flussi di lavoro semplici, che remota nella quale occupa uns server dedicato.
+ \subsubsection{Servizio Broker}
+In un cluster distribuito è il servizio a cui instradare le query. Comoprende i metadati forniti da \textbf{Zookeeper}, dove ricavare i dati neccesari ad elaborare i risultati delle query.\\
+Infine unisce i risultati di tutti i risultati elebaorati per fornire un'unica risposta alla query richiesta.
+\subsubsection{Servizio di router}
+ È il servizio che ha il compito di instradare le query a diversi processi \textbf{Broker}. Le query vengono instardate in base alle regole di caricamento dei segmenti che vengono applicate. Questa configurazione fornisce l'isolamento delle query in modo tale che le query per i dati più importanti non siano influenzate dalle query per i dati meno importanti.
+ \subsection{Servizio storico}
+ Ogni servizio  copia o estrae i file di segmento da Deep Storage al disco locale in un'area chiamata \textit{segment cache}.\\Il coordinatore controlla l'assegnazione dei segmenti agli storici e l'equilibrio dei segmenti tra gli storici.  I servizio di storico non comunicano direttamente tra loro, né comunicano direttamente con il Coordinatore. Invece, il coordinatore crea voci temporanee in \textbf{Zookeeper} in un percorso della coda di caricamento . Ogni processo storico mantiene una connessione con \textbf{Zookeeper}, osservando quei percorsi per le informazioni sui segmenti.
+\subsection{MiddleManager}
+È un processo di lavoro che esegue le attività inviate. SOno separate per mantenere l'isolamento delle risorse e dei log.
 \section{Test}
 \subsection{High AVaibility}
 Per andare a testare l'alta affidabilità, si è andati a creare un cluster di nodi formato da: 1 nodo Zookeeper, 3 nodi broker (Kafka1, Kafka2,Kafka3) e si è andati ad istanziare un produttore e consumatore collegati al broker Kafka1. Ora per testare l'alta affidabilità basta simulare un malfunzionamento e verificare se i messaggi che il broker Kafka1 non è riuscito ad inviare al consumatore sono accessibili attraverso i server Kafka2 e Kafka3. 
-\subsection{Svolgimento}
+\subsubsection{Svolgimento}
 
 
 \subsection{verifing to connect with an another host}
