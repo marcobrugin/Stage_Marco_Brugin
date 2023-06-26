@@ -309,9 +309,46 @@ Le note riportate si riferiscono ad un sistema operativo Linux dove è già stat
    \end{lstlisting}
 
 \end{itemize}
+\section{Apache Druid}
+\textbf{Apache Druid} è un database di analisi in tempo reale progettato per analisi rapide, i suoi punti di forza sono le alte prestazioni in esecuzione di query su set di dati di grandi dimensioni.
+\textbf{Druid} è comunemente utilizzato come back-end del database per le GUI di applicazioni analitiche o per API altamente simultanee che richiedono aggregazioni veloci. Mostra le sue migliori prestazioni con dati orientati agli eventi.
+\subsection{Caratteristiche principali}
+\textbf{Druid} combina le idee provenienti da serie temporali e sistema di ricerca, \textit{data-warehouse}.
+Le caratteristiche principali sono:
+\begin{itemize}
+    \item formato di archiviazione a colonne: utilizza una archiviazione orientata alle colonne e carica soltanto le colonne necessarie per una determinata query. Inoltre ottimizza l'archiviazione delle colonne in base al tipo di dato;
+    \item sistema distribuito scalabile: le distribuzioni tipiche di Druid si estendono su cluster che vanno da decine a centinaia di server ciò permette di mantenere un tempo di latenza molto basso, al di sotto di pochi secondi;
+    \item elaborazione massicciamente parallela: le query vengono elaborate in parallello sull'intero cluster;
+    \item injection in tempo reale o batch: \textbf{Druid} è in grado di elaborare sia dati in tempo reale che in batch, i dati acquisiti sono immediatamente disponibili per le successive interrogazioni;
+    \item è dotato di un sistema di autobilanciamento e auto individuazione dei guasti:il cluster Druid si riequilibra automaticamente in background senza tempi di inattività, inoltre se un server \textbf{Druid} si guasta, il sistema instrada automaticamente i dati intorno al danno fino alla risoluzione, infatti \textbf{Druid} è progettato per funzionare senza tempi di inattività;
+    \item l'architettura nativa del cloud è tollerante ai guasti: \textbf{Druid} archivia in modo sicuro una copia dei tuoi dati in un archivio profondo (in genere su su fyle system o sul cloud), tali dati saranno accessibili semopre anche nel momento in cui i server falliscano; ciò permette l'esecuzione di query anche nei momenti di ripristino.
+    \item Indici per filtraggio rapido: \textbf{Druid} utilizza indici bitmap compressi per creare indici che consentano il filtraggio rapido e la ricerca su più colonne;
+    \item Partizionamento basato sul tempo: \textbf{Druid} prima suddivide i dati in base al tempo, è possibile in ogni caso aggiungere altri tipi di filtri;
+   \item  Algoritmi approssimati:
+   \textbf{Druid} permette l'utilizzo di algoritmi offrono un utilizzo limitato della memoria e sono spesso sostanzialmente più veloci dei calcoli esatti, dove sono richiesti conteggi più esatti \textbf{Druid} offre pure questa funzionalità.
+   \item Riepilogo automatico al momento dell'acquisizione: \textbf{Druid} supporta facoltativamente il riepilogo dei dati al momento dell'acquisizione.
+\end{itemize}
+
+\subsection{Funzionamento}
+\subsubsection{DistribuzioniSu singolo nodo}
+\textbf{Apache Druid} include molteplici configurazioni su singola macchina si trattano di distribuzioni oramai poco utilizzate.
+\\
+Esistono confivgurazioni molto piccole pensate per macchine con poca \textbf{CPU} e \textbf{memoria}, pensate per ambienti con risorse limitate, come i piccoli contenitori \textit{Docker}.
+\subsubsection{Distribuzione in cluster}
+\textbf{Apache Druid} è progettato per essere distribuito come cluster scalabile e con tolleranza ai guasti.\\
+In generale è consigliato andare a creare un cluster che ospita: 
+\begin{itemize}
+    \item i server principali (Coordinator e Overlord): sono responsabili della gestione dei metadati e delle esigenze di coordinamento del  cluster, possono essere collocati insieme sullo stesso server;
+    \item i server dati (Historicals e MiddleManager):
+    per gestire i dati effettivi nel tuo cluster,traggono grandi vantaggi da CPU, RAM e SSD;
+    \item i server di interrogazione:
+    i \textbf{Druid Broker} accettano le richieste e le distribuiscono al resto del cluster, facoltativamente, mantengono una cache delle query in memoria.
+\end{itemize}
+
 \section{Test}
 \subsection{High AVaibility}
 Per andare a testare l'alta affidabilità, si è andati a creare un cluster di nodi formato da: 1 nodo Zookeeper, 3 nodi broker (Kafka1, Kafka2,Kafka3) e si è andati ad istanziare un produttore e consumatore collegati al broker Kafka1. Ora per testare l'alta affidabilità basta simulare un malfunzionamento e verificare se i messaggi che il broker Kafka1 non è riuscito ad inviare al consumatore sono accessibili attraverso i server Kafka2 e Kafka3. 
+\subsection{Svolgimento}
 
 
 \subsection{verifing to connect with an another host}
