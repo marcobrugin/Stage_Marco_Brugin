@@ -309,7 +309,12 @@ Le note riportate si riferiscono ad un sistema operativo Linux dove è già stat
    \end{lstlisting}
 
 \end{itemize}
+\section{Test}
+\subsection{High AVaibility}
+Per andare a testare l'alta affidabilità, si è andati a creare un cluster di nodi formato da: 1 nodo Zookeeper, 3 nodi broker (Kafka1, Kafka2,Kafka3) e si è andati ad istanziare un produttore e consumatore collegati al broker Kafka1. Ora per testare l'alta affidabilità basta simulare un malfunzionamento e verificare se i messaggi che il broker Kafka1 non è riuscito ad inviare al consumatore sono accessibili attraverso i server Kafka2 e Kafka3. 
 
+
+\subsection{verifing to connect with an another host}
 \bibliographystyle{IEEEtran}
 \bibliography{https://Kafka.apache.org/documentation/}
 \bibliography{https://ably.com/topic/pub-sub#the-pub-sub-model-explained}
