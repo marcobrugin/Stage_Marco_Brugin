@@ -369,6 +369,37 @@ Infine unisce i risultati di tutti i risultati elebaorati per fornire un'unica r
  Ogni servizio  copia o estrae i file di segmento da Deep Storage al disco locale in un'area chiamata \textit{segment cache}.\\Il coordinatore controlla l'assegnazione dei segmenti agli storici e l'equilibrio dei segmenti tra gli storici.  I servizio di storico non comunicano direttamente tra loro, né comunicano direttamente con il Coordinatore. Invece, il coordinatore crea voci temporanee in \textbf{Zookeeper} in un percorso della coda di caricamento . Ogni processo storico mantiene una connessione con \textbf{Zookeeper}, osservando quei percorsi per le informazioni sui segmenti.
 \subsection{MiddleManager}
 È un processo di lavoro che esegue le attività inviate. SOno separate per mantenere l'isolamento delle risorse e dei log.
+\section{Archiviazione dei dati}
+I dati in\textbf{Apache Druid} vengono archiviati in \textit{datasources} tabelle simili a quelle utilizzate dai database relazionali. Ogni tabella viene partizionata in base agli intervalli di tempo. Ogni intervallo di tempo è chiamato blocco. All'interno di un blocco, i dati vengono partizionati in uno o più segmenti . Ogni segmento è un singolo file, che in genere comprende fino a pochi milioni di righe di dati. Si può pensare che i segmenti dati è come vivano in una sequenza temporale.\\
+Ogni \textit{datasources} può contenere.
+\subsection{Casi d'uso}
+\subsubsection{Potenza di analisi dati in real-time e applicazioni dati}
+Un caso d'uso importante per \textbf{Apache Druid} è l'impiego di sistemi di acquisizione dati in tempo reale, query rapide e tempo di attività. \textbf{Druid} viene utilizzato per alimentare GUI per applicazioni analitiche o per \textbf{API} simultanee che necessitano di aggregazioni veloci. Funziona meglio su dati orientati agli eventi.
+Le aree di impiego più comuni:
+\begin{itemize}
+    \item analisi dei flussi di clic
+    \item analisi della telemetria di rete (monitoraggio delle prestazioni della rete)
+    \item archiviazione delle metriche del server
+    \item metriche delle prestazioni dell'applicazione
+    \item operazioni \textbf{OLAP}
+\end{itemize}
+\subsubsection{Attività e comportamento dell'utente}
+\textbf{Apache Druid} viene speso utilizzato per effettuare misurazioni sul coinvogimento degli utenti e il monitoraggio dei dati di test. \\
+È utilizzato per calcolare metriche utente come conteggi distinti sia esattamente che approssimativamente.
+\subsubsection{Flussi di rete}
+Druid è comunemente usato per raccogliere e analizzare i flussi di rete. Druid viene utilizzato per  suddividere arbitrariamente i dati del flusso lungo qualsiasi insieme di attributi.
+Questi attributi includono spesso attributi di base come IP e porta.\textbf{Druid} permette di gestire schemi flessibili di attributi.
+\subsubsection{Marketing digitale}
+\textbf{Druid} viene comunemente usato per archiviare e interrogare i dati pubblicitari online. Questi dati in genere provengono dagli ad server e sono fondamentali per misurare e comprendere le prestazioni delle campagne pubblicitarie, le percentuali di clic, i tassi di conversione (tassi di abbandono) e molto altro. In generale \textbf{Druid} è stato creato per gestire questo tipo di dati in grandi dimensioni.\\
+Inoltre \textbf{Druid} può calcolare una serie di altre metriche per calcolare tendenze su grandi moli id dati.
+\subsubsection{Gestione delle prestazioni dell'applicazione}
+Druid viene spesso utilizzato per tenere traccia dei dati operativi generati dalle applicazioni.
+Similmente all'analisi dell'attività utente, in questo caso le metriche calcolate, o stimaste riguardano dati emessi dall'applicazione stessa.
+\subsubsection{Metriche IoT e dispositivi}
+\textbf{Druid} può essere utilizzato acquisire i dati generati dalla macchina in tempo reale ed eseguire rapide analisi ad hoc per misurare le prestazioni, ottimizzare le risorse hardware o identificare i problemi.\\
+A differenza di altri databse di serie temporali, \textbf{Druid} fornisce una serie di funzionalità di ricerca e parrtizionamento che gli permette di eseguire query molto velocemente.
+\subsection{Operazioni OLAP}
+\textbf{Druid} viene utilizzato per accelerare le query e potenziare le applicazioni. È progettato per un'elevata concorrenza e query in meno di un secondo, alimentando l'esplorazione interattiva dei dati attraverso un'interfaccia utente. Ciò fornisce una migliore soluzione interattiva con l'utente.
 \section{Test}
 \subsection{High Avaibility}
 Per andare a testare l'alta affidabilità, si è andati a creare un cluster di nodi formato da: 1 nodo Zookeeper, 3 nodi broker (Kafka1, Kafka2,Kafka3) e si è andati ad istanziare un produttore e consumatore collegati al broker Kafka1. Ora per testare l'alta affidabilità basta simulare un malfunzionamento e verificare se i messaggi che il broker Kafka1 non è riuscito ad inviare al consumatore sono accessibili attraverso i server Kafka2 e Kafka3. 
