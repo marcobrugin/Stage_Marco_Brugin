@@ -333,7 +333,7 @@ Le caratteristiche principali sono:
 \subsubsection{DistribuzioniSu singolo nodo}
 \textbf{Apache Druid} include molteplici configurazioni su singola macchina si trattano di distribuzioni oramai poco utilizzate.
 \\
-Esistono confivgurazioni molto piccole pensate per macchine con poca \textbf{CPU} e \textbf{memoria}, pensate per ambienti con risorse limitate, come i piccoli contenitori \textit{Docker}.
+Esistono configurazioni molto piccole pensate per macchine con poca \textbf{CPU} e \textbf{memoria}, pensate per ambienti con risorse limitate, come i piccoli contenitori \textit{Docker}.
 \subsubsection{Distribuzione in cluster}
 \textbf{Apache Druid} è progettato per essere distribuito come cluster scalabile e con tolleranza ai guasti.\\
 In generale è consigliato andare a creare un cluster che ospita: 
@@ -365,13 +365,63 @@ In un cluster distribuito è il servizio a cui instradare le query. Comoprende i
 Infine unisce i risultati di tutti i risultati elebaorati per fornire un'unica risposta alla query richiesta.
 \subsubsection{Servizio di router}
  È il servizio che ha il compito di instradare le query a diversi processi \textbf{Broker}. Le query vengono instardate in base alle regole di caricamento dei segmenti che vengono applicate. Questa configurazione fornisce l'isolamento delle query in modo tale che le query per i dati più importanti non siano influenzate dalle query per i dati meno importanti.
- \subsection{Servizio storico}
+ \subsubsection{Servizio storico}
  Ogni servizio  copia o estrae i file di segmento da Deep Storage al disco locale in un'area chiamata \textit{segment cache}.\\Il coordinatore controlla l'assegnazione dei segmenti agli storici e l'equilibrio dei segmenti tra gli storici.  I servizio di storico non comunicano direttamente tra loro, né comunicano direttamente con il Coordinatore. Invece, il coordinatore crea voci temporanee in \textbf{Zookeeper} in un percorso della coda di caricamento . Ogni processo storico mantiene una connessione con \textbf{Zookeeper}, osservando quei percorsi per le informazioni sui segmenti.
-\subsection{MiddleManager}
+\subsubsection{MiddleManager}
 È un processo di lavoro che esegue le attività inviate. SOno separate per mantenere l'isolamento delle risorse e dei log.
-\section{Archiviazione dei dati}
+
+\subsection{Archiviazione dei dati}
 I dati in\textbf{Apache Druid} vengono archiviati in \textit{datasources} tabelle simili a quelle utilizzate dai database relazionali. Ogni tabella viene partizionata in base agli intervalli di tempo. Ogni intervallo di tempo è chiamato blocco. All'interno di un blocco, i dati vengono partizionati in uno o più segmenti . Ogni segmento è un singolo file, che in genere comprende fino a pochi milioni di righe di dati. Si può pensare che i segmenti dati è come vivano in una sequenza temporale.\\
-Ogni \textit{datasources} può contenere.
+Ogni segmento viene creato da un \textbf{MiddleManager} come mutable e uncommitted.  I dati sono interrogabili non appena vengono aggiunti a un segmento senza commit.\\
+Il processo di creazione del segmento accelera le query successive producendo un file di dati compatto e indicizzato. \\
+Periodicamente i segmenti vengono sottoposti a commit e pubblicati in deep storage diventano immutabili e passano dai MiddleManager ai processi storici. Inoltre nell'archivio dei metadati viene scritta una voce al segmento che lo descrive.\\
+Tali informazioni inidicano al coordinatore quali dati sono presenti nel cluster.
+
+\subsection{I segmenti}
+\textbf{Apache Druid} memorizza i suoi dati e indici in file di segmenti partizionati in base al tempo.
+\textbf{Druid} crea un segmento per ogni intervallo di segmento che contiene dati.
+Affinchè \textbf{Druid} funzioni bene  con un carico di query elevato, è importante che la dimensione del file del segmento rientri nell'intervallo consigliato di 300-700 MB. Se questo non accade si può valutare la possibilità di modifica della granularità dell'intervallo di tempo del segmento.
+\subsubsection{Struttura del file di segmento}
+I file di segmento sono colonnari : i dati per ciascuna colonna sono disposti in strutture di dati separate. Memorizzando ciascuna colonna separatamente, Druid riduce la latenza delle query analizzando solo le colonne effettivamente necessarie per una query. \\
+Una volta che una query identifica le righe da selezionare, le decomprime, estrae le righe pertinenti e applica l'operatore di aggregazione desiderato.  Se una query non richiede una colonna, Druid ignora i dati di quella colonna.
+Le colonne di tìpo dimension supportano le operazioni di filtro e raggrupamento, quindi richiede l'utilizzo delle seguenti tre strutture dati: 
+\begin{itemize}
+    \item Dizionario : esegue il mapping dei valori agli ID interi, consentendo una rappresentazione compatta dell'elenco e dei valori bitmap;
+    \item List : i valori della colonna, codificati utilizzando il dizionario.
+    Questi operatori consentono l'esecuzione di query che aggregano esclusivamente metriche basate su filtri senza accedere all'elenco di valori.
+    \item Bitmap : una bitmap per ogni valore distinto nella colonna, per indicare quali righe contengono tale valore.
+\end{itemize}
+Per ogni riga nell'elenco dei dati della colonna, esiste solo una singola bitmap con una voce diversa da zero. Ciò significa che le colonne con cardinalità elevata hanno bitmap estremamente rade e quindi altamente comprimibili. 
+\subsubsection{L'indentificazione del segmento}
+Gli identificatori di segmento in genere contengono l'origine dati del segmento, l'ora di inizio dell'intervallo (in formato ISO 8601), l'ora di fine dell'intervallo (in formato ISO 8601) e le informazioni sulla versione. Se i dati vengono ulteriormente partizionati oltre un intervallo di tempo, l'identificatore di segmento contiene anche un numero di partizione.
+\subsubsection{Indicizzazione e consegna del segmento}
+L'\textbf{indicizzazione} è il meccanismo mediante il quale vengono creati nuovi segmenti e l'\textbf{handoff} è il meccanismo mediante il quale vengono pubblicati e iniziano a essere serviti dai processi storici. \\
+Un'attività di indicizzazione viene avviata e crea un nuovo segmento. Deve determinare l'identificatore del segmento prima di iniziare a costruirlo.\\ Per un'attività che sta aggiungendo questo viene fatto chiamando un'API di "allocazione" su \textbf{Overlord} per aggiungere potenzialmente una nuova partizione a un set di segmenti esistente.  Per un'attività che sta sovrascrivendo (come un'attività Hadoop o un'attività di indicizzazione non in modalità di aggiunta), questa operazione viene eseguita bloccando un intervallo e creando un nuovo numero di versione e un nuovo set di segmenti.\\
+Da quensto momento in poi il segmento è interrogabile e quando l'attività di indiccizzazione ha terminato li inserisce nello storage profondo e li pubblica scrivendolo nell'archivio dei metadati. Per i processi in real-time, per garantire la disponibilità dei dati attende il caricaamento dei dati.
+\subsubsection{Indentificatore di segmento}
+Tutti i segmenti hanno un identificatore in quattro parti con i seguenti componenti:
+\begin{itemize}
+    \item nome dell'origine dati;
+    \item intervallo di tempo;
+    \item numero di versione;
+    \item numero di partizione.
+\end{itemize}
+\subsubsection{Versione del segmento}
+Il numero di versione fornisce una forma di controllo della concorrenza multi-versione (MVCC) per supportare la sovrascrittura in modalità batch. Il passaggio da una versione all'altra dal lato utente non è percepibile,  perché Druid lo gestisce caricando prima i nuovi dati e non appena i nuovi dati sono stati caricati, cambiando tutte le nuove query per utilizzare quelle nuovi segmenti. Quindi rilascia i vecchi segmenti pochi minuti dopo. 
+\subsubsection{Ciclo di vita del segmento}
+Ogni segmento ha un ciclo di vita che coinvolge le seguenti tre aree principali:
+\begin{itemize}
+    \item archivio dei metadati: contiene i metadati del segmento e vengono archiviati nell'archivio dei metadati una volta terminata la costruzione di un segmento.
+    \item Archiviazione profonda: i file di dati del segmento vengono inseriti nell'archiviazione profonda una volta terminata la costruzione di un segmento. Ciò avviene immediatamente prima della pubblicazione dei metadati nell'archivio dei metadati.
+    \item Disponibilità per l'interrogazione: i segmenti sono disponibili per l'interrogazione su alcuni server di dati Druid, come un'attività in tempo reale o un processo storico.
+\end{itemize}
+\subsubsection{Injection dei dati}
+ I principali metodi di ingestione di Druid sono tutti basati su pull e offrono garanzie transazionali (verrà caricato o tutto o niente).
+ \begin{itemize}
+     \item Metodi di ingestione "seekable-stream" supervisionati come Kafka e Kinesis . Con questi metodi, Druid esegue il commit degli offset del flusso nel proprio archivio di metadati insieme ai metadati del segmento, nella stessa transazione.
+    \item Inserimento batch basato su Hadoop  . Ogni attività pubblica tutti i metadati del segmento in un'unica transazione.
+    \item Importazione batch nativa . In modalità parallela, l'attività del supervisore pubblica tutti i metadati del segmento in un'unica transazione al termine delle attività secondarie.
+ \end{itemize}
 \subsection{Casi d'uso}
 \subsubsection{Potenza di analisi dati in real-time e applicazioni dati}
 Un caso d'uso importante per \textbf{Apache Druid} è l'impiego di sistemi di acquisizione dati in tempo reale, query rapide e tempo di attività. \textbf{Druid} viene utilizzato per alimentare GUI per applicazioni analitiche o per \textbf{API} simultanee che necessitano di aggregazioni veloci. Funziona meglio su dati orientati agli eventi.
@@ -397,12 +447,46 @@ Druid viene spesso utilizzato per tenere traccia dei dati operativi generati dal
 Similmente all'analisi dell'attività utente, in questo caso le metriche calcolate, o stimaste riguardano dati emessi dall'applicazione stessa.
 \subsubsection{Metriche IoT e dispositivi}
 \textbf{Druid} può essere utilizzato acquisire i dati generati dalla macchina in tempo reale ed eseguire rapide analisi ad hoc per misurare le prestazioni, ottimizzare le risorse hardware o identificare i problemi.\\
-A differenza di altri databse di serie temporali, \textbf{Druid} fornisce una serie di funzionalità di ricerca e parrtizionamento che gli permette di eseguire query molto velocemente.
+A differenza di altri database di serie temporali, \textbf{Druid} fornisce una serie di funzionalità di ricerca e parrtizionamento che gli permette di eseguire query molto velocemente.
 \subsubsection{Operazioni OLAP}
 \textbf{Druid} viene utilizzato per accelerare le query e potenziare le applicazioni. È progettato per un'elevata concorrenza e query in meno di un secondo, alimentando l'esplorazione interattiva dei dati attraverso un'interfaccia utente. Ciò fornisce una migliore soluzione interattiva con l'utente.
+\subsection{Modello dei dati}
+Druid memorizza i dati in \textit{datasources} molto simili alle tabelle di un tradizionale database relazione e alle serie temporali.
+Il modello di dati di \textbf{Druid} presenta essenzialmnente le seguenti componenti:
+\begin{itemize}
+    \item Timestamp principale: Gli schemi Druid devono sempre includere un timestamp primario. Viene utilizzato per partizionare ed ordinare i dati. Inoltre il timestamp viene utilizzato per recuperare rapidamente i dati all'interno di un detrminato intervallo di tempo.
+    \item Dimension: sono colonne che Druid memorizza "così come sono". Si possono utilizzare per qualsiasi scopo: filtrare, applicare aggregatori e così via.
+    \item Metrics: sono colonne che Druid archivia in forma aggregata e diventano più utili se attivi il rollup è una forma di aggregazione che comprime le dimensioni mentre aggrega i valori nelle metriche, ovvero comprime le righe ma conserva le informazioni di riepilogo.
+\end{itemize}
+
+\subsection{Schema design tips}
+\begin{itemize}
+   
+
+ \item nell'importazione dei dati \textbf{Druid} con o senza rollup: aggregando parzialmente i tuoi dati durante l'importazione, riducendo potenzialmente il numero di righe, diminuendo l'impronta di archiviazione e migliorando le prestazioni delle query. Mentre senza rollup \textbf{Druid} archivia una riga per ogni riga di input.
+ \item ogni riga in Druid deve avere un timestamp, tale informazione potrà essere utilizzata per successivi grappamenti.
+ \item tutte le colonne del modello di archiviazione di     \textbf{Druid} sono metriche ad eccezione del timestamp
+ \item le colonne dimensione vengono archiviate così come sono
+ \item le colonne delle metriche vengono archiviate preaggregate , quindi possono essere aggregate solo al momento della query.
+\end{itemize}
+\subsubsection{Modello relazionale}
+In \textbf{Druid} in generale le \textit{datasources} sono molto simili alle tabelle utilizzate nel modelli relazionali ma in questo caso si preferisce creare tabelle che permettano elaborazioni piatte: recupero delle informazioni senza l'utilizzo di join tra tabelle, ciò consente un aumento delle prestazioni.
+\subsubsection{Modello su serie storiche}
+Simile ai database delle serie temporali, il modello di dati di Druid richiede un timestamp. Druid non è un database di serie temporali, ma è una scelta naturale per l'archiviazione di dati di serie temporali. Il suo modello di dati flessibile consente di archiviare sia dati di serie temporali che non, anche nella stessa origine dati.\\
+Per ottenere prestazioni ottimali di compressione e query in Druid per i dati delle serie temporali, è importante partizionare e ordinare in base al nome della metrica, come fanno spesso i database delle serie temporali.
+\subsubsection{Utilizzo degli Sketches}
+Nel momento in cui si vanno ad inserire dati \textbf{Druid} non li memorizza direttamente uno Sketche che poi può inserire nell'esecuzion delle query siccessive. \\Ogni Sketche è progettato per un solo particolare tipo di calcolo. In questo modo si riduce il rollup e si riduce la memoria utilizzata in fase di query.
+\subsubsection{Utilizzo del timestamp}
+Gli schemi \textbf{Druid} devono sempre includere un timestamp primario. Il timestamp principale viene utilizzato per partizionare e ordinare i dati, quindi dovrebbe essere il timestamp su cui filtrerai più spesso. Druid è in grado di identificare e recuperare rapidamente i dati corrispondenti agli intervalli di tempo della colonna timestamp primaria.
+Se lo schema lo richiede è possibile importare anche timestamp secondari.
+\subsubsection{Autorillevamento del tipo}
+È possibile fare in modo che \textbf{Druid} deduca lo schema e i tipi per i tuoi dati parzialmente o completamente impostando. \\
+Nella deduzione del tipo \textbf{Druid} sceglie il tipo nativo più appropiato.\\
+Per le colonne di tipo misto vengono archiviate nel tipo meno restrittivo che può rappresentare tutti i valori nella colonna.
 \section{Test}
 \subsection{High Avaibility}
 Per andare a testare l'alta affidabilità, si è andati a creare un cluster di nodi formato da: 1 nodo Zookeeper, 3 nodi broker (Kafka1, Kafka2,Kafka3) e si è andati ad istanziare un produttore e consumatore collegati al broker Kafka1. Ora per testare l'alta affidabilità basta simulare un malfunzionamento e verificare se i messaggi che il broker Kafka1 non è riuscito ad inviare al consumatore sono accessibili attraverso i server Kafka2 e Kafka3. 
+
 \subsubsection{Svolgimento}
 \begin{itemize}
     \item Come prima operazione si è andati a creare un cluster di 3 nodi Kafka e un nodo ZooKeeper utilizzando Docker Compose.
