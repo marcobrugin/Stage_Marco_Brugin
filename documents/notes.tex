@@ -416,7 +416,36 @@ Per andare a testare l'alta affidabilità, si è andati a creare un cluster di n
     \label{fig:my_label}
 \end{figure}
 
-\subsection{verifing to connect with an another host}
+\subsection{Verifica di connessione al container da un altro host}
+Per andare a verificare la conessione al container a partire da un altro host bon facciamo altro che conneterci al container attraverso la porta pubblica che espone ed che espone nel parametro external di configurazione.
+\subsubsection{Svolgimento}
+\begin{itemize}
+    \item Come prima operazione si è andati a creare un cluster di 3 nodi Kafka e un nodo ZooKeeper utilizzando Docker Compose.
+\end{itemize}
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.5]{images/cluster.png}
+    \caption{Creazione del cluster}
+    \label{fig:my_label}
+\end{figure}
+\begin{itemize}
+    \item Dopo di che abbiamo creato dei topic da esempio.
+\end{itemize}
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.5]{images/create_topic.png}
+    \caption{Creazione dei topic}
+    \label{fig:my_label}
+\end{figure}
+\begin{itemize}
+    \item Ed infine ci siamo colleegati al cluster a partire da un altro host (localhost) per visualizzare la lista dei topic creati.
+\end{itemize}
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.5]{images/test_connect_another_host.png}
+    \caption{Connessione da altro host}
+    \label{fig:my_label}
+\end{figure}
 \bibliographystyle{IEEEtran}
 \bibliography{https://Kafka.apache.org/documentation/}
 \bibliography{https://ably.com/topic/pub-sub#the-pub-sub-model-explained}
