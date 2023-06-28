@@ -353,6 +353,8 @@ Druid ha un'architettura distribuita progettata per essere compatibile con il cl
     \label{fig:my_label}
 \end{figure}
 \subsection{Servizzi offerti}
+\subsection{Server principale}
+Un server Master gestisce l'ingestion e la disponibilità dei dati: è responsabile dell'avvio di nuovi job di ingestion e del coordinamento della disponibilità dei dati sui "Data server" descritti di seguito.
 \subsubsection{Servizio di coordinamento}
 Ha il compito di gestire la disponibilità dei dati dei l cluster.
 \textbf{Druid Coordinator} comunica ai processi storici di caricare o rilasciare segmenti in base alle configurazioni.
@@ -360,15 +362,25 @@ Inoltre è responsabile del caricamento di nuovi segmenti, dell'eliminazione di 
 \textbf{Druid Coordinator} prima di eseguire le varie operazioni valuta lo stato attuale del cluster. Inoltre come gli altri servizzi mantiene una connessione a un cluster \textbf{Zookeeper} per le informazioni sul cluster corrente. Infine il servizio di cooordinamento ha anche una connessione ad un databse contenente l'elenco dei segmenti utilizzati.
 \subsubsection{Servizio di Overlord}
  È responsabile dell'accettazione delle attività, del coordinamento della distribuzione delle attività, della creazione di blocchi attorno alle attività e della restituzione degli stati ai chiamanti. È possibile eseguirlo sia in modalità locale, per flussi di lavoro semplici, che remota nella quale occupa uns server dedicato.
+ \subsection{Server di interrogazione}
+ Un server di query fornisce gli endpoint con cui interagiscono gli utenti e le applicazioni client, instradando le query ai server di dati o ad altri server di query.
  \subsubsection{Servizio Broker}
 In un cluster distribuito è il servizio a cui instradare le query. Comoprende i metadati forniti da \textbf{Zookeeper}, dove ricavare i dati neccesari ad elaborare i risultati delle query.\\
 Infine unisce i risultati di tutti i risultati elebaorati per fornire un'unica risposta alla query richiesta.
-\subsubsection{Servizio di router}
+\subsubsection{Servizio di router (opzionale)}
  È il servizio che ha il compito di instradare le query a diversi processi \textbf{Broker}. Le query vengono instardate in base alle regole di caricamento dei segmenti che vengono applicate. Questa configurazione fornisce l'isolamento delle query in modo tale che le query per i dati più importanti non siano influenzate dalle query per i dati meno importanti.
+ \subsection{Server dati}
+ Un server di dati esegue processi di acquisizione e archivia dati interrogabili.
  \subsubsection{Servizio storico}
- Ogni servizio  copia o estrae i file di segmento da Deep Storage al disco locale in un'area chiamata \textit{segment cache}.\\Il coordinatore controlla l'assegnazione dei segmenti agli storici e l'equilibrio dei segmenti tra gli storici.  I servizio di storico non comunicano direttamente tra loro, né comunicano direttamente con il Coordinatore. Invece, il coordinatore crea voci temporanee in \textbf{Zookeeper} in un percorso della coda di caricamento . Ogni processo storico mantiene una connessione con \textbf{Zookeeper}, osservando quei percorsi per le informazioni sui segmenti.
-\subsubsection{MiddleManager}
-È un processo di lavoro che esegue le attività inviate. SOno separate per mantenere l'isolamento delle risorse e dei log.
+ Ogni servizio  copia o estrae i file di segmento da Deep Storage al disco locale in un'area chiamata \textit{segment cache} e rispondono alle domande su tali segmenti.\\Il coordinatore controlla l'assegnazione dei segmenti agli storici e l'equilibrio dei segmenti tra gli storici.  I servizio di storico non comunicano direttamente tra loro, né comunicano direttamente con il Coordinatore. Invece, il coordinatore crea voci temporanee in \textbf{Zookeeper} in un percorso della coda di caricamento . Ogni processo storico mantiene una connessione con \textbf{Zookeeper}, osservando quei percorsi per le informazioni sui segmenti.
+\subsubsection{Servizio MiddleManager}
+I processi MiddleManager gestiscono l'inserimento di nuovi dati nel cluster. Sono responsabili della lettura da fonti di dati esterne e della pubblicazione di nuovi segmenti Druid.
+\subsubsection{Servizio Peone}
+I servizzi Peon sono motori di esecuzione delle attività generati dai \textbf{MiddleManager}. Ogni \textbf{Peon} esegue una JVM separata ed è responsabile dell'esecuzione di una singola attività. I Peon girano sempre sullo stesso host del \textbf{MiddleManager} che li ha generati.
+\subsubsection{Servizio di inidicizzazione}
+In alterenativa ai \textbf{MiddleManger} ed ai \textbf{Peon}.\\
+Invece di eseguire il fork di processi JVM separati per attività, l'indicizzatore esegue le attività come singoli thread all'interno di un singolo processo JVM.\\
+L'indicizzatore è progettato per essere più facile da configurare e distribuire rispetto al sistema MiddleManager + Peon e per consentire una migliore condivisione delle risorse tra le attività. 
 \subsection{Deep dive}
 \subsubsection{Deep storage}
 Il \textbf{deep storage} è dove vengono archiviati i segmenti. È un mceccanismo non fornito da \textbf{Druid}.\\
@@ -404,6 +416,7 @@ Si riferiscono alle tabelle create e gestite dall'\textbf{Overlord} e \textbf{Mi
 È la tabella che memorizza le modifiche apportate alla configurazione.\\
 Hanno accesso hai metadati solo: il servizio di indicizzazione, il servizio in tempo reale e il servizio di coordinamento.
 \subsubsection{Zookeeper}
+\textbf{Apache Druid} utilizza \textbf{Apache ZooKeeper} per la gestione dello stato corrente del cluster.\\
 
 \subsection{Archiviazione dei dati}
 I dati in\textbf{Apache Druid} vengono archiviati in \textit{datasources} tabelle simili a quelle utilizzate dai database relazionali. Ogni tabella viene partizionata in base agli intervalli di tempo. Ogni intervallo di tempo è chiamato blocco. All'interno di un blocco, i dati vengono partizionati in uno o più segmenti . Ogni segmento è un singolo file, che in genere comprende fino a pochi milioni di righe di dati. Si può pensare che i segmenti dati è come vivano in una sequenza temporale.\\
