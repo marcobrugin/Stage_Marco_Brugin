@@ -417,6 +417,15 @@ Si riferiscono alle tabelle create e gestite dall'\textbf{Overlord} e \textbf{Mi
 Hanno accesso hai metadati solo: il servizio di indicizzazione, il servizio in tempo reale e il servizio di coordinamento.
 \subsubsection{Zookeeper}
 \textbf{Apache Druid} utilizza \textbf{Apache ZooKeeper} per la gestione dello stato corrente del cluster.\\
+In \textbf{Zookeeper} avengono le seguenti attività: 
+\begin{itemize}
+    \item Elezione del servizio di coordinamento;
+    \item Protocollo di "pubblicazione" del segmento degli storici;
+    \item Protocollo di caricamento/rilascio del segmento tra Coordinatore e Storico;
+    \item elezione del servizio di \textbf{Overlord};
+    \item Gestione delle attività di \textbf{Overlord e MiddleManager};
+    
+\end{itemize}
 
 \subsection{Archiviazione dei dati}
 I dati in\textbf{Apache Druid} vengono archiviati in \textit{datasources} tabelle simili a quelle utilizzate dai database relazionali. Ogni tabella viene partizionata in base agli intervalli di tempo. Ogni intervallo di tempo è chiamato blocco. All'interno di un blocco, i dati vengono partizionati in uno o più segmenti . Ogni segmento è un singolo file, che in genere comprende fino a pochi milioni di righe di dati. Si può pensare che i segmenti dati è come vivano in una sequenza temporale.\\
