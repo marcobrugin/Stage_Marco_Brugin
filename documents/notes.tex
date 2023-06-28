@@ -369,7 +369,15 @@ Infine unisce i risultati di tutti i risultati elebaorati per fornire un'unica r
  Ogni servizio  copia o estrae i file di segmento da Deep Storage al disco locale in un'area chiamata \textit{segment cache}.\\Il coordinatore controlla l'assegnazione dei segmenti agli storici e l'equilibrio dei segmenti tra gli storici.  I servizio di storico non comunicano direttamente tra loro, né comunicano direttamente con il Coordinatore. Invece, il coordinatore crea voci temporanee in \textbf{Zookeeper} in un percorso della coda di caricamento . Ogni processo storico mantiene una connessione con \textbf{Zookeeper}, osservando quei percorsi per le informazioni sui segmenti.
 \subsubsection{MiddleManager}
 È un processo di lavoro che esegue le attività inviate. SOno separate per mantenere l'isolamento delle risorse e dei log.
-
+\subsection{Deep dive}
+\subsubsection{Deep storage}
+Il \textbf{deep storage} è dove vengono archiviati i segmenti. È un mceccanismo non fornito da \textbf{Druid}.\\
+Fintanto i servizi di \textbf{Druid} possono vedere questa infrastruttura di archiviazione e accedere ai segmenti archiviati su di essa, non  si perdereanno i  dati indipendentemente dal numero di nodi Druid che persi.\\
+Il \textbf{deep storage} può essere di due tipi:
+\begin{itemize}
+    \item locale: destinato ad un solo server o a più server che hanno  acesso ad un filesystem condiviso;
+    \item su cloud: è più convenienti, più scalabile e più robuste rispetto all'impostazione di un filesystem condiviso. \textbf{Druid} è compatibile con diveresi sistemi cloud come: Azure, Amazon S3, Google.
+\end{itemize}
 \subsection{Archiviazione dei dati}
 I dati in\textbf{Apache Druid} vengono archiviati in \textit{datasources} tabelle simili a quelle utilizzate dai database relazionali. Ogni tabella viene partizionata in base agli intervalli di tempo. Ogni intervallo di tempo è chiamato blocco. All'interno di un blocco, i dati vengono partizionati in uno o più segmenti . Ogni segmento è un singolo file, che in genere comprende fino a pochi milioni di righe di dati. Si può pensare che i segmenti dati è come vivano in una sequenza temporale.\\
 Ogni segmento viene creato da un \textbf{MiddleManager} come mutable e uncommitted.  I dati sono interrogabili non appena vengono aggiunti a un segmento senza commit.\\
