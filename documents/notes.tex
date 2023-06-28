@@ -378,6 +378,33 @@ Il \textbf{deep storage} può essere di due tipi:
     \item locale: destinato ad un solo server o a più server che hanno  acesso ad un filesystem condiviso;
     \item su cloud: è più convenienti, più scalabile e più robuste rispetto all'impostazione di un filesystem condiviso. \textbf{Druid} è compatibile con diveresi sistemi cloud come: Azure, Amazon S3, Google.
 \end{itemize}
+\subsubsection{Metadata storage}
+È l'archivio, basato su dipendeza esterna, dove vengono conservati tutti i metadati essenziali per il funzionamento di un cluster Druid.
+Druid utilizza l'archivio dei metadati per ospitare vari metadati sul sistema, ma non per archiviare i dati effettivi.\\
+Contiene: 
+\begin{itemize}
+    \item record di segmenti;
+    \item record di regole;
+    \item record di configurazione;
+    \item registri di controllo.
+\end{itemize}
+Come servizio predefinito \textbf{Druid} ustilizza \textbf{Derby}, ma archivi più adatti alla produzione sono \textbf{MySQL} e \textbf{PostgreSQL}.
+\paragraph{Tabella dei segmenti}
+Questa tabella memorizza i metadati sui segmenti che dovrebbero essere disponibili nel sistema (chiamati anche segmenti usati).La tabella viene interrogata dal coordinatore per determinare l'insieme di segmenti che dovrebbero essere disponibili per l'interrogazione nel sistema. La tabella ha due colonne funzionali principali, le altre colonne sono a scopo di indicizzazione.\\
+Il primo valore \textbf{used} indica che il segmento deve essere utilizzato dal cluster, è il mezzo attraverso cui si caricano e scaricano i segmenti dal cluster senza rimuovere i metadati.\\
+La seconda è la  \textbf{payload} che archivia un BLOB JSON che contiene tutti i metadati per il segmento.
+\paragraph{Tabella delle regole}
+È la tabella che memorizza le varie regole su dove allocare e deallocare i segmenti del cluster.
+\paragraph{Tabella di configurazione}
+Hanno los copo di memorizzare  gli oggetti di configurazione di runtime.\\
+In futuro avranno lo scopo di modificare alcuni parametri di configurazione nel cluster in fase di esecuzione.
+\paragraph{Tabella delle attività}
+Si riferiscono alle tabelle create e gestite dall'\textbf{Overlord} e \textbf{MiddleManager}.
+\paragraph{Tabella di revisione}
+È la tabella che memorizza le modifiche apportate alla configurazione.\\
+Hanno accesso hai metadati solo: il servizio di indicizzazione, il servizio in tempo reale e il servizio di coordinamento.
+\subsubsection{Zookeeper}
+
 \subsection{Archiviazione dei dati}
 I dati in\textbf{Apache Druid} vengono archiviati in \textit{datasources} tabelle simili a quelle utilizzate dai database relazionali. Ogni tabella viene partizionata in base agli intervalli di tempo. Ogni intervallo di tempo è chiamato blocco. All'interno di un blocco, i dati vengono partizionati in uno o più segmenti . Ogni segmento è un singolo file, che in genere comprende fino a pochi milioni di righe di dati. Si può pensare che i segmenti dati è come vivano in una sequenza temporale.\\
 Ogni segmento viene creato da un \textbf{MiddleManager} come mutable e uncommitted.  I dati sono interrogabili non appena vengono aggiunti a un segmento senza commit.\\
