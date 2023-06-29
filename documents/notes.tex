@@ -215,9 +215,9 @@ Il fattore importante in tale pattern architetturale è l'ordine con cui vengono
 Il \textbf{Broker} pattern architetturale che può essere utilizzzato per sistemi software disaccopiati e distribuiti che interagiscono tramite chiamate remote.
 Il pattern è formato da tre agenti:
 \begin{itemize}
-    \item il client: che accede a funzionalità del server inviadno ricbhieste al broker;
+    \item il client: che accede a funzionalità del server inviando le richieste al broker;
     \item il server che mette a disposizione del client i propri servizzi attraverso il broker;
-    \item il broker: riceve le richieste dai cleint e una volta trovato il server appropiato inoltra la richiesta e trasmette il risultato al client.
+    \item il broker: riceve le richieste dai client e una volta trovato il server appropiato inoltra la richiesta e trasmette il risultato al client.
 \end{itemize}
 \section{Publisher-Subscriber}
 Il pattern architetturale \textbf{Publisher-Subscriber} è un modello di progettazione software, utilizzato nei sistemi distribuiti, che impiegano una comunicazione asincrona tra i vari componenti.\\
@@ -366,7 +366,7 @@ Inoltre è responsabile del caricamento di nuovi segmenti, dell'eliminazione di 
  Un server di query fornisce gli endpoint con cui interagiscono gli utenti e le applicazioni client, instradando le query ai server di dati o ad altri server di query.
  \subsubsection{Servizio Broker}
 In un cluster distribuito è il servizio a cui instradare le query. Comoprende i metadati forniti da \textbf{Zookeeper}, dove ricavare i dati neccesari ad elaborare i risultati delle query.\\
-Infine unisce i risultati di tutti i risultati elebaorati per fornire un'unica risposta alla query richiesta.
+Infine unisce i risultati di tutti i risultati elaborati per fornire un'unica risposta alla query richiesta.
 \subsubsection{Servizio di router (opzionale)}
  È il servizio che ha il compito di instradare le query a diversi processi \textbf{Broker}. Le query vengono instardate in base alle regole di caricamento dei segmenti che vengono applicate. Questa configurazione fornisce l'isolamento delle query in modo tale che le query per i dati più importanti non siano influenzate dalle query per i dati meno importanti.
  \subsection{Server dati}
