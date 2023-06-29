@@ -287,28 +287,7 @@ Con il termine \textbf{distribuito} si va ad intendere un'architettura nella qua
     \caption{Confronto tra architetture centralizzate e distribuite}
     
 \end{figure}
-\section{Implementazione}
-\subsection{Apache kafka}
-Le note riportate si riferiscono ad un sistema operativo Linux dove è già stata scaricata una versione di \textbf{Apache Kafka}. I comandi devono essere eseguiti dalla cartella di installazione.
-\begin{itemize}
-    \item mandare in esecuzione il gestore \textbf{Zookeeper}
-    \begin{lstlisting}
-    bin/zookeeper-server-start.sh config/zookeeper.properties\end{lstlisting}
-    \item mandare in esecuzione il \textbf{Broker}
-    \begin{lstlisting}
-    bin/kafka-server-start.sh config/server.properties\end{lstlisting}
-    \item creare un nuovo \textbf{topic} name
-   \noindent \begin{lstlisting}
-   bin/kafka-topics.sh--create --topic topic--name--bootstrap-serverIP:port server \end{lstlisting}
-   \item creare un \textbf{produttore} 
-   \begin{lstlisting}
-   bin/kafka-console-producer.sh --topic topic--name --bootstrap-server IP:port server \end{lstlisting}
-   \item creare un \textbf{consumatore}
-   \begin{lstlisting}
-   bin/kafka-console-consumer.sh--topic topic--name--from-beginning --bootstrap-server IP:port server
-   \end{lstlisting}
 
-\end{itemize}
 \section{Apache Druid}
 \textbf{Apache Druid} è un database di analisi in tempo reale progettato per analisi rapide, i suoi punti di forza sono le alte prestazioni in esecuzione di query su set di dati di grandi dimensioni.
 \textbf{Druid} è comunemente utilizzato come back-end del database per le GUI di applicazioni analitiche o per API altamente simultanee che richiedono aggregazioni veloci. Mostra le sue migliori prestazioni con dati orientati agli eventi.
@@ -540,6 +519,56 @@ Se lo schema lo richiede è possibile importare anche timestamp secondari.
 È possibile fare in modo che \textbf{Druid} deduca lo schema e i tipi per i tuoi dati parzialmente o completamente impostando. \\
 Nella deduzione del tipo \textbf{Druid} sceglie il tipo nativo più appropiato.\\
 Per le colonne di tipo misto vengono archiviate nel tipo meno restrittivo che può rappresentare tutti i valori nella colonna.
+\section{Implementazione}
+\subsection{Apache kafka}
+Le note riportate si riferiscono ad un sistema operativo Linux dove è già stata scaricata una versione di \textbf{Apache Kafka}. I comandi devono essere eseguiti dalla cartella di installazione.
+\begin{itemize}
+    \item mandare in esecuzione il gestore \textbf{Zookeeper}
+    \begin{lstlisting}
+    bin/zookeeper-server-start.sh config/zookeeper.properties\end{lstlisting}
+    \item mandare in esecuzione il \textbf{Broker}
+    \begin{lstlisting}
+    bin/kafka-server-start.sh config/server.properties\end{lstlisting}
+    \item creare un nuovo \textbf{topic} name
+   \noindent \begin{lstlisting}
+   bin/kafka-topics.sh--create --topic topic--name--bootstrap-serverIP:port server \end{lstlisting}
+   \item creare un \textbf{produttore} 
+   \begin{lstlisting}
+   bin/kafka-console-producer.sh --topic topic--name --bootstrap-server IP:port server \end{lstlisting}
+   \item creare un \textbf{consumatore}
+   \begin{lstlisting}
+   bin/kafka-console-consumer.sh--topic topic--name--from-beginning --bootstrap-server IP:port server
+   \end{lstlisting}
+
+\end{itemize}
+\subsection{Creazione di un generatore di dati e faccia injection in Apache Druid tramite Apache Kafka}
+Come prima operazione di è andati a creare un producer di eventi in python che simuli il cambiamento di stato di un parcheggio.
+\begin{lstlisting}[language=Python]
+from time import sleep  
+from json import dumps  
+from kafka import KafkaProducer  
+import random
+import datetime
+import json
+
+producer = KafkaProducer(  
+    bootstrap_servers = ['localhost:9092', 'localhost:9093','localhost:9094'],  
+    value_serializer = lambda x:json.dumps(x).encode('utf-8')  
+    )  
+print("Conncet succefully") 
+
+for n in range(50):  
+	for j in range(10):
+	    my_data = {"timestamp": str(datetime.datetime.now()), "id" : str(random.randint(0,999)),"value": random.randint(0,1)} 
+	    producer.send('druid', value = my_data) 
+	print("Send")
+	sleep(1) 
+print("End")
+     
+
+\end{lstlisting}
+Dopo di che si è andati a creare un topic in \textbf{Apache Kafka} chiamato \textbf{druid} e si è andati ad eseguire il producer appena creato.
+\\In seguito siamo andati ad eseguire l'injection dei dati in \textbf{Apache Druid} utilizzando la gui fornita da \textbf{Apache Druid}.
 \section{Test}
 \subsection{High Avaibility}
 Per andare a testare l'alta affidabilità, si è andati a creare un cluster di nodi formato da: 1 nodo Zookeeper, 3 nodi broker (Kafka1, Kafka2,Kafka3) e si è andati ad istanziare un produttore e consumatore collegati al broker Kafka1. Ora per testare l'alta affidabilità basta simulare un malfunzionamento e verificare se i messaggi che il broker Kafka1 non è riuscito ad inviare al consumatore sono accessibili attraverso i server Kafka2 e Kafka3. 
