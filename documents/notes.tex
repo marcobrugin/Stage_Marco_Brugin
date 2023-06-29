@@ -541,6 +541,7 @@ Le note riportate si riferiscono ad un sistema operativo Linux dove è già stat
    \end{lstlisting}
 
 \end{itemize}
+\pagebreak
 \subsection{Creazione di un generatore di dati e faccia injection in Apache Druid tramite Apache Kafka}
 Come prima operazione di è andati a creare un producer di eventi in python che simuli il cambiamento di stato di un parcheggio.
 \begin{lstlisting}[language=Python]
@@ -564,11 +565,18 @@ for n in range(50):
 	print("Send")
 	sleep(1) 
 print("End")
-     
+ 
+
 
 \end{lstlisting}
 Dopo di che si è andati a creare un topic in \textbf{Apache Kafka} chiamato \textbf{druid} e si è andati ad eseguire il producer appena creato.
 \\In seguito siamo andati ad eseguire l'injection dei dati in \textbf{Apache Druid} utilizzando la gui fornita da \textbf{Apache Druid}.
+\begin{figure}[H]
+    \centering
+    
+    \caption{Producer}
+    \label{fig:producer}
+\end{figure}  
 \section{Test}
 \subsection{High Avaibility}
 Per andare a testare l'alta affidabilità, si è andati a creare un cluster di nodi formato da: 1 nodo Zookeeper, 3 nodi broker (Kafka1, Kafka2,Kafka3) e si è andati ad istanziare un produttore e consumatore collegati al broker Kafka1. Ora per testare l'alta affidabilità basta simulare un malfunzionamento e verificare se i messaggi che il broker Kafka1 non è riuscito ad inviare al consumatore sono accessibili attraverso i server Kafka2 e Kafka3. 
@@ -577,6 +585,7 @@ Per andare a testare l'alta affidabilità, si è andati a creare un cluster di n
 \begin{itemize}
     \item Come prima operazione si è andati a creare un cluster di 3 nodi Kafka e un nodo ZooKeeper utilizzando Docker Compose.
 \end{itemize}
+
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.5]{images/cluster.png}
@@ -586,6 +595,9 @@ Per andare a testare l'alta affidabilità, si è andati a creare un cluster di n
 \begin{itemize}
     \item Creazione del topic "test".
 \end{itemize}
+\begin{lstlisting}
+    sudo docker exec kafka1 kafka-topics --bootstrap-server kafka1:19092 --create --topic topic_name
+\end{lstlisting}
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.5]{images/create_topic.png}
@@ -595,12 +607,18 @@ Per andare a testare l'alta affidabilità, si è andati a creare un cluster di n
 \begin{itemize}
     \item Creazione di produttore e consumatore.
 \end{itemize}
+\begin{lstlisting}
+    sudo docker exec --interactive --tty kafka1 kafka-console-producer --bootstrap-server kafka1:19092 kafka2:19093 kafka3:19094 --topic topic_name 
+\end{lstlisting}
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.5]{images/produttore.png}
     \caption{Creazione del produttore}
     \label{fig:my_label}
 \end{figure}
+\begin{lstlisting}
+    sudo docker exec --interactive --tty kafka1 kafka-console-consumer --bootstrap-server kafka1:19092 kafka2:19093 kafka3:19094 --topic topic_name --from-beginning
+\end{lstlisting}
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.5]{images/consumatore.png}
@@ -608,7 +626,7 @@ Per andare a testare l'alta affidabilità, si è andati a creare un cluster di n
     \label{fig:my_label}
 \end{figure}
 \begin{itemize}
-    \item Se il nodo Kafka1 viene spento, il produttore e consumatore possono continuare a comunicare collegandosi o al nodo Kafka2 o al nodo Kafka3.
+    \item Se il nodo kafka1 viene spento, il produttore e consumatore possono continuare a comunicare collegandosi o al nodo kafka2 o al nodo kafka3.
 \end{itemize}
 \begin{figure}[H]
     \centering
@@ -616,7 +634,6 @@ Per andare a testare l'alta affidabilità, si è andati a creare un cluster di n
     \caption{Test di alta affidabilità}
     \label{fig:my_label}
 \end{figure}
-
 \subsection{Verifica di connessione al container da un altro host}
 Per andare a verificare la conessione al container a partire da un altro host bon facciamo altro che conneterci al container attraverso la porta pubblica che espone ed che espone nel parametro external di configurazione.
 \subsubsection{Svolgimento}
@@ -639,8 +656,11 @@ Per andare a verificare la conessione al container a partire da un altro host bo
     \label{fig:my_label}
 \end{figure}
 \begin{itemize}
-    \item Ed infine ci siamo colleegati al cluster a partire da un altro host (localhost) per visualizzare la lista dei topic creati.
+    \item Ed infine ci siamo collegati al cluster a partire da un altro host (localhost) per visualizzare la lista dei topic creati.
 \end{itemize}
+\begin{lstlisting}
+   bin/kafka-topics.sh --list --bootstrap-server localhost:9093
+\end{lstlisting}
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.5]{images/test_connect_another_host.png}
