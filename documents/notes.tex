@@ -545,38 +545,48 @@ Le note riportate si riferiscono ad un sistema operativo Linux dove è già stat
 \subsection{Creazione di un generatore di dati e faccia injection in Apache Druid tramite Apache Kafka}
 Come prima operazione di è andati a creare un producer di eventi in python che simuli il cambiamento di stato di un parcheggio.
 \begin{lstlisting}[language=Python]
-from time import sleep  
-from json import dumps  
-from kafka import KafkaProducer  
-import random
-import datetime
-import json
-
-producer = KafkaProducer(  
-    bootstrap_servers = ['localhost:9092', 'localhost:9093','localhost:9094'],  
-    value_serializer = lambda x:json.dumps(x).encode('utf-8')  
-    )  
-print("Conncet succefully") 
-
-for n in range(50):  
-	for j in range(10):
-	    my_data = {"timestamp": str(datetime.datetime.now()), "id" : str(random.randint(0,999)),"value": random.randint(0,1)} 
-	    producer.send('druid', value = my_data) 
-	print("Send")
-	sleep(1) 
-print("End")
- 
-
+    from time import sleep  
+    from json import dumps  
+    from kafka import KafkaProducer  
+    import random
+    import datetime
+    import json
+    
+    producer = KafkaProducer(  
+        bootstrap_servers = ['localhost:9092', 'localhost:9093','localhost:9094'],  
+        value_serializer = lambda x:json.dumps(x).encode('utf-8')  
+        )  
+    print("Conncet succefully") 
+    
+    for n in range(50):  
+        for j in range(10):
+            my_data = {"timestamp": str(datetime.datetime.now()), "id" : str(random.randint(0,999)),"value": random.randint(0,1)} 
+            producer.send('druid', value = my_data) 
+        print("Send")
+        sleep(1) 
+    print("End")
+         
+    
 
 \end{lstlisting}
+\subsubsection{Svolgimento}
+\begin{itemize}
+    \item Come prima operazione abbiamo mandato in esecuzione il kluster di nodi \textbf{Apache Kafka} formato da 1 nodo \textbf{Zookeeper} e 3 nodi \textbf{Broker} (Kafka1, Kafka2, Kafka3).
+\end{itemize}
+\begin{figure}[h]
+    \centering
+    \includegraphics[scale=0.5]{images/kluster_producer.png}
+    \caption{Cluster Kafka}
+    \label{fig:my_label}
+\end{figure}
 Dopo di che si è andati a creare un topic in \textbf{Apache Kafka} chiamato \textbf{druid} e si è andati ad eseguire il producer appena creato.
 \\In seguito siamo andati ad eseguire l'injection dei dati in \textbf{Apache Druid} utilizzando la gui fornita da \textbf{Apache Druid}.
-\begin{figure}[H]
+\begin{figure}
     \centering
-    
-    \caption{Producer}
-    \label{fig:producer}
-\end{figure}  
+    \includegraphics[scale=0.5]{images/consumer.png}
+    \caption{Iniezione dei dati}
+    \label{fig:my_label}
+\end{figure} 
 \section{Test}
 \subsection{High Avaibility}
 Per andare a testare l'alta affidabilità, si è andati a creare un cluster di nodi formato da: 1 nodo Zookeeper, 3 nodi broker (Kafka1, Kafka2,Kafka3) e si è andati ad istanziare un produttore e consumatore collegati al broker Kafka1. Ora per testare l'alta affidabilità basta simulare un malfunzionamento e verificare se i messaggi che il broker Kafka1 non è riuscito ad inviare al consumatore sono accessibili attraverso i server Kafka2 e Kafka3. 
