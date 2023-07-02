@@ -13,7 +13,7 @@ print("Conncet succefully")
 
 a=["primo", "secondo", "terzo", "quarto", "quinto", "sesto", "settimo", "ottavo", "nono", "decimo"]
 for n in range(10):  
-	for j in range(50000):
+	for j in range(10):
 	    my_data = {"timestamp": str(datetime.datetime.now()), "id" : str(random.randint(0,999)), "value": random.randint(0,1), "campo1": str(random.randrange(0,9999)), "campo2": a[random.randint(0, len(a)-1)], "campo3": random.randint(0,999), "campo4": random.randint(1000, 1999)} 
 	    producer.send('druid_1', value = my_data) 
 	print("Send")
