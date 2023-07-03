@@ -34,13 +34,15 @@ services:
   # Need 3.5 or later for container nodes
   zookeeper:
     container_name: zookeeper
-    image: zookeeper:3.5.10
+    hostname: zookeeper
+    image: confluentinc/cp-zookeeper:latest
     networks: 
       - kafka-druid
     ports:
-      - "2183:2181"
+      - "2181:2181"
     environment:
-      - ZOO_MY_ID=1
+      - ZOOKEEPER_SERVER_ID=1
+      - ZOOKEEPER_CLIENT_PORT=2181
 
   coordinator:
     image: apache/druid:26.0.0
