@@ -6,7 +6,7 @@ import datetime
 import json
 
 producer = KafkaProducer(  
-    bootstrap_servers = ['localhost:9092', 'localhost:9093','localhost:9094'],  
+    bootstrap_servers = ['localhost:29092'],  
     value_serializer = lambda x:json.dumps(x).encode('utf-8')  
     )  
 print("Conncet succefully") 
