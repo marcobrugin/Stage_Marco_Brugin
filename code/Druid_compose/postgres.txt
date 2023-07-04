@@ -1,0 +1,5 @@
+dopo aver fatto sudo docker cp source container:/nome _file
+Copy transazione(datat,cliente,prodotto,quantita,gradimento)
+From '/data.csv'
+Delimiter ','
+csv header;
