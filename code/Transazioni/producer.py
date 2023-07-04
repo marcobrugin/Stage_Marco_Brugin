@@ -1,9 +1,9 @@
 from time import sleep  
-from json import dumps  
 from kafka import KafkaProducer  
+import json 
 import random
 import datetime
-import json
+
 
 producer = KafkaProducer(  
     bootstrap_servers = ['localhost:29092'],  
