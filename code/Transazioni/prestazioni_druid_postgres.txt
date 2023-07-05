@@ -1,17 +1,24 @@
 dataset da 1000000
-		                   druid con rollup  druid senza rollup     POSTgres
-select* 		           <=0.1s 	 	<=0.1s                 0.7s 
-group by timestamp                 <=0.1 s	        0.6s                  >=1.5s
+		                         druid con rollup  druid senza rollup     Postgres
+query1: select* from transazione       <=0.1s 	 	<=0.1s                 0.7s 
+
+altre query testate: 
+group by timestamp                 <=0.1 s	            0.6s                  >=1.5s
 select solo una colonna            <=0.1s               <=0.1s              0.25-0.3s 
 
 query complessa(select 2 colonne) 
 con doppio group by+order by  	   0.12-0.22           0.2-0.3s               0.15s 
 
+query3:
+
+select count(*) from transazione where gradimento>3 group by datat, cliente, prodotto 
+select datat, cliente, prodotto from transazione where gradimento>3 group by datat, cliente, prodotto order by datat
 select su 3 colonne con 
-triplo group by+ order by         0.10 -0.20 s          2.3-2.4s             0.7-0.9s 
+triplo group by+ order by         0.10 -0.20 s         1.54s             0.7-0.9s 
 
 
+query4:
 
-select count(*) from transazione where gradimento>3 group by datat, cliente, prodotto, gradimento	
+select datat, cliente, prodotto, gradimento	 from transazione where gradimento>3 group by datat, cliente, prodotto, gradimento	
 group by+ order by con più di 
-3 colonne              		  circa 0.2s            2.5s                 0.8-0-9s 
+3 colonne              		      circa 0.2s               2.5s                 0.8-0-9s 
