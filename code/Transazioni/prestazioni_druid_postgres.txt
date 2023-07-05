@@ -11,14 +11,15 @@ con doppio group by+order by  	   0.12-0.22           0.2-0.3s              0.15
 
 query3:
 
-select count(*) from transazione where gradimento>3 group by datat, cliente, prodotto 
+
 select datat, cliente, prodotto from transazione where gradimento>3 group by datat, cliente, prodotto order by datat
 select su 3 colonne con 
-triplo group by+ order by         0.10 -0.20s         1.54s                 0.7-0.9s 
-
+triplo group by+ order by         0.10 -0.20s            1.54s                 0.7-0.9s 
+select count(*) from transazione where gradimento>3 group by datat, cliente, prodotto 
+													     1.65s
 
 query4:
 
 select datat, cliente, prodotto, gradimento	 from transazione where gradimento>3 group by datat, cliente, prodotto, gradimento	
 group by+ order by con più di 
-3 colonne              		      circa 0.2s            2.5s                 0.8-0-9s 
+3 colonne              		      circa 0.2s            1.82s                 0.8-0-9s 
