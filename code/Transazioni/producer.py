@@ -13,9 +13,9 @@ print("Conncet succefully")
 cliente=['Mario','Luigi','Pippo','Pluto','Paperino','Paperone','Qui','Quo','Qua','Zio Paperone']
 prodotto=["primo", "secondo", "terzo", "quarto", "quinto", "sesto", "settimo", "ottavo", "nono", "decimo"]
 volume=[]
-for n in range(10):  
+for n in range(1000):  
 	
-	for j in range(10):
+	for j in range(1000):
 	    data=str(datetime.datetime.now())
 	    clienti=cliente[random.randint(0,len(cliente)-1)]
 	    prodotti= prodotto[random.randint(0,len(prodotto)-1)]
