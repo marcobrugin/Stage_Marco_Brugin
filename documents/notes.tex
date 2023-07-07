@@ -272,7 +272,7 @@ Per garantire tali prestazioni in generale è necessario seguire i seguenti prin
     \item \textbf{Rillevazione e gestione automatica dei guasti}:
     i guasti devono essere visibili e i  sistemi devono disporre di un sistema deve essere provvisto di un sistema automatico in grado di gestirli autonomamente.
 \end{itemize}
-\section{Archietture distribuite}
+\section{Architetture distribuite}
 Con il termine \textbf{distribuito} si va ad intendere un'architettura nella quale i componenti non si trovano su un'unica macchina ma possono cooperare attraverso una rete di comunicazione per raggiungere un detrminato obiettivo.
 \\Le principali caraterristiche che si riscontrano su tale archietettura sono:
 \begin{itemize}
@@ -280,7 +280,7 @@ Con il termine \textbf{distribuito} si va ad intendere un'architettura nella qua
     \item Il middleware è un'infrastruttura che supporta adeguatamente lo sviluppo e l'esecuzione di applicazioni distribuite, fornendo un buffer tra le applicazioni e la rete. Svolge il ruolo di intermediario del sistema e gestisce o supporta i diversi componenti di un sistema distribuito;
     \item le basi di un'architettura distribuita sono la  trasparenza, affidabilità e disponibilità.
 \end{itemize}
-\subsection{Confronto Architetture centralizzate e distribuite }
+\subsection{Confronto tra  architetture centralizzate e distribuite}
 \begin{figure}[H]
     \centering
 \includegraphics[scale=0.5]{images/central_vs_distribution.png}
@@ -331,7 +331,7 @@ Druid ha un'architettura distribuita progettata per essere compatibile con il cl
     \caption{Architettura Druid}
     \label{fig:my_label}
 \end{figure}
-\subsection{Servizzi offerti}
+\subsection{Servizi offerti}
 \subsection{Server principale}
 Un server Master gestisce l'ingestion e la disponibilità dei dati: è responsabile dell'avvio di nuovi job di ingestion e del coordinamento della disponibilità dei dati sui "Data server" descritti di seguito.
 \subsubsection{Servizio di coordinamento}
@@ -347,7 +347,7 @@ Inoltre è responsabile del caricamento di nuovi segmenti, dell'eliminazione di 
 In un cluster distribuito è il servizio a cui instradare le query. Comoprende i metadati forniti da \textbf{Zookeeper}, dove ricavare i dati neccesari ad elaborare i risultati delle query.\\
 Infine unisce i risultati di tutti i risultati elaborati per fornire un'unica risposta alla query richiesta.
 \subsubsection{Servizio di router (opzionale)}
- È il servizio che ha il compito di instradare le query a diversi processi \textbf{Broker}. Le query vengono instardate in base alle regole di caricamento dei segmenti che vengono applicate. Questa configurazione fornisce l'isolamento delle query in modo tale che le query per i dati più importanti non siano influenzate dalle query per i dati meno importanti.
+ È il servizio che ha il compito di instradare le query a diversi processi \textbf{Broker}. Le query vengono instradate in base alle regole di caricamento dei segmenti che vengono applicate. Questa configurazione fornisce l'isolamento delle query in modo tale che le query per i dati più importanti non siano influenzate dalle query per i dati meno importanti.
  \subsection{Server dati}
  Un server di dati esegue processi di acquisizione e archivia dati interrogabili.
  \subsubsection{Servizio storico}
@@ -356,7 +356,7 @@ Infine unisce i risultati di tutti i risultati elaborati per fornire un'unica ri
 I processi MiddleManager gestiscono l'inserimento di nuovi dati nel cluster. Sono responsabili della lettura da fonti di dati esterne e della pubblicazione di nuovi segmenti Druid.
 \subsubsection{Servizio Peone}
 I servizzi Peon sono motori di esecuzione delle attività generati dai \textbf{MiddleManager}. Ogni \textbf{Peon} esegue una JVM separata ed è responsabile dell'esecuzione di una singola attività. I Peon girano sempre sullo stesso host del \textbf{MiddleManager} che li ha generati.
-\subsubsection{Servizio di inidicizzazione}
+\subsubsection{Servizio di indicizzazione}
 In alterenativa ai \textbf{MiddleManger} ed ai \textbf{Peon}.\\
 Invece di eseguire il fork di processi JVM separati per attività, l'indicizzatore esegue le attività come singoli thread all'interno di un singolo processo JVM.\\
 L'indicizzatore è progettato per essere più facile da configurare e distribuire rispetto al sistema MiddleManager + Peon e per consentire una migliore condivisione delle risorse tra le attività. 
@@ -428,7 +428,7 @@ Le colonne di tìpo dimension supportano le operazioni di filtro e raggrupamento
     \item Bitmap : una bitmap per ogni valore distinto nella colonna, per indicare quali righe contengono tale valore.
 \end{itemize}
 Per ogni riga nell'elenco dei dati della colonna, esiste solo una singola bitmap con una voce diversa da zero. Ciò significa che le colonne con cardinalità elevata hanno bitmap estremamente rade e quindi altamente comprimibili. 
-\subsubsection{L'indentificazione del segmento}
+\subsubsection{L'identificazione del segmento}
 Gli identificatori di segmento in genere contengono l'origine dati del segmento, l'ora di inizio dell'intervallo (in formato ISO 8601), l'ora di fine dell'intervallo (in formato ISO 8601) e le informazioni sulla versione. Se i dati vengono ulteriormente partizionati oltre un intervallo di tempo, l'identificatore di segmento contiene anche un numero di partizione.
 \subsubsection{Indicizzazione e consegna del segmento}
 L'\textbf{indicizzazione} è il meccanismo mediante il quale vengono creati nuovi segmenti e l'\textbf{handoff} è il meccanismo mediante il quale vengono pubblicati e iniziano a essere serviti dai processi storici. \\
@@ -601,7 +601,7 @@ Le note riportate si riferiscono ad un sistema operativo Linux dove è già stat
 
 \end{itemize}
 \pagebreak
-\subsection{Creazione di un generatore di dati e faccia injection in Apache Druid tramite Apache Kafka}
+\subsection{Creazione di un generatore di dati ed efettui uan injection in Apache Druid tramite Apache Kafka}
 Come prima operazione di è andati a creare un producer di eventi in python che simuli il cambiamento di stato di un parcheggio.
 \begin{lstlisting}[language=Python]
     from time import sleep  
