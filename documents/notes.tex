@@ -519,11 +519,26 @@ Se lo schema lo richiede è possibile importare anche timestamp secondari.
 È possibile fare in modo che \textbf{Druid} deduca lo schema e i tipi per i tuoi dati parzialmente o completamente impostando. \\
 Nella deduzione del tipo \textbf{Druid} sceglie il tipo nativo più appropiato.\\
 Per le colonne di tipo misto vengono archiviate nel tipo meno restrittivo che può rappresentare tutti i valori nella colonna.
+\subsection{Lookups}
+In \textbf{Apache Druid} le \textbf{lookups} non sono altro che un modo per sostituire i valori dei \textbf{datasources} con delle chiavi senza dover effettivamente modificare i \textbf{datasources}. \\
+Un possibile esempio è la necessità di dover archiviare tutte le informazioni relative ad un gruppo di clienti, che non non verrano aggiornate frequentemente e gli aquisti che hanno effettuato tali clienti.\\
+È facile capire che per ottimizzare la ricerca su tale modle di dati basta sostituire le informazioni di un clienti con un \textbf{ID}.\\ In questo modo le ricerche vengono ottimizzate, mentre per quanto riguarda gli aggiornamenti basta andare a modificare i dati degli utenti nel record di referenza con l'\textbf{ID} assegnato.
+\subsubsection{Query}
+In \textbf{Apache Druid} le operazioni di ricerca con si efettuano con la funzione $LOOKUP$.
+\begin{lstlisting}[language=SQL,showstringspaces=false,]
+SELECT LOOKUP(customer, 'Carlo Albero dalla Chiesa') AS cliente, 
+SUM(cost)
+FROM sales
+GROUP BY 1
+\end{lstlisting}
+In generale le \textbf{lookups} possono essere in genere di due tipi: iniettive e non iniettive.
+Nel caso di \textbf{lookups} iniettive si ha una mappatura di tutte le chiavi a valori univoci.\\
+Tale fatto deve essere tenuto in considerazione nel caso di aggregazioni, in quanto, nel caso in cui chiavi diverse puntino allo stesso valore (\textbf{lookups} non iniettiva), nel risultato di una query comparirano due valori che avrebbero dovuto essere aggregati.
 \subsection{Confronto Apache Druid e PostgreSQL}
 Per andare ad eveidenziare pregi e diffetti di \textbf{Apache Druid} è stato scelto di confrontarlo con un database relazionale come \textbf{PostgreSQL}, nella esecuzione di query su un dataset di 1 milione di righe.\\
 Il test effettuato non usufruisce della cache.
 Lo schema logico del dataset è il seguente:
-\begin{lstlisting}
+\begin{lstlisting}[language=SQL]
     CREATE TABLE transazione
 (
     __time timestamp,
