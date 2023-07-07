@@ -30,7 +30,18 @@ druid_emitter_logging_logLevel=debug
 druid_extensions_loadList=["druid-histogram", "druid-datasketches", "druid-lookups-cached-global", "postgresql-metadata-storage", "druid-multi-stage-query", "druid-kafka-indexing-service"]
 
 druid_zk_service_host=zookeeper
+druid_lookup_enableLookupSyncOnStartup=true
+druid_lookup_lookupTierIsDatasource=false
+druid_lookup_lookupTier=_default_tier
 
+druid_broker_cache_useCache=true
+druid_broker_cache_populateCache=true
+druid_broker_cache_useResultLevelCache=true
+druid_broker_cache_populateResultLevelCache=true
+druid_cache_useCache=true
+druid_cache_populateCache=true
+druid_cache_useResultLevelCache=true
+druid_cache_populateResultLevelCache=true
 druid_metadata_storage_host=
 druid_metadata_storage_type=postgresql
 druid_metadata_storage_connector_connectURI=jdbc:postgresql://postgres:5432/druid
