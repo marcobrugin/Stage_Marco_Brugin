@@ -521,6 +521,7 @@ Nella deduzione del tipo \textbf{Druid} sceglie il tipo nativo più appropiato.\
 Per le colonne di tipo misto vengono archiviate nel tipo meno restrittivo che può rappresentare tutti i valori nella colonna.
 \subsection{Confronto Apache Druid e PostgreSQL}
 Per andare ad eveidenziare pregi e diffetti di \textbf{Apache Druid} è stato scelto di confrontarlo con un database relazionale come \textbf{PostgreSQL}, nella esecuzione di query su un dataset di 1 milione di righe.\\
+Il test effettuato non usufruisce della cache.
 Lo schema logico del dataset è il seguente:
 \begin{lstlisting}
     CREATE TABLE transazione
@@ -531,12 +532,23 @@ Lo schema logico del dataset è il seguente:
     quantita int,
     gradimento int
 )
+
 \end{lstlisting}
+
 \subsubsection{Query}
-\begin{lstlisting}
-    query1: SELECT * FROM transazione
-    query2: SELECT DATA_TRUNC('MINUTE',\__time) as '\__time', cliente, prodotto,COUNT(*) FROM transazione WHERE gradimento>3 GROUP BY DATA_TRUNC('MINUTE',\__time) as '\__time', cliente, prodotto
-    query3: SELECT DATA_TRUNC('HOUR',__time) as '__time', cliente, prodotto, gradimento FROM transazione WHERE gradimento>3 GROUP BY DATA_TRUNC('HOUR',__time) as '__time', cliente, prodotto, gradimento
+\begin{lstlisting}[language=SQL]
+    query1: 
+    SELECT * FROM transazione
+    query2: 
+    SELECT DATA_TRUNC('MINUTE',__time) as '__time', cliente, prodotto,COUNT(*) 
+    FROM transazione 
+    WHERE gradimento>3 
+    GROUP BY DATA_TRUNC('MINUTE',\__time) as '\__time', cliente, prodotto
+    query3: 
+    SELECT DATA_TRUNC('HOUR',__time) as '__time', cliente, prodotto, gradimento 
+    FROM transazione 
+    WHERE gradimento>3 
+    GROUP BY DATA_TRUNC('HOUR',__time) as '__time', cliente, prodotto, gradimento
 \end{lstlisting}
 \begin{table}[H]
 \centering
