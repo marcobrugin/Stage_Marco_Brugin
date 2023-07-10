@@ -541,8 +541,9 @@ In generale le \textbf{lookups} possono essere in genere di due tipi: iniettive 
 Nel primo tipo rietrano tutti i casi d'uso legati alla mappatura tra codice del paese e nome del paese; mentre nel secondo caso rientrano la mappatura tra codice del paese e lingua parlata.\\
 Nel caso di \textbf{lookups} iniettive si ha una mappatura di tutte le chiavi a valori univoci.\\
 Nel momento in cui si utilizzano le \textbf{lookups} bisogna tenere in considerazione che queste ultime non hanno memoria e restituiranno sempre il dato attuale indipendentemente dall'intervallod i tempo.\\
-Inoltre nel momento in cui si creano \textbf{lookups} iniettive \textbf{Apache Druid} è in grado di applicare ulteriori ottimizzazioni nella esecuzione delle query.\\
-\\Tale fatto deve essere tenuto in considerazione nel caso di aggregazioni, in quanto, nel caso in cui chiavi diverse puntino allo stesso valore (\textbf{lookups} non iniettiva), nel risultato di una query comparirano due valori che avrebbero dovuto essere aggregati.
+Inoltre nel momento in cui si creano \textbf{lookups} iniettive \textbf{Apache Druid} è in grado di applicare ulteriori ottimizzazioni nella esecuzione delle query.
+\\Tale fatto deve essere tenuto in considerazione nel caso di aggregazioni, in quanto, nel caso in cui chiavi diverse puntino allo stesso valore (\textbf{lookups} non iniettiva), nel risultato di una query comparirano due valori che avrebbero dovuto essere aggregati.\\
+Ad ogni modo è consigliato effetuare tale operazione se possibile a pre-injection.
 \subsubsection{Casi d'uso}
 Un semplice caso d'uso per le tabelle di \textbf{Lookup} è la risoluzione del problema degli aggiornamenti. In questo caso ogni aggiornamento di stato viene visto come un nuovo evento e viene aggiunto al \textbf{datasource} originale.\\
 Per estrarre sempre il dato più recente si utilizza una \textbf{lookup} iniettiva che mappa ogni chiave con il valore dell'attributo richiesto più recente.
