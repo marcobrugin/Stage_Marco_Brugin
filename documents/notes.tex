@@ -494,7 +494,13 @@ Il modello di dati di \textbf{Druid} presenta essenzialmnente le seguenti compon
     \item Dimension: sono colonne che Druid memorizza "così come sono". Si possono utilizzare per qualsiasi scopo: filtrare, applicare aggregatori e così via.
     \item Metrics: sono colonne che Druid archivia in forma aggregata e diventano più utili se attivi il rollup è una forma di aggregazione che comprime le dimensioni mentre aggrega i valori nelle metriche, ovvero comprime le righe ma conserva le informazioni di riepilogo.
 \end{itemize}
-
+\pagebreak
+\subsubsection{Metrica}
+Le metriche sono colonne che \textbf{Druid} archivia in forma aggregata. Le metriche sono più utili quando abiliti il \textbf{rollup}.\\ 
+Se specifichi una metrica, puoi applicare una funzione di aggregazione a ogni riga durante l'importazione.
+Il rollup è una forma di aggregazione che combina più righe con lo stesso valore di timestamp e gli stessi valori di dimensione; mentre aggrega i valori nelle metriche, ovvero comprime le righe ma conserva le informazioni di riepilogo.
+\subsubsection{Dimension}
+Le dimensioni sono colonne che Druid memorizza "così come sono". Le dimensioni possono essere utilizzzate per qualsiasi scopo. Ad esempio per  raggruppare, filtrare o applicare aggregatori alle dimensioni in fase di query, se necessario. Se il \textbf{rollup} è disabilitato le dimension vengono trattate come colonne da importare.
 \subsection{Schema design tips}
 \begin{itemize}
    
