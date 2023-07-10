@@ -344,7 +344,7 @@ Inoltre è responsabile del caricamento di nuovi segmenti, dell'eliminazione di 
  \subsection{Server di interrogazione}
  Un server di query fornisce gli endpoint con cui interagiscono gli utenti e le applicazioni client, instradando le query ai server di dati o ad altri server di query.
  \subsubsection{Servizio Broker}
-In un cluster distribuito è il servizio a cui instradare le query. Comoprende i metadati forniti da \textbf{Zookeeper}, dove ricavare i dati neccesari ad elaborare i risultati delle query.\\
+In un cluster distribuito è il servizio a cui instradare le query. Comprende i metadati forniti da \textbf{Zookeeper}, dove ricavare i dati necessari ad elaborare i risultati delle query.\\
 Infine unisce i risultati di tutti i risultati elaborati per fornire un'unica risposta alla query richiesta.
 \subsubsection{Servizio di router (opzionale)}
  È il servizio che ha il compito di instradare le query a diversi processi \textbf{Broker}. Le query vengono instradate in base alle regole di caricamento dei segmenti che vengono applicate. Questa configurazione fornisce l'isolamento delle query in modo tale che le query per i dati più importanti non siano influenzate dalle query per i dati meno importanti.
@@ -511,7 +511,7 @@ In \textbf{Druid} in generale le \textit{datasources} sono molto simili alle tab
 Simile ai database delle serie temporali, il modello di dati di Druid richiede un timestamp. Druid non è un database di serie temporali, ma è una scelta naturale per l'archiviazione di dati di serie temporali. Il suo modello di dati flessibile consente di archiviare sia dati di serie temporali che non, anche nella stessa origine dati.\\
 Per ottenere prestazioni ottimali di compressione e query in Druid per i dati delle serie temporali, è importante partizionare e ordinare in base al nome della metrica, come fanno spesso i database delle serie temporali.
 \subsubsection{Utilizzo degli Sketches}
-Nel momento in cui si vanno ad inserire dati \textbf{Druid} non li memorizza direttamente uno Sketche che poi può inserire nell'esecuzion delle query siccessive. \\Ogni Sketche è progettato per un solo particolare tipo di calcolo. In questo modo si riduce il rollup e si riduce la memoria utilizzata in fase di query.
+Nel momento in cui si vanno ad inserire dati \textbf{Druid} non li memorizza direttamente uno Sketche che poi può inserire nell'esecuzion3 delle query successive. \\Ogni Sketche è progettato per un solo particolare tipo di calcolo. In questo modo si riduce il rollup e si riduce la memoria utilizzata in fase di query.
 \subsubsection{Utilizzo del timestamp}
 Gli schemi \textbf{Druid} devono sempre includere un timestamp primario. Il timestamp principale viene utilizzato per partizionare e ordinare i dati, quindi dovrebbe essere il timestamp su cui filtrerai più spesso. Druid è in grado di identificare e recuperare rapidamente i dati corrispondenti agli intervalli di tempo della colonna timestamp primaria.
 Se lo schema lo richiede è possibile importare anche timestamp secondari.
@@ -536,7 +536,7 @@ Nel primo tipo rietrano tutti i casi d'uso legati alla mappatura tra codice del 
 Nel caso di \textbf{lookups} iniettive si ha una mappatura di tutte le chiavi a valori univoci.\\
 Nel momento in cui si utilizzano le \textbf{lookups} bisogna tenere in considerazione che queste ultime non hanno memoria e restituiranno sempre il dato attuale indipendentemente dall'intervallod i tempo.\\
 Inoltre nel momento in cui si creano \textbf{lookups} iniettive \textbf{Apache Druid} è in grado di applicare ulteriori ottimizzazioni nella esecuzione delle query.\\
-Tale fatto deve essere tenuto in considerazione nel caso di aggregazioni, in quanto, nel caso in cui chiavi diverse puntino allo stesso valore (\textbf{lookups} non iniettiva), nel risultato di una query comparirano due valori che avrebbero dovuto essere aggregati.
+\\Tale fatto deve essere tenuto in considerazione nel caso di aggregazioni, in quanto, nel caso in cui chiavi diverse puntino allo stesso valore (\textbf{lookups} non iniettiva), nel risultato di una query comparirano due valori che avrebbero dovuto essere aggregati.
 \subsubsection{Casi d'uso}
 Un semplice caso d'uso per le tabelle di \textbf{Lookup} è la risoluzione del problema degli aggiornamenti. In questo caso ogni aggiornamento di stato viene visto come un nuovo evento e viene aggiunto al \textbf{datasource} originale.\\
 Per estrarre sempre il dato più recente si utilizza una \textbf{lookup} iniettiva che mappa ogni chiave con il valore dell'attributo richiesto più recente.
@@ -564,7 +564,7 @@ Lo schema logico del dataset è il seguente:
     SELECT DATA_TRUNC('MINUTE',__time) as '__time', cliente, prodotto,COUNT(*) 
     FROM transazione 
     WHERE gradimento>3 
-    GROUP BY DATA_TRUNC('MINUTE',\__time) as '\__time', cliente, prodotto
+    GROUP BY DATA_TRUNC('MINUTE',__time) as '__time', cliente, prodotto
     query3: 
     SELECT DATA_TRUNC('HOUR',__time) as '__time', cliente, prodotto, gradimento 
     FROM transazione 
