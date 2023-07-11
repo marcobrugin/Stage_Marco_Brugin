@@ -12,8 +12,8 @@ producer = KafkaProducer(
 print("Conncet succefully") 
 fake = Faker()
 volume=[]
-for n in range(5000):
-    for j in range(1000):
+for n in range(500):
+    for j in range(10000):
         nome= fake.first_name()
         cognome= fake.last_name()
         indirizzo= fake.address()

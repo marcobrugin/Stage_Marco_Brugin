@@ -1,0 +1,17 @@
+CREATE TABLE registrazione(nome text, cognome text, indirizzo text, citta text, stato text, cap int, 
+email text, telefono text, eta int, altezza decimal(5,2), peso decimal(5,2), reddito decimal(6,2), 
+datan date, professione text, istruzione text, hobby text, nfigli int, codice_cliente int datareg timestamp, ultimoacc timestamp);
+
+500.000 records
+- query1: 
+SELECT * FROM registrazione;  
+Druid:       PostGres: 
+- query2: 
+SELECT COUNT(*) FROM registrazione;
+Druid:       PostGres: 
+- query3: 
+SELECT nome, cognome, indirizzo, citta, email, telefono, datan,  COUNT(*) AS  Conteggio FROM registrazione GROUP BY nome, cognome, indirizzo, citta, email, telefono, datan;
+Druid:       PostGres: 
+- query4: 
+SELECT nome, cognome, indirizzo, citta, email, telefono, datan,  COUNT(*) AS  Conteggio FROM registrazione GROUP BY nome, cognome, indirizzo, citta, email, telefono, datan HAVING Conteggio > 1;
+Druid:       PostGres: 
