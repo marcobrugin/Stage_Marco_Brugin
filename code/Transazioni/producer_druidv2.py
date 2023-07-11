@@ -28,11 +28,11 @@ for n in range(500000):
     reddito= round(random.uniform(1000, 10000), 2)
     datan= fake.date_of_birth(minimum_age=18, maximum_age=89).strftime("%Y-%m-%d")
     professione= fake.job()
-    istruzione= fake.random_element(elements=("Scuola Secondaria", "Laurea triennale", "Laurea Magistrale", "Dottorato"))
-    hobby= fake.random_element(elements=("Leggere","Viaggiare","Giocare a calcio","Giocare ai videogiochi","Fare sport")),
-    nfigli= random.randint(0, 5),
-    codice_cliente= fake.random_number(digits=6),
-    datareg= fake.date_time_between(start_date="-1y", end_date="now").strftime("%Y-%m-%d %H:%M:%S"),
+    istruzione= fake.random_element(elements=("Scuola Secondaria", "Laurea triennale", "Laurea Magistrale", "Dottorato"))[0]
+    hobby= fake.random_element(elements=("Leggere","Viaggiare","Giocare a calcio","Giocare ai videogiochi","Fare sport"))
+    nfigli= random.randint(0, 5)
+    codice_cliente= fake.random_number(digits=6)
+    datareg= fake.date_time_between(start_date="-1y", end_date="now").strftime("%Y-%m-%d %H:%M:%S")
     ultimoacc= fake.date_time_between(start_date="-1w", end_date="now").strftime("%Y-%m-%d %H:%M:%S")
     my_data = {"Nome": nome, "Cognome": cognome, "Indirizzo": indirizzo, "Città": citta, "Stato": stato, "CAP": cap,
     "Email": email, "Telefono": telefono, "Età": eta, "Altezza": altezza, "Peso": peso,
