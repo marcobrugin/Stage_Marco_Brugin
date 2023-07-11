@@ -47,7 +47,7 @@ for n in range(500000):
 	volume.append(element)
 	print("Send")
 	sleep(1)
-with open('data.csv', 'w', newline='') as file:
+with open('data2.csv', 'w', newline='') as file:
     writer = csv.writer(file, quoting=csv.QUOTE_NONNUMERIC, delimiter=',')
     writer.writerows(volume) 
 print("End")
