@@ -13,7 +13,7 @@ producer = KafkaProducer(
 print("Conncet succefully") 
 fake = Faker()
 volume=[]
-for n in range(500000): 
+for n in range(5): 
     nome= fake.first_name()
     cognome= fake.last_name()
     indirizzo= fake.address()
@@ -28,7 +28,7 @@ for n in range(500000):
     reddito= round(random.uniform(1000, 10000), 2)
     datan= fake.date_of_birth(minimum_age=18, maximum_age=89).strftime("%Y-%m-%d")
     professione= fake.job()
-    istruzione= fake.random_element(elements=("Scuola Secondaria", "Laurea triennale", "Laurea Magistrale", "Dottorato"))[0]
+    istruzione= fake.random_element(elements=("Scuola Secondaria", "Laurea triennale", "Laurea Magistrale", "Dottorato"))
     hobby= fake.random_element(elements=("Leggere","Viaggiare","Giocare a calcio","Giocare ai videogiochi","Fare sport"))
     nfigli= random.randint(0, 5)
     codice_cliente= fake.random_number(digits=6)
