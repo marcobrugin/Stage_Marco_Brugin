@@ -41,7 +41,7 @@ for n in range(500000):
     "Numero di Figli": nfigli, "Codice Cliente":codice_cliente, 
     "Data di Registrazione": datareg, 
     "Ultimo Accesso": ultimoacc}
-    producer.send("transazioni3", value = my_data) 
+    producer.send("prova1", value = my_data) 
 
     element=[nome, cognome, indirizzo, citta, stato, cap, email, telefono, eta, altezza, peso, reddito, datan, professione, istruzione, hobby, nfigli, codice_cliente, datareg, ultimoacc]
     volume.append(element)
