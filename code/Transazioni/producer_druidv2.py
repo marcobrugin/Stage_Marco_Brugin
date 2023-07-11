@@ -12,7 +12,7 @@ producer = KafkaProducer(
 print("Conncet succefully") 
 fake = Faker()
 volume=[]
-for n in range(5): 
+for n in range(500000): 
     nome= fake.first_name()
     cognome= fake.last_name()
     indirizzo= fake.address()
@@ -40,7 +40,7 @@ for n in range(5):
     "Numero di Figli": nfigli, "Codice Cliente":codice_cliente, 
     "Data di Registrazione": datareg, 
     "Ultimo Accesso": ultimoacc}
-    producer.send("prova1", value = my_data) 
+    producer.send("registrazione", value = my_data) 
 
     element=[nome, cognome, indirizzo, citta, stato, cap, email, telefono, eta, altezza, peso, reddito, datan, professione, istruzione, hobby, nfigli, codice_cliente, datareg, ultimoacc]
     volume.append(element)
