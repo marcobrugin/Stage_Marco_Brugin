@@ -2,7 +2,6 @@ from time import sleep
 from kafka import KafkaProducer  
 import json 
 import random
-import datetime
 import csv
 from faker import Faker
 
