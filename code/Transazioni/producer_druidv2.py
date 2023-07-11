@@ -34,19 +34,19 @@ for n in range(500000):
     codice_cliente= fake.random_number(digits=6),
     datareg= fake.date_time_between(start_date='-1y', end_date='now').strftime('%Y-%m-%d %H:%M:%S'),
     ultimoacc= fake.date_time_between(start_date='-1w', end_date='now').strftime('%Y-%m-%d %H:%M:%S')
-	my_data = {'Nome': nome, 'Cognome': cognome, 'Indirizzo': indirizzo, 'Città': citta, 'Stato': stato, 'CAP': cap,
-                    'Email': email, 'Telefono': telefono, 'Età': eta, 'Altezza': altezza, 'Peso': peso,
-                    'Reddito':reddito, 'Data di Nascita':  datan, 'Professione':  professione, 'Istruzione': istruzione,
-                    'Hobby': hobby,
-                    'Numero di Figli': nfigli, 'Codice Cliente':codice_cliente, 
-                    'Data di Registrazione': datareg, 
-                    'Ultimo Accesso': ultimoacc}
-	producer.send('transazioni3', value = my_data) 
+    my_data = {'Nome': nome, 'Cognome': cognome, 'Indirizzo': indirizzo, 'Città': citta, 'Stato': stato, 'CAP': cap,
+    'Email': email, 'Telefono': telefono, 'Età': eta, 'Altezza': altezza, 'Peso': peso,
+    'Reddito':reddito, 'Data di Nascita':  datan, 'Professione':  professione, 'Istruzione': istruzione,
+    'Hobby': hobby,
+    'Numero di Figli': nfigli, 'Codice Cliente':codice_cliente, 
+    'Data di Registrazione': datareg, 
+    'Ultimo Accesso': ultimoacc}
+    producer.send('transazioni3', value = my_data) 
 
-	element=[nome, cognome, indirizzo, citta, stato, cap, email, telefono, eta, altezza, peso, reddito, datan, professione, istruzione, hobby, nfigli, codice_cliente, datareg, ultimoacc]
-	volume.append(element)
-	print("Send")
-	sleep(1)
+    element=[nome, cognome, indirizzo, citta, stato, cap, email, telefono, eta, altezza, peso, reddito, datan, professione, istruzione, hobby, nfigli, codice_cliente, datareg, ultimoacc]
+    volume.append(element)
+    print("Send")
+    sleep(1)
 with open('data2.csv', 'w', newline='') as file:
     writer = csv.writer(file, quoting=csv.QUOTE_NONNUMERIC, delimiter=',')
     writer.writerows(volume) 
