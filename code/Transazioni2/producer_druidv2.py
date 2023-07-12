@@ -1,14 +1,15 @@
 from time import sleep  
-from kafka import KafkaProducer  
+#from kafka import KafkaProducer  
 import json 
 import random
 import csv
 from faker import Faker
-
+'''
 producer = KafkaProducer(  
     bootstrap_servers = ["localhost:29092"],  
     value_serializer = lambda x:json.dumps(x).encode("utf-8")  
     )  
+    '''
 print("Conncet succefully") 
 fake = Faker()
 max=10 
@@ -60,12 +61,12 @@ for n in range(500):
         "Numero di Figli": nfigli, "Codice Cliente":codice_cliente, 
         "Data di Registrazione": datareg, 
         "Ultimo Accesso": ultimoacc}
-        producer.send("registrazione1", value = my_data) 
+        #producer.send("registrazione1", value = my_data) 
 
         element=[nome, cognome, indirizzo, citta, stato, cap, email, telefono, eta, altezza, peso, reddito, datan, professione, istruzione, hobby, nfigli, codice_cliente, datareg, ultimoacc]
         volume.append(element)
         print("Send")
-        sleep(1)
+        #sleep(1)
 with open("data2.csv", "w", newline="") as file:
     writer = csv.writer(file, quoting=csv.QUOTE_NONNUMERIC, delimiter=",")
     writer.writerows(volume) 
