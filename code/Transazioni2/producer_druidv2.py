@@ -12,28 +12,50 @@ producer = KafkaProducer(
     '''
 print("Conncet succefully") 
 fake = Faker()
-max=10 
+max=random.randint(4,20)
 nomi= [fake.first_name() for _ in range(max)]
+max=random.randint(4,20)
 cognomi= [fake.last_name() for _ in range(max)]
+max=random.randint(4,20)
 indirizzi= [fake.address() for _ in range(max)]
+print(indirizzi)
+for p in indirizzi:
+    p=p.replace("\n", " ")
+print(indirizzi)
+max=random.randint(4,20)
 cittas=[fake.city() for _ in range(max)]
+max=random.randint(4,20)
 stati=[fake.country() for _ in range(max)]
+max=random.randint(4,20)
 caps=[fake.zipcode() for _ in range(max)]
+max=random.randint(4,20)
 emails=[fake.email() for _ in range(max)]
+max=random.randint(4,20)
 telefoni=[fake.phone_number() for _ in range(max)]
+max=random.randint(4,20)
 etas= [random.randint(18, 89) for _ in range(max)]
+max=random.randint(4,20)
 altezzas= [round(random.uniform(120, 210), 2) for _ in range(max)]
+max=random.randint(4,20)
 pesos= [round(random.uniform(30, 180), 2) for _ in range(max)]
+max=random.randint(4,20)
 redditi= [round(random.uniform(1000, 10000), 2) for _ in range(max)]
+max=random.randint(4,20)
 datans= [fake.date_of_birth(minimum_age=18, maximum_age=89).strftime("%Y-%m-%d") for _ in range(max)]
+max=random.randint(4,20)
 professioni= [fake.job() for _ in range(max)]
+max=random.randint(4,20)
 nfiglis= [random.randint(0, 5) for _ in range(max)]
+max=random.randint(4,20)
 codice_clienti=[fake.random_number(digits=6) for _ in range(max)]
+max=random.randint(4,20)
 dataregs= [fake.date_time_between(start_date="-1y", end_date="now").strftime("%Y-%m-%d %H:%M:%S") for _ in range(max)]
+max=random.randint(4,20)
 ultimoaccs=[fake.date_time_between(start_date="-1w", end_date="now").strftime("%Y-%m-%d %H:%M:%S") for _ in range(max)]
+max=random.randint(4,20)
 volume=[]
-for n in range(500):
-    for j in range(10000):
+for n in range(1):
+    for j in range(10):
         nome= random.choice(nomi)
         cognome= random.choice(cognomi)
         indirizzo= random.choice(indirizzi)
