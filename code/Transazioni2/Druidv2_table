@@ -12,14 +12,14 @@ csv header;
 SELECT datan, COUNT(*) AS  Conteggio FROM registrazione GROUP BY datan;
 Druid:       PostGres: 
 - query2:
-
+SELECT stato, citta, cap, AVG(eta) FROM registrazione GROUP BY stato, citta, cap;
 Druid:       PostGres: 
 - query3:
-
+SELECT citta, professione, istruzione, hobby, nfigli, AVG(reddito) FROM GROUP BY citta, professione, istruzione, hobby, nfigli HAvING AVG(reddito) > 10000;
 Druid:       PostGres: 
 - query4:
-
+SELECT DATE_TRUNC('year', datareg), citta, professione, istruzione, hobby, COUNT(*) FROM registrazione WHERE reddito > 10000 AND eta > 30 AND eta < 50 AND nfigli BEWEEN 1 AND 3  GROUP BY citta, professione, istruzione, hobby, DATE_TRUNC('year', datareg);
 Druid:       PostGres: 
 - query5:
-
+SELECT DATE_TRUNC('year', datan), stato, citta, professione, istruzione, COUNT(*) FROM registrazione GROUP BY DATE_TRUNC('year', datan), stato, citta, professione, istruzione;
 Druid:       PostGres: 
