@@ -8,18 +8,20 @@ From '/data2.csv'
 Delimiter ','
 csv header;
 5000000 records
-- query1: 
+-query1: SELECT * FROM registrazione;
+Druid:      PostGres: 
+- query2: 
 SELECT datan, COUNT(*) AS  Conteggio FROM registrazione GROUP BY datan;
 Druid:       PostGres: 900 ms
-- query2:
+- query3:
 SELECT stato, citta, cap, AVG(eta) FROM registrazione GROUP BY stato, citta, cap;
 Druid:       PostGres: 1400 ms 
-- query3:
+- query4:
 SELECT citta, professione, istruzione, hobby, nfigli, AVG(reddito) FROM registrazione GROUP BY citta, professione, istruzione, hobby, nfigli HAvING AVG(reddito) > 1000;
 Druid:       PostGres: 2700 ms
-- query4:
+- query5:
 SELECT DATE_TRUNC('year', datareg), citta, professione, istruzione, hobby, COUNT(*) FROM registrazione WHERE reddito > 1000 AND eta > 30 AND eta < 50 AND nfigli BETWEEN 1 AND 3  GROUP BY citta, professione, istruzione, hobby, DATE_TRUNC('year', datareg);
 Druid:       PostGres: 1600 ms
-- query5:
+- query6:
 SELECT DATE_TRUNC('year', datan), stato, citta, professione, istruzione, COUNT(*) FROM registrazione GROUP BY DATE_TRUNC('year', datan), stato, citta, professione, istruzione;
 Druid:       PostGres: 3000 ms
