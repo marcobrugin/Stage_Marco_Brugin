@@ -1,7 +1,12 @@
 CREATE TABLE registrazione(nome text, cognome text, indirizzo text, citta text, stato text, cap int, 
 email text, telefono text, eta int, altezza decimal(5,2), peso decimal(5,2), reddito decimal(6,2), 
-datan date, professione text, istruzione text, hobby text, nfigli int, codice_cliente int datareg timestamp, ultimoacc timestamp);
-
+datan date, professione text, istruzione text, hobby text, nfigli int, codice_cliente int, datareg timestamp, ultimoacc timestamp);
+COPY registrazione(nome, cognome, indirizzo, citta, stato, cap, 
+email, telefono, eta, altezza, peso, reddito, 
+datan, professione, istruzione, hobby, nfigli, codice_cliente, datareg, ultimoacc)
+From '/data2.csv'
+Delimiter ','
+csv header;
 5000000 records
 - query1: 
 SELECT datan, COUNT(*) AS  Conteggio FROM registrazione GROUP BY datan;
