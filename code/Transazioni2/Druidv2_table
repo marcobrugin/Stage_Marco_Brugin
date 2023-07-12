@@ -3,8 +3,18 @@ email text, telefono text, eta int, altezza decimal(5,2), peso decimal(5,2), red
 datan date, professione text, istruzione text, hobby text, nfigli int, codice_cliente int datareg timestamp, ultimoacc timestamp);
 
 5000000 records
-- query3: 
+- query1: 
 SELECT datan, COUNT(*) AS  Conteggio FROM registrazione GROUP BY datan;
 Druid:       PostGres: 
-- query4: 
+- query2:
+
+Druid:       PostGres: 
+- query3:
+
+Druid:       PostGres: 
+- query4:
+
+Druid:       PostGres: 
+- query5:
+
 Druid:       PostGres: 
