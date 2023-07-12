@@ -18,10 +18,8 @@ max=random.randint(4,20)
 cognomi= [fake.last_name() for _ in range(max)]
 max=random.randint(4,20)
 indirizzi= [fake.address() for _ in range(max)]
-print(indirizzi)
-for p in indirizzi:
-    p=p.replace("\n", " ")
-print(indirizzi)
+for i in range(len(indirizzi)):
+    indirizzi[i]=indirizzi[i].replace('\n', ' ')
 max=random.randint(4,20)
 cittas=[fake.city() for _ in range(max)]
 max=random.randint(4,20)
@@ -54,8 +52,8 @@ max=random.randint(4,20)
 ultimoaccs=[fake.date_time_between(start_date="-1w", end_date="now").strftime("%Y-%m-%d %H:%M:%S") for _ in range(max)]
 max=random.randint(4,20)
 volume=[]
-for n in range(1):
-    for j in range(10):
+for n in range(500):
+    for j in range(10000):
         nome= random.choice(nomi)
         cognome= random.choice(cognomi)
         indirizzo= random.choice(indirizzi)
