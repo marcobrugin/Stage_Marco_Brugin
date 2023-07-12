@@ -10,12 +10,12 @@ csv header;
 5000000 records
 - query1: 
 SELECT datan, COUNT(*) AS  Conteggio FROM registrazione GROUP BY datan;
-Druid:       PostGres: 
+Druid:       PostGres: 900 ms
 - query2:
 SELECT stato, citta, cap, AVG(eta) FROM registrazione GROUP BY stato, citta, cap;
-Druid:       PostGres: 
+Druid:       PostGres: 1400 ms 
 - query3:
-SELECT citta, professione, istruzione, hobby, nfigli, AVG(reddito) FROM GROUP BY citta, professione, istruzione, hobby, nfigli HAvING AVG(reddito) > 10000;
+SELECT citta, professione, istruzione, hobby, nfigli, AVG(reddito) FROM registrazione GROUP BY citta, professione, istruzione, hobby, nfigli HAvING AVG(reddito) > 10000;
 Druid:       PostGres: 
 - query4:
 SELECT DATE_TRUNC('year', datareg), citta, professione, istruzione, hobby, COUNT(*) FROM registrazione WHERE reddito > 10000 AND eta > 30 AND eta < 50 AND nfigli BEWEEN 1 AND 3  GROUP BY citta, professione, istruzione, hobby, DATE_TRUNC('year', datareg);
