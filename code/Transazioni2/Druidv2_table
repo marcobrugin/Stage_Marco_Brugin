@@ -1,9 +1,9 @@
-CREATE TABLE accessi(__time timestamp, nome text, cognome text, indirizzo text, citta text, stato text, cap int, 
+CREATE TABLE accessi( nome text, cognome text, indirizzo text, citta text, stato text, cap int, 
 email text, telefono text, eta int, altezza decimal(5,2), peso decimal(5,2), reddito decimal(6,2), 
-datan date, professione text, istruzione text, hobby text, nfigli int, codice_cliente int, datareg timestamp);
-COPY accessi(__time, nome, cognome, indirizzo, citta, stato, cap, 
+datan date, professione text, istruzione text, hobby text, nfigli int, codice_cliente int, datareg timestamp,__time timestamp);
+COPY accessi(nome, cognome, indirizzo, citta, stato, cap, 
 email, telefono, eta, altezza, peso, reddito, 
-datan, professione, istruzione, hobby, nfigli, codice_cliente, datareg)
+datan, professione, istruzione, hobby, nfigli, codice_cliente, datareg, __time)
 From '/data.csv'
 Delimiter ','
 csv header;
@@ -20,12 +20,15 @@ DRUID:             POSTGRES:
            FROM accessi
            GROUP BY stato
 DRUID:             POSTGRES:
-- query 3: SELECT DATE_TRUNC('YEAR', ___time) as "Anno", stato, professione, istruzione, nfigli, COUNT(*)
+- query 3: SELECT DATE_TRUNC('year', ___time) as "Anno", stato, professione, istruzione, nfigli, COUNT(*)
            FROM accessi
-           WHERE Numero di Figli > 0
-           GROUP BY DATE_TRUNC('YEAR', __time), stato, professione, istruzione, nfigli
+           WHERE nfigli> 0
+           GROUP BY DATE_TRUNC('year', __time), stato, professione, istruzione, nfigli
            ORDER BY 5 DESC
 DRUID:             POSTGRES:
 
-- query 4: 
+- query 4: SELECT DATE_TRUNC('hour',__time), citta,  AVG(eta) AS "Media Oraria"
+           FROM accessi
+           GROUP BY DATE_TRUNC('hour', __time), citta          
 
+DRUID:             POSTGRES:
