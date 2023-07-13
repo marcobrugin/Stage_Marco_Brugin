@@ -4,7 +4,7 @@ import json
 import random
 import csv
 from faker import Faker
-
+import datetime
 producer = KafkaProducer(  
     bootstrap_servers = ["localhost:29092"],  
     value_serializer = lambda x:json.dumps(x).encode("utf-8")  
@@ -49,7 +49,7 @@ codici_cliente=[fake.random_number(digits=6) for _ in range(max)]
 max=random.randint(4,20)
 datereg= [fake.date_time_between(start_date="-1y", end_date="now").strftime("%Y-%m-%d %H:%M:%S") for _ in range(max)]
 max=random.randint(4,20)
-ultimiacc=[fake.date_time_between(start_date="-1w", end_date="now").strftime("%Y-%m-%d %H:%M:%S") for _ in range(max)]
+
 max=random.randint(4,20)
 volume=[]
 for n in range(500):
@@ -73,7 +73,7 @@ for n in range(500):
         nfigli= random.choice(_nfigli)
         codice_cliente= random.choice(codici_cliente)
         datareg= random.choice(datereg)
-        accesso= random.choice(ultimiacc)
+        accesso= datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         my_data = {"Nome": nome, "Cognome": cognome, "Indirizzo": indirizzo, "Città": citta, "Stato": stato, "CAP": cap,
         "Email": email, "Telefono": telefono, "Età": eta, "Altezza": altezza, "Peso": peso,
         "Reddito":reddito, "Data di Nascita":  datan, "Professione":  professione, "Istruzione": istruzione,
