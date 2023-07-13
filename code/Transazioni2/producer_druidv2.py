@@ -1,5 +1,5 @@
 from time import sleep  
-#from kafka import KafkaProducer  
+from kafka import KafkaProducer  
 import json 
 import random
 import csv
@@ -51,6 +51,7 @@ datereg= [fake.date_time_between(start_date="-1y", end_date="now").strftime("%Y-
 max=random.randint(4,20)
 ultimiacc=[fake.date_time_between(start_date="-1w", end_date="now").strftime("%Y-%m-%d %H:%M:%S") for _ in range(max)]
 max=random.randint(4,20)
+volume=[]
 for n in range(500):
     for j in range(10000):
         nome= random.choice(nomi)
@@ -72,15 +73,22 @@ for n in range(500):
         nfigli= random.choice(_nfigli)
         codice_cliente= random.choice(codici_cliente)
         datareg= random.choice(datereg)
-        ultimoacc= random.choice(ultimiacc)
+        accesso= random.choice(ultimiacc)
         my_data = {"Nome": nome, "Cognome": cognome, "Indirizzo": indirizzo, "Città": citta, "Stato": stato, "CAP": cap,
         "Email": email, "Telefono": telefono, "Età": eta, "Altezza": altezza, "Peso": peso,
         "Reddito":reddito, "Data di Nascita":  datan, "Professione":  professione, "Istruzione": istruzione,
         "Hobby": hobby,
         "Numero di Figli": nfigli, "Codice Cliente":codice_cliente, 
         "Data di Registrazione": datareg, 
-        "Ultimo Accesso": ultimoacc}
-        producer.send("registrazione", value = my_data) 
+        "Accesso": accesso}
+        producer.send("accessi", value = my_data) 
+        element=[nome, cognome, indirizzo, citta, stato, cap, email, telefono, eta, altezza, peso, reddito, datan, professione, istruzione, hobby, nfigli, codice_cliente, datareg, accesso]
+        volume.append(element)
+        print("Send")
         sleep(1)
+with open('data.csv', 'w', newline='') as file:
+    writer = csv.writer(file, quoting=csv.QUOTE_NONNUMERIC, delimiter=',')
+    writer.writerows(volume) 
+
 print("End")
      
