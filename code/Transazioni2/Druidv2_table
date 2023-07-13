@@ -1,28 +1,31 @@
-CREATE TABLE registrazione(nome text, cognome text, indirizzo text, citta text, stato text, cap int, 
+CREATE TABLE accessi(__time timestamp, nome text, cognome text, indirizzo text, citta text, stato text, cap int, 
 email text, telefono text, eta int, altezza decimal(5,2), peso decimal(5,2), reddito decimal(6,2), 
-datan date, professione text, istruzione text, hobby text, nfigli int, codice_cliente int, datareg timestamp, ultimoacc timestamp);
-COPY registrazione(nome, cognome, indirizzo, citta, stato, cap, 
+datan date, professione text, istruzione text, hobby text, nfigli int, codice_cliente int, datareg timestamp);
+COPY accessi(__time, nome, cognome, indirizzo, citta, stato, cap, 
 email, telefono, eta, altezza, peso, reddito, 
-datan, professione, istruzione, hobby, nfigli, codice_cliente, datareg, ultimoacc)
-From '/data2.csv'
+datan, professione, istruzione, hobby, nfigli, codice_cliente, datareg)
+From '/data.csv'
 Delimiter ','
 csv header;
 5000000 records
--query1:
-SELECT * FROM registrazione;
-Druid:      PostGres: out of time 
-- query2: 
-SELECT datan, COUNT(*) AS  Conteggio FROM registrazione GROUP BY datan;
-Druid:       PostGres: 900 ms
-- query3:
-SELECT stato, citta, cap, AVG(eta) FROM registrazione GROUP BY stato, citta, cap;
-Druid:       PostGres: 1400 ms 
-- query4:
-SELECT citta, professione, istruzione, hobby, nfigli, AVG(reddito) FROM registrazione GROUP BY citta, professione, istruzione, hobby, nfigli HAvING AVG(reddito) > 1000;
-Druid:       PostGres: 2500 ms
-- query5:
-SELECT DATE_TRUNC('year', datareg), citta, professione, istruzione, hobby, COUNT(*) FROM registrazione WHERE reddito > 1000 AND eta > 30 AND eta < 50 AND nfigli BETWEEN 1 AND 3  GROUP BY citta, professione, istruzione, hobby, DATE_TRUNC('year', datareg);
-Druid:       PostGres: 1500 ms
-- query6:
-SELECT DATE_TRUNC('year', datan), stato, citta, professione, istruzione, COUNT(*) FROM registrazione GROUP BY DATE_TRUNC('year', datan), stato, citta, professione, istruzione;
-Druid:       PostGres: 3000 ms
+segment raggrupati per day 
+Max rows in memory a 800000
+
+
+- query 1: SELECT DATE_TRUNC('day', __time) as "Giorno", citta, COUNT(*) AS "Accessi"
+           FROM accessi
+           GROUP BY DATE_TRUNC('day', __time), citta
+DRUID:             POSTGRES:
+- query 2: SELECT stato, AVG(eta), AS "Media_eta", AVG(reddito) AS "Media_reddito"
+           FROM accessi
+           GROUP BY stato
+DRUID:             POSTGRES:
+- query 3: SELECT DATE_TRUNC('YEAR', ___time) as "Anno", stato, professione, istruzione, nfigli, COUNT(*)
+           FROM accessi
+           WHERE Numero di Figli > 0
+           GROUP BY DATE_TRUNC('YEAR', __time), stato, professione, istruzione, nfigli
+           ORDER BY 5 DESC
+DRUID:             POSTGRES:
+
+- query 4: 
+
