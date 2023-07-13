@@ -774,7 +774,249 @@ Dopo di che si è andati a creare un topic in \textbf{Apache Kafka} chiamato \te
     \caption{Iniezione dei dati}
     \label{fig:my_label}
 \end{figure} 
+\subsection{Creazione di una data pipeline con Apache Kafka, Apache Druid e Docker Compose}
+Le noto riportate in questa sezione illustrano la costruzione e un test di prestazione di una data pipeline containerizzata ed eseguita con \textbf{Docker Compose}.
+\subsubsection{Svolgimento}
+\begin{itemize}
+    \item Come prima operazione si è andati a creare il seguente modello logico relazione, che riporta gli accessi effettuati da degli utenti
+    \begin{lstlisting}[language=SQL]
+CREATE TABLE accessi(__time TIMESTAMP, nome TEXT, cognome TEXT, indirizzo TEXT, citta TEXT, stato TEXT, cap INT, 
+email TEXT, telefono TEXT, eta INT, altezza DECIMAL(5,2), peso DECIMAL(5,2), reddito DECIMAL(6,2), 
+datan DATE, professione TEXT, istruzione TEXT, hobby TEXT, nfigli INT, codice_cliente INT, datareg TIMESTAMP);
+    \end{lstlisting}
+\item Su tale modello dati si è andati a sviluppare il seguente generatore di eventi
+\begin{lstlisting}[language=Python]
+from time import sleep  
+from kafka import KafkaProducer  
+import json 
+import random
+from faker import Faker
 
+producer = KafkaProducer(  
+    bootstrap_servers = ["localhost:29092"],  
+    value_serializer = lambda x:json.dumps(x).encode("utf-8")  
+    )  
+print("Conncet succefully") 
+fake = Faker()
+max=random.randint(4,20)
+nomi= [fake.first_name() for _ in range(max)]
+max=random.randint(4,20)
+cognomi= [fake.last_name() for _ in range(max)]
+max=random.randint(4,20)
+indirizzi= [fake.address() for _ in range(max)]
+#la libreria faker genera indirizzi con \n, che vanno sostituiti con uno spazio
+for i in range(len(indirizzi)):
+    indirizzi[i]=indirizzi[i].replace('\n', ' ')
+max=random.randint(4,20)
+_citta=[fake.city() for _ in range(max)]
+max=random.randint(4,20)
+stati=[fake.country() for _ in range(max)]
+max=random.randint(4,20)
+_cap=[fake.zipcode() for _ in range(max)]
+max=random.randint(4,20)
+_email=[fake.email() for _ in range(max)]
+max=random.randint(4,20)
+telefoni=[fake.phone_number() for _ in range(max)]
+max=random.randint(4,20)
+_eta= [random.randint(18, 89) for _ in range(max)]
+max=random.randint(4,20)
+altezze= [round(random.uniform(120, 210), 2) for _ in range(max)]
+max=random.randint(4,20)
+pesi= [round(random.uniform(30, 180), 2) for _ in range(max)]
+max=random.randint(4,20)
+redditi= [round(random.uniform(1000, 10000), 2) for _ in range(max)]
+max=random.randint(4,20)
+daten= [fake.date_of_birth(minimum_age=18, maximum_age=89).strftime("%Y-%m-%d") for _ in range(max)]
+max=random.randint(4,20)
+professioni= [fake.job() for _ in range(max)]
+max=random.randint(4,20)
+_nfigli= [random.randint(0, 5) for _ in range(max)]
+max=random.randint(4,20)
+codici_cliente=[fake.random_number(digits=6) for _ in range(max)]
+max=random.randint(4,20)
+datereg= [fake.date_time_between(start_date="-1y", end_date="now").strftime("%Y-%m-%d %H:%M:%S") for _ in range(max)]
+max=random.randint(4,20)
+ultimiacc=[fake.date_time_between(start_date="-1w", end_date="now").strftime("%Y-%m-%d %H:%M:%S") for _ in range(max)]
+max=random.randint(4,20)
+
+for n in range(500):
+    for j in range(10000):
+        nome= random.choice(nomi)
+        cognome= random.choice(cognomi)
+        indirizzo= random.choice(indirizzi)
+        citta= random.choice(_citta)
+        stato= random.choice(stati)
+        cap= random.choice(_cap)
+        email= random.choice(_email)
+        telefono= random.choice(telefoni)
+        eta= random.choice(_eta)
+        altezza= random.choice(altezze)
+        peso= random.choice(pesi)
+        reddito= random.choice(redditi)
+        datan= random.choice(daten)
+        professione= random.choice(professioni)
+        istruzione= fake.random_element(elements=("Scuola Secondaria", "Laurea triennale", "Laurea Magistrale", "Dottorato"))
+        hobby= fake.random_element(elements=("Leggere","Viaggiare","Giocare a calcio","Giocare ai videogiochi","Fare sport"))
+        nfigli= random.choice(_nfigli)
+        codice_cliente= random.choice(codici_cliente)
+        datareg= random.choice(datereg)
+        accesso= random.choice(ultimiacc)
+        my_data = {"nome": nome, "cgnome": cognome, "indirizzo": indirizzo, "città": citta, "stato": stato, "CAP": cap,
+        "email": email, "telefono": telefono, "eta": eta, "altezza": altezza, "peso": peso,
+        "reddito":reddito, "data di nascita":  datan, "professione":  professione, "istruzione": istruzione,
+        "hobby": hobby,
+        "numero di figli": nfigli, "codice cliente":codice_cliente, 
+        "data di registrazione": datareg, 
+        "accesso": accesso}
+        producer.send("accessi", value = my_data) 
+        sleep(1)
+
+print("End")
+     
+
+\end{lstlisting}
+È possibile notare che è stata applicata una randomici da 4 a 20 sui possibili valori che un attributo può assumere
+\item Successivamente è stati creati i servizi di \textbf{Apache Druid} andando a specificare una \textit{docker network} che permetterà ai contaiener di comunicare.
+\begin{lstlisting}
+version: "2.2"
+
+networks:
+  kafka-druid:
+    name: kafka-druid
+    driver: bridge
+    external: true
+
+volumes:
+  metadata_data: {}
+  middle_var: {}
+  historical_var: {}
+  broker_var: {}
+  coordinator_var: {}
+  router_var: {}
+  druid_shared: {}
+
+
+services:
+  postgres:
+    container_name: postgres
+    image: postgres:13
+    networks: 
+      - kafka-druid
+    ports:
+      - "5432:5432"
+    volumes:
+      - metadata_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=FoolishPassword
+      - POSTGRES_USER=druid
+      - POSTGRES_DB=druid
+      
+  zookeeper:
+    container_name: zookeeper
+    hostname: zookeeper
+    image: confluentinc/cp-zookeeper:7.4.0
+    networks: 
+      - kafka-druid
+    ports:
+      - "2181:2181"
+    environment:
+      - ZOOKEEPER_SERVER_ID=1
+      - ZOOKEEPER_CLIENT_PORT=2181
+
+  coordinator:
+    image: apache/druid:26.0.0
+    container_name: coordinator
+    networks:
+      - kafka-druid
+    volumes:
+      - druid_shared:/opt/shared
+      - coordinator_var:/opt/druid/var
+    depends_on:
+      - zookeeper
+      - postgres
+    ports:
+      - "8081:8081"
+    command:
+      - coordinator
+    env_file:
+      - environment
+
+  broker:
+    image: apache/druid:26.0.0
+    container_name: broker
+    networks:
+      - kafka-druid
+    volumes:
+      - broker_var:/opt/druid/var
+    depends_on:
+      - zookeeper
+      - postgres
+      - coordinator
+    ports:
+      - "8082:8082"
+    command:
+      - broker
+    env_file:
+      - environment
+
+  historical:
+    image: apache/druid:26.0.0
+    container_name: historical
+    networks:
+      - kafka-druid
+    volumes:
+      - druid_shared:/opt/shared
+      - historical_var:/opt/druid/var
+    depends_on: 
+      - zookeeper
+      - postgres
+      - coordinator
+    ports:
+      - "8083:8083"
+    command:
+      - historical
+    env_file:
+      - environment
+
+  middlemanager:
+    image: apache/druid:26.0.0
+    container_name: middlemanager
+    networks: 
+      - kafka-druid
+    volumes:
+      - druid_shared:/opt/shared
+      - middle_var:/opt/druid/var
+    depends_on: 
+      - zookeeper
+      - postgres
+      - coordinator
+    ports:
+      - "8091:8091"
+      - "8100-8105:8100-8105"
+    command:
+      - middleManager
+    env_file:
+      - environment
+
+  router:
+    image: apache/druid:26.0.0
+    container_name: router
+    networks:
+      - kafka-druid
+    volumes:
+      - router_var:/opt/druid/var
+    depends_on:
+      - zookeeper
+      - postgres
+      - coordinator
+    ports:
+      - "8888:8888"
+    command:
+      - router
+    env_file:
+      - environment
+\end{lstlisting}
+\end{itemize}
 \bibliographystyle{IEEEtran}
 \bibliography{https://Kafka.apache.org/documentation/}
 \bibliography{https://ably.com/topic/pub-sub#the-pub-sub-model-explained}
