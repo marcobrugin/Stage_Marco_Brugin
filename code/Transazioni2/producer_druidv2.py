@@ -74,13 +74,13 @@ for n in range(500):
         codice_cliente= random.choice(codici_cliente)
         datareg= random.choice(datereg)
         accesso= datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        my_data = {"Nome": nome, "Cognome": cognome, "Indirizzo": indirizzo, "Città": citta, "Stato": stato, "CAP": cap,
+        my_data = {"Accesso": accesso, "Nome": nome, "Cognome": cognome, "Indirizzo": indirizzo, "Città": citta, "Stato": stato, "CAP": cap,
         "Email": email, "Telefono": telefono, "Età": eta, "Altezza": altezza, "Peso": peso,
         "Reddito":reddito, "Data di Nascita":  datan, "Professione":  professione, "Istruzione": istruzione,
         "Hobby": hobby,
         "Numero di Figli": nfigli, "Codice Cliente":codice_cliente, 
         "Data di Registrazione": datareg, 
-        "Accesso": accesso}
+        }
         producer.send("accessi", value = my_data) 
         element=[nome, cognome, indirizzo, citta, stato, cap, email, telefono, eta, altezza, peso, reddito, datan, professione, istruzione, hobby, nfigli, codice_cliente, datareg, accesso]
         volume.append(element)
