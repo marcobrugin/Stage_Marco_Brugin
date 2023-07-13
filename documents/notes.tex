@@ -1016,6 +1016,120 @@ services:
     env_file:
       - environment
 \end{lstlisting}
+\item  In seguito si è andato a configurare il relativo file di configurazione di \textbf{Apache Druid}
+\begin{lstlisting}
+# Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements.  See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership.  The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License.  You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing,
+# software distributed under the License is distributed on an
+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+# KIND, either express or implied.  See the License for the
+# specific language governing permissions and limitations
+# under the License.
+#
+
+# Java tuning
+#DRUID_XMX=1g
+#DRUID_XMS=1g
+#DRUID_MAXNEWSIZE=250m
+#DRUID_NEWSIZE=250m
+DRUID_MAXDIRECTMEMORYSIZE=3072m
+DRUID_SINGLE_NODE_CONF=nano-quickstart
+
+druid_emitter_logging_logLevel=debug
+
+druid_extensions_loadList=["druid-histogram", "druid-datasketches", "druid-lookups-cached-global", "postgresql-metadata-storage", "druid-multi-stage-query", "druid-kafka-indexing-service"]
+
+druid_zk_service_host=zookeeper
+druid_lookup_enableLookupSyncOnStartup=true
+druid_lookup_lookupTierIsDatasource=false
+druid_lookup_lookupTier=_default_tier
+
+druid_broker_cache_useCache=true
+druid_broker_cache_populateCache=true
+druid_broker_cache_useResultLevelCache=true
+druid_broker_cache_populateResultLevelCache=true
+druid_cache_useCache=true
+druid_cache_populateCache=true
+druid_cache_useResultLevelCache=true
+druid_cache_populateResultLevelCache=true
+druid_metadata_storage_host=
+druid_metadata_storage_type=postgresql
+druid_metadata_storage_connector_connectURI=jdbc:postgresql://postgres:5432/druid
+druid_metadata_storage_connector_user=druid
+druid_metadata_storage_connector_password=FoolishPassword
+
+druid_coordinator_balancer_strategy=cachingCost
+
+druid_indexer_runner_javaOptsArray=["-server", "-Xmx1g", "-Xms1g", "-XX:MaxDirectMemorySize=3g", "-Duser.timezone=UTC", "-Dfile.encoding=UTF-8", "-Djava.util.logging.manager=org.apache.logging.log4j.jul.LogManager"]
+druid_indexer_fork_property_druid_processing_buffer_sizeBytes=256MiB
+
+druid_storage_type=local
+druid_storage_storageDirectory=/opt/shared/segments
+druid_indexer_logs_type=file
+druid_indexer_logs_directory=/opt/shared/indexing-logs
+
+druid_processing_numThreads=1
+druid_processing_numMergeBuffers=1
+
+DRUID_LOG4J=<?xml version="1.0" encoding="UTF-8" ?><Configuration status="WARN"><Appenders><Console name="Console" target="SYSTEM_OUT"><PatternLayout pattern="%d{ISO8601} %p [%t] %c - %m%n"/></Console></Appenders><Loggers><Root level="info"><AppenderRef ref="Console"/></Root><Logger name="org.apache.druid.jetty.RequestLog" additivity="false" level="DEBUG"><AppenderRef ref="Console"/></Logger></Loggers></Configuration>
+
+\end{lstlisting}
+\item In seguito per mandare in esecuzione i container  
+\begin{lstlisting}
+    docker compose -f nome_file up -d 
+\end{lstlisting}
+Dopo tale operazione tutti i container relativi ad \textbf{Apache Druid} saranno in esecuzione
+\item Ora si configurano  i container realtvi relativi ad \textbf{Apache Kafka}, per semplicità utilizzeremo un solo nodo come \textbf{Broker} e riutilizzeremo il nodo \textbf{Zookeeper} generato precedentemente come servizio di configurazione dei nodi
+\begin{lstlisting}[yaml]
+    networks:
+  kafka-druid:
+    name: kafka-druid
+    driver: bridge
+    external: true
+
+services:
+  kafka:
+    image: confluentinc/cp-kafka:7.4.0
+    hostname: kafka
+    container_name: kafka
+    networks:
+      - kafka-druid
+    ports:
+      - "29092:29092"
+    environment:
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka:9092,EXTERNAL://localhost:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+      KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
+      KAFKA_BROKER_ID: 1
+      KAFKA_LOG4J_LOGGERS: "kafka.controller=INFO,kafka.producer.async.DefaultEventHandler=INFO,
+      state.change.logger=INFO"
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_AUTHORIZER_CLASS_NAME: kafka.security.authorizer.AclAuthorizer
+      KAFKA_ALLOW_EVERYONE_IF_NO_ACL_FOUND: "true"
+\end{lstlisting}
+Dopo di che sia il nodo di \textbf{Apache Kafka}, sia quello di \textbf{Apache Druid} saranno in esecuzione. \\
+Per lanciare il generatore di eventi lanciare il comando
+\begin{lstlisting}
+    python3 nome_file.py
+\end{lstlisting}
+\item in seguito per effettuare l'\textbf{injection} all'interno di \textbf{Apache Druid} usare il servizio gui \textbf{Load data - Streaming-Apache kafka} andando a spedificare  l'hostname e la porta esterna del \textbf{Broker} e il relativi \textbf{topic} di pubblicazione.
+\begin{figure}[H]
+    \centering
+    \includegraphics{img/load_data.png}
+    \caption{Load data - Streaming-Apache kafka}
+\end{figure}
 \end{itemize}
 \bibliographystyle{IEEEtran}
 \bibliography{https://Kafka.apache.org/documentation/}
