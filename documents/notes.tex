@@ -778,16 +778,107 @@ Dopo di che si è andati a creare un topic in \textbf{Apache Kafka} chiamato \te
 Ora dopo aver fatto alcune sperimentazioni con \textbf{Apache Kafka}, \textbf{Apache Druid} e aver costruito un generatore di eventi, riutilizziamo tali componenti per creiamo una pipeline dati in grado di generare 5000000 di dati ed effettuare il \textbf{Data Injection} all'interno di \textbf{Druid}.
 \subsubsection{Svolgimento}
 \begin{itemize}
-    \item Come primo passo è stato creato un generatore di eventi in \textbf{Python}, utilizzando il modulo \textbf{Faker}. Tali eventi verranno pubblicati poi in Kafka, all'interno del topic \textbf{registrazione}. Il modello relazionale dei dati è il seguente (i tipi riportati sono affini al DBMS \textbf{PostGreSQL}).
-\end{itemize}
-
+    \item Come primo passo è stato creato un generatore di eventi in \textbf{Python}, utilizzando il modulo \textbf{Faker}. Tali eventi verranno pubblicati poi in Kafka, all'interno del topic \textbf{registrazione}. Il modello relazionale dei dati è il seguente (i tipi riportati sono affini al DBMS \textbf{PostgreSQL}).
+    
 \begin{lstlisting}[language=SQL]
 CREATE TABLE registrazione(nome text, cognome text, indirizzo text,
 citta text, stato text, cap int, email text, telefono text, eta int,
 altezza decimal(5,2), peso decimal(5,2), reddito decimal(6,2),
 datan date, professione text, istruzione text, hobby text, nfigli int,
 codice_cliente int, datareg timestamp, ultimoacc timestamp);
+
 \end{lstlisting}
+    \item Il generatore di eventi utilizzerà una randomicità ristretta sui dati generati per avere un maggiore controllo su questi ultimi
+    \begin{lstlisting}[language=Python]
+from time import sleep  
+from kafka import KafkaProducer  
+import json 
+import random
+import csv
+from faker import Faker
+
+producer = KafkaProducer(  
+    bootstrap_servers = ["localhost:29092"],  
+    value_serializer = lambda x:json.dumps(x).encode("utf-8")  
+    )  
+print("Conncet succefully") 
+fake = Faker()
+max=random.randint(4,20)
+nomi= [fake.first_name() for _ in range(max)]
+max=random.randint(4,20)
+cognomi= [fake.last_name() for _ in range(max)]
+max=random.randint(4,20)
+indirizzi= [fake.address() for _ in range(max)]
+#la libreria faker genera indirizzi con \n, che vanno sostituiti con uno spazio
+for i in range(len(indirizzi)):
+    indirizzi[i]=indirizzi[i].replace('\n', ' ')
+max=random.randint(4,20)
+_citta=[fake.city() for _ in range(max)]
+max=random.randint(4,20)
+stati=[fake.country() for _ in range(max)]
+max=random.randint(4,20)
+_cap=[fake.zipcode() for _ in range(max)]
+max=random.randint(4,20)
+_email=[fake.email() for _ in range(max)]
+max=random.randint(4,20)
+telefoni=[fake.phone_number() for _ in range(max)]
+max=random.randint(4,20)
+_eta= [random.randint(18, 89) for _ in range(max)]
+max=random.randint(4,20)
+altezze= [round(random.uniform(120, 210), 2) for _ in range(max)]
+max=random.randint(4,20)
+pesi= [round(random.uniform(30, 180), 2) for _ in range(max)]
+max=random.randint(4,20)
+redditi= [round(random.uniform(1000, 10000), 2) for _ in range(max)]
+max=random.randint(4,20)
+daten= [fake.date_of_birth(minimum_age=18, maximum_age=89).strftime("%Y-%m-%d") for _ in range(max)]
+max=random.randint(4,20)
+professioni= [fake.job() for _ in range(max)]
+max=random.randint(4,20)
+_nfigli= [random.randint(0, 5) for _ in range(max)]
+max=random.randint(4,20)
+codici_cliente=[fake.random_number(digits=6) for _ in range(max)]
+max=random.randint(4,20)
+datereg= [fake.date_time_between(start_date="-1y", end_date="now").strftime("%Y-%m-%d %H:%M:%S") for _ in range(max)]
+max=random.randint(4,20)
+ultimiacc=[fake.date_time_between(start_date="-1w", end_date="now").strftime("%Y-%m-%d %H:%M:%S") for _ in range(max)]
+max=random.randint(4,20)
+for n in range(500):
+    for j in range(10000):
+        nome= random.choice(nomi)
+        cognome= random.choice(cognomi)
+        indirizzo= random.choice(indirizzi)
+        citta= random.choice(_citta)
+        stato= random.choice(stati)
+        cap= random.choice(_cap)
+        email= random.choice(_email)
+        telefono= random.choice(telefoni)
+        eta= random.choice(_eta)
+        altezza= random.choice(altezze)
+        peso= random.choice(pesi)
+        reddito= random.choice(redditi)
+        datan= random.choice(daten)
+        professione= random.choice(professioni)
+        istruzione= fake.random_element(elements=("Scuola Secondaria", "Laurea triennale", "Laurea Magistrale", "Dottorato"))
+        hobby= fake.random_element(elements=("Leggere","Viaggiare","Giocare a calcio","Giocare ai videogiochi","Fare sport"))
+        nfigli= random.choice(_nfigli)
+        codice_cliente= random.choice(codici_cliente)
+        datareg= random.choice(datereg)
+        ultimoacc= random.choice(ultimiacc)
+        my_data = {"Nome": nome, "Cognome": cognome, "Indirizzo": indirizzo, "Città": citta, "Stato": stato, "CAP": cap,
+        "Email": email, "Telefono": telefono, "Età": eta, "Altezza": altezza, "Peso": peso,
+        "Reddito":reddito, "Data di Nascita":  datan, "Professione":  professione, "Istruzione": istruzione,
+        "Hobby": hobby,
+        "Numero di Figli": nfigli, "Codice Cliente":codice_cliente, 
+        "Data di Registrazione": datareg, 
+        "Ultimo Accesso": ultimoacc}
+        producer.send("registrazione", value = my_data) 
+        sleep(1)
+print("End")
+     
+
+    \end{lstlisting}
+\end{itemize}
 \bibliographystyle{IEEEtran}
 \bibliography{https://Kafka.apache.org/documentation/}
 \bibliography{https://ably.com/topic/pub-sub#the-pub-sub-model-explained}
