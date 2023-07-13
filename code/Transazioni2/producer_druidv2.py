@@ -18,6 +18,7 @@ max=random.randint(4,20)
 cognomi= [fake.last_name() for _ in range(max)]
 max=random.randint(4,20)
 indirizzi= [fake.address() for _ in range(max)]
+#la libreria faker genera indirizzi con \n, che vanno sostituiti con uno spazio
 for i in range(len(indirizzi)):
     indirizzi[i]=indirizzi[i].replace('\n', ' ')
 max=random.randint(4,20)
