@@ -790,8 +790,9 @@ from time import sleep
 from kafka import KafkaProducer  
 import json 
 import random
+import csv
 from faker import Faker
-
+import datetime
 producer = KafkaProducer(  
     bootstrap_servers = ["localhost:29092"],  
     value_serializer = lambda x:json.dumps(x).encode("utf-8")  
@@ -836,9 +837,8 @@ codici_cliente=[fake.random_number(digits=6) for _ in range(max)]
 max=random.randint(4,20)
 datereg= [fake.date_time_between(start_date="-1y", end_date="now").strftime("%Y-%m-%d %H:%M:%S") for _ in range(max)]
 max=random.randint(4,20)
-ultimiacc=[fake.date_time_between(start_date="-1w", end_date="now").strftime("%Y-%m-%d %H:%M:%S") for _ in range(max)]
-max=random.randint(4,20)
 
+max=random.randint(4,20)
 for n in range(500):
     for j in range(10000):
         nome= random.choice(nomi)
@@ -860,18 +860,21 @@ for n in range(500):
         nfigli= random.choice(_nfigli)
         codice_cliente= random.choice(codici_cliente)
         datareg= random.choice(datereg)
-        accesso= random.choice(ultimiacc)
-        my_data = {"nome": nome, "cgnome": cognome, "indirizzo": indirizzo, "città": citta, "stato": stato, "CAP": cap,
-        "email": email, "telefono": telefono, "eta": eta, "altezza": altezza, "peso": peso,
-        "reddito":reddito, "data di nascita":  datan, "professione":  professione, "istruzione": istruzione,
-        "hobby": hobby,
-        "numero di figli": nfigli, "codice cliente":codice_cliente, 
-        "data di registrazione": datareg, 
-        "accesso": accesso}
+        accesso= datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        my_data = {"Accesso": accesso, "Nome": nome, "Cognome": cognome, "Indirizzo": indirizzo, "Città": citta, "Stato": stato, "CAP": cap,
+        "Email": email, "Telefono": telefono, "Età": eta, "Altezza": altezza, "Peso": peso,
+        "Reddito":reddito, "Data di Nascita":  datan, "Professione":  professione, "Istruzione": istruzione,
+        "Hobby": hobby,
+        "Numero di Figli": nfigli, "Codice Cliente":codice_cliente, 
+        "Data di Registrazione": datareg, 
+        }
         producer.send("accessi", value = my_data) 
         sleep(1)
 
+
 print("End")
+     
+
      
 
 \end{lstlisting}
@@ -1131,6 +1134,140 @@ Per lanciare il generatore di eventi lanciare il comando
     \caption{Load data - Streaming-Apache kafka}
 \end{figure}
 \end{itemize}
+\subsubsection{Confronto tra Apache Druid e Postgres}
+Per mettere in evidenza le capacità di questi struemtni andiamo ad utilizzare un datasource da 5000000 record aventi il seguente schema relazione
+\begin{lstlisting}[language=SQL]
+CREATE TABLE accessi( nome text, cognome text, indirizzo text, citta text, stato text, cap int, 
+email text, telefono text, eta int, altezza decimal(5,2), peso decimal(5,2), reddito decimal(6,2), 
+datan date, professione text, istruzione text, hobby text, nfigli int, codice_cliente int, datareg timestamp,__time timestamp);
+    
+\end{lstlisting}
+Utilizzando i seguenti parametri di configurazione per \textbf{Apache Druid}
+\begin{enumerate}
+    \item granularity segment per day ;
+    \item 800000 Max rows in memory.
+\end{enumerate}
+Inoltre per consentire l'utilizzo degli stessi dati sia in \textbf{Apache Druid} che in \textbf{Postgres},  il generatore degli eventi viene modificato in modo tale da poter memorizzare gli eventi genreati all'interno di un file *.csv  . 
+\pagebreak
+\begin{lstlisting}
+from time import sleep  
+from kafka import KafkaProducer  
+import json 
+import random
+import csv
+from faker import Faker
+import datetime
+producer = KafkaProducer(  
+    bootstrap_servers = ["localhost:29092"],  
+    value_serializer = lambda x:json.dumps(x).encode("utf-8")  
+    )  
+print("Conncet succefully") 
+fake = Faker()
+max=random.randint(4,20)
+nomi= [fake.first_name() for _ in range(max)]
+max=random.randint(4,20)
+cognomi= [fake.last_name() for _ in range(max)]
+max=random.randint(4,20)
+indirizzi= [fake.address() for _ in range(max)]
+#la libreria faker genera indirizzi con \n, che vanno sostituiti con uno spazio
+for i in range(len(indirizzi)):
+    indirizzi[i]=indirizzi[i].replace('\n', ' ')
+max=random.randint(4,20)
+_citta=[fake.city() for _ in range(max)]
+max=random.randint(4,20)
+stati=[fake.country() for _ in range(max)]
+max=random.randint(4,20)
+_cap=[fake.zipcode() for _ in range(max)]
+max=random.randint(4,20)
+_email=[fake.email() for _ in range(max)]
+max=random.randint(4,20)
+telefoni=[fake.phone_number() for _ in range(max)]
+max=random.randint(4,20)
+_eta= [random.randint(18, 89) for _ in range(max)]
+max=random.randint(4,20)
+altezze= [round(random.uniform(120, 210), 2) for _ in range(max)]
+max=random.randint(4,20)
+pesi= [round(random.uniform(30, 180), 2) for _ in range(max)]
+max=random.randint(4,20)
+redditi= [round(random.uniform(1000, 10000), 2) for _ in range(max)]
+max=random.randint(4,20)
+daten= [fake.date_of_birth(minimum_age=18, maximum_age=89).strftime("%Y-%m-%d") for _ in range(max)]
+max=random.randint(4,20)
+professioni= [fake.job() for _ in range(max)]
+max=random.randint(4,20)
+_nfigli= [random.randint(0, 5) for _ in range(max)]
+max=random.randint(4,20)
+codici_cliente=[fake.random_number(digits=6) for _ in range(max)]
+max=random.randint(4,20)
+datereg= [fake.date_time_between(start_date="-1y", end_date="now").strftime("%Y-%m-%d %H:%M:%S") for _ in range(max)]
+max=random.randint(4,20)
+
+max=random.randint(4,20)
+volume=[]
+for n in range(500):
+    for j in range(10000):
+        nome= random.choice(nomi)
+        cognome= random.choice(cognomi)
+        indirizzo= random.choice(indirizzi)
+        citta= random.choice(_citta)
+        stato= random.choice(stati)
+        cap= random.choice(_cap)
+        email= random.choice(_email)
+        telefono= random.choice(telefoni)
+        eta= random.choice(_eta)
+        altezza= random.choice(altezze)
+        peso= random.choice(pesi)
+        reddito= random.choice(redditi)
+        datan= random.choice(daten)
+        professione= random.choice(professioni)
+        istruzione= fake.random_element(elements=("Scuola Secondaria", "Laurea triennale", "Laurea Magistrale", "Dottorato"))
+        hobby= fake.random_element(elements=("Leggere","Viaggiare","Giocare a calcio","Giocare ai videogiochi","Fare sport"))
+        nfigli= random.choice(_nfigli)
+        codice_cliente= random.choice(codici_cliente)
+        datareg= random.choice(datereg)
+        accesso= datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        my_data = {"Accesso": accesso, "Nome": nome, "Cognome": cognome, "Indirizzo": indirizzo, "Città": citta, "Stato": stato, "CAP": cap,
+        "Email": email, "Telefono": telefono, "Età": eta, "Altezza": altezza, "Peso": peso,
+        "Reddito":reddito, "Data di Nascita":  datan, "Professione":  professione, "Istruzione": istruzione,
+        "Hobby": hobby,
+        "Numero di Figli": nfigli, "Codice Cliente":codice_cliente, 
+        "Data di Registrazione": datareg, 
+        }
+        producer.send("accessi", value = my_data) 
+        element=[nome, cognome, indirizzo, citta, stato, cap, email, telefono, eta, altezza, peso, reddito, datan, professione, istruzione, hobby, nfigli, codice_cliente, datareg, accesso]
+        volume.append(element)
+        print("Send")
+        sleep(1)
+with open('data.csv', 'w', newline='') as file:
+    writer = csv.writer(file, quoting=csv.QUOTE_NONNUMERIC, delimiter=',')
+    writer.writerows(volume) 
+
+print("End")
+     
+
+\end{lstlisting}
+
+\noindent Una volta effettuato l'\textbf{injection} di dati su entrambi i sistemi per misurare le performance si eseguiranno le seguenti query.
+\begin{lstlisting}
+ - query 1: SELECT DATE_TRUNC('day', __time) as "Giorno", citta, COUNT(*) AS "Accessi"
+            FROM accessi
+            GROUP BY DATE_TRUNC('day', __time), citta
+      
+- query 2: SELECT stato, AVG(eta), AS "Media_eta", AVG(reddito) AS "Media_reddito"
+            FROM accessi
+            GROUP BY stato
+      
+- query 3: SELECT DATE_TRUNC('year', ___time) as "Anno", stato, professione, istruzione, nfigli, COUNT(*)
+            FROM accessi
+            WHERE nfigli> 0
+            GROUP BY DATE_TRUNC('year', __time), stato, professione, istruzione, nfigli
+            ORDER BY 5 DESC
+      
+- query 4: SELECT DATE_TRUNC('hour',__time), citta,  AVG(eta) AS "Media Oraria"
+            FROM accessi
+            GROUP BY DATE_TRUNC('hour', __time), citta               
+\end{lstlisting}
+
 \bibliographystyle{IEEEtran}
 \bibliography{https://Kafka.apache.org/documentation/}
 \bibliography{https://ably.com/topic/pub-sub#the-pub-sub-model-explained}
