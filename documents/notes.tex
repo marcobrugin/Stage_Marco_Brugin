@@ -1,6 +1,8 @@
 \documentclass{article}
 \usepackage{listings}
 \usepackage{amsmath, amsthm, amssymb, amsfonts}
+\usepackage{xcolor}
+\usepackage{listings}
 \usepackage{thmtools}
 \usepackage{graphicx}
 \usepackage{setspace}
@@ -11,11 +13,9 @@
 \usepackage[english]{babel}
 \usepackage{framed}
 \usepackage[dvipsnames]{xcolor}
-\usepackage{tcolorbox}
 
-\colorlet{LightGray}{White!90!Periwinkle}
-\colorlet{LightOrange}{Orange!15}
-\colorlet{LightGreen}{Green!15}
+
+
 
 \newcommand{\HRule}[1]{\rule{\linewidth}{#1}}
 
@@ -33,11 +33,39 @@
 % ------------------------------------------------------------------------------
 
 \begin{document}
-
+\lstdefinestyle{yaml}{
+     basicstyle=\color{blue}\footnotesize,
+     rulecolor=\color{black},
+     string=[s]{'}{'},
+     stringstyle=\color{blue},
+     comment=[l]{:},
+     commentstyle=\color{black},
+     morecomment=[l]{-}
+ }
 % ------------------------------------------------------------------------------
 % Cover Page and ToC
 % ------------------------------------------------------------------------------
-
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+\lstset{language=SQL,
+  basicstyle={\small\ttfamily},
+  belowskip=3mm,
+  breakatwhitespace=true,
+  breaklines=true,
+  classoffset=0,
+  columns=flexible,
+  commentstyle=\color{dkgreen},
+  framexleftmargin=0.25em,
+  frameshape={}{yy}{}{}, %To remove to vertical lines on left, set `frameshape={}{}{}{}`
+  keywordstyle=\color{blue},
+  numbers=none, %If you want line numbers, set `numbers=left`
+  numberstyle=\tiny\color{gray},
+  showstringspaces=false,
+  stringstyle=\color{mauve},
+  tabsize=3,
+  xleftmargin =1em
+}
 \title{ \normalsize \textsc{}
 		\\ [2.0cm]
 		\HRule{1.5pt} \\
@@ -591,74 +619,6 @@ Lo schema logico del dataset è il seguente:
 
     \end{tabular}
 \end{table}
-\section{Implementazione}
-\subsection{Apache Kafka}
-Le note riportate si riferiscono ad un sistema operativo Linux dove è già stata scaricata una versione di \textbf{Apache Kafka}. I comandi devono essere eseguiti dalla cartella di installazione.
-\begin{itemize}
-    \item mandare in esecuzione il gestore \textbf{Zookeeper}
-    \begin{lstlisting}
-    bin/zookeeper-server-start.sh config/zookeeper.properties\end{lstlisting}
-    \item mandare in esecuzione il \textbf{Broker}
-    \begin{lstlisting}
-    bin/kafka-server-start.sh config/server.properties\end{lstlisting}
-    \item creare un nuovo \textbf{topic} name
-   \noindent \begin{lstlisting}
-   bin/kafka-topics.sh--create --topic topic--name--bootstrap-serverIP:port server \end{lstlisting}
-   \item creare un \textbf{produttore} 
-   \begin{lstlisting}
-   bin/kafka-console-producer.sh --topic topic--name --bootstrap-server IP:port server \end{lstlisting}
-   \item creare un \textbf{consumatore}
-   \begin{lstlisting}
-   bin/kafka-console-consumer.sh--topic topic--name--from-beginning --bootstrap-server IP:port server
-   \end{lstlisting}
-
-\end{itemize}
-\pagebreak
-\subsection{Creazione di un generatore di dati ed efettui uan injection in Apache Druid tramite Apache Kafka}
-Come prima operazione di è andati a creare un producer di eventi in python che simuli il cambiamento di stato di un parcheggio.
-\begin{lstlisting}[language=Python]
-    from time import sleep  
-    from json import dumps  
-    from kafka import KafkaProducer  
-    import random
-    import datetime
-    import json
-    
-    producer = KafkaProducer(  
-        bootstrap_servers = ['localhost:9092', 'localhost:9093','localhost:9094'],  
-        value_serializer = lambda x:json.dumps(x).encode('utf-8')  
-        )  
-    print("Conncet succefully") 
-    
-    for n in range(50):  
-        for j in range(10):
-            my_data = {"timestamp": str(datetime.datetime.now()), "id" : str(random.randint(0,999)),"value": random.randint(0,1)} 
-            producer.send('druid', value = my_data) 
-        print("Send")
-        sleep(1) 
-    print("End")
-         
-    
-
-\end{lstlisting}
-\subsubsection{Svolgimento}
-\begin{itemize}
-    \item Come prima operazione abbiamo mandato in esecuzione il kluster di nodi \textbf{Apache Kafka} formato da 1 nodo \textbf{Zookeeper} e 3 nodi \textbf{Broker} (Kafka1, Kafka2, Kafka3).
-\end{itemize}
-\begin{figure}[h]
-    \centering
-    \includegraphics[scale=0.5]{images/kluster_producer.png}
-    \caption{Cluster Kafka}
-    \label{fig:my_label}
-\end{figure}
-Dopo di che si è andati a creare un topic in \textbf{Apache Kafka} chiamato \textbf{druid} e si è andati ad eseguire il producer appena creato.
-\\In seguito siamo andati ad eseguire l'injection dei dati in \textbf{Apache Druid} utilizzando la gui fornita da \textbf{Apache Druid}.
-\begin{figure}
-    \centering
-    \includegraphics[scale=0.5]{images/consumer.png}
-    \caption{Iniezione dei dati}
-    \label{fig:my_label}
-\end{figure} 
 \section{Test}
 \subsection{High Availability}
 Per andare a testare l'alta affidabilità, si è andati a creare un cluster di nodi formato da: 1 nodo Zookeeper, 3 nodi broker (Kafka1, Kafka2,Kafka3) e si è andati ad istanziare un produttore e consumatore collegati al broker Kafka1. Ora per testare l'alta affidabilità basta simulare un malfunzionamento e verificare se i messaggi che il broker Kafka1 non è riuscito ad inviare al consumatore sono accessibili attraverso i server Kafka2 e Kafka3. 
@@ -749,6 +709,85 @@ Per andare a verificare la connessione al container a partire da un altro host n
     \caption{Connessione da altro host}
     \label{fig:my_label}
 \end{figure}
+\section{Implementazione}
+\subsection{Apache Kafka}
+Le note riportate si riferiscono ad un sistema operativo Linux dove è già stata scaricata una versione di \textbf{Apache Kafka}. I comandi devono essere eseguiti dalla cartella di installazione.
+\begin{itemize}
+    \item mandare in esecuzione il gestore \textbf{Zookeeper}
+    \begin{lstlisting}
+    bin/zookeeper-server-start.sh config/zookeeper.properties\end{lstlisting}
+    \item mandare in esecuzione il \textbf{Broker}
+    \begin{lstlisting}
+    bin/kafka-server-start.sh config/server.properties\end{lstlisting}
+    \item creare un nuovo \textbf{topic} name
+   \noindent \begin{lstlisting}
+   bin/kafka-topics.sh--create --topic topic--name--bootstrap-serverIP:port server \end{lstlisting}
+   \item creare un \textbf{produttore} 
+   \begin{lstlisting}
+   bin/kafka-console-producer.sh --topic topic--name --bootstrap-server IP:port server \end{lstlisting}
+   \item creare un \textbf{consumatore}
+   \begin{lstlisting}
+   bin/kafka-console-consumer.sh--topic topic--name--from-beginning --bootstrap-server IP:port server
+   \end{lstlisting}
+
+\end{itemize}
+\pagebreak
+\subsection{Creazione di un generatore di dati ed efettui uan injection in Apache Druid tramite Apache Kafka}
+Come prima operazione di è andati a creare un producer di eventi in python che simuli il cambiamento di stato di un parcheggio.
+\begin{lstlisting}[language=Python]
+    from time import sleep  
+    from json import dumps  
+    from kafka import KafkaProducer  
+    import random
+    import datetime
+    import json
+    
+    producer = KafkaProducer(  
+        bootstrap_servers = ['localhost:9092', 'localhost:9093','localhost:9094'],  
+        value_serializer = lambda x:json.dumps(x).encode('utf-8')  
+        )  
+    print("Conncet succefully") 
+    
+    for n in range(50):  
+        for j in range(10):
+            my_data = {"timestamp": str(datetime.datetime.now()), "id" : str(random.randint(0,999)),"value": random.randint(0,1)} 
+            producer.send('druid', value = my_data) 
+        print("Send")
+        sleep(1) 
+    print("End")
+\end{lstlisting}
+\subsubsection{Svolgimento}
+\begin{itemize}
+    \item Come prima operazione abbiamo mandato in esecuzione il kluster di nodi \textbf{Apache Kafka} formato da 1 nodo \textbf{Zookeeper} e 3 nodi \textbf{Broker} (Kafka1, Kafka2, Kafka3).
+\end{itemize}
+\begin{figure}[h]
+    \centering
+    \includegraphics[scale=0.5]{images/kluster_producer.png}
+    \caption{Cluster Kafka}
+    \label{fig:my_label}
+\end{figure}
+Dopo di che si è andati a creare un topic in \textbf{Apache Kafka} chiamato \textbf{druid} e si è andati ad eseguire il producer appena creato.
+\\In seguito siamo andati ad eseguire l'injection dei dati in \textbf{Apache Druid} utilizzando la gui fornita da \textbf{Apache Druid}.
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.5]{images/consumer.png}
+    \caption{Iniezione dei dati}
+    \label{fig:my_label}
+\end{figure} 
+\subsection{Creazione di una Datapipeline con Apache Kafka, Apache Druid e Docker Compose}
+Ora dopo aver fatto alcune sperimentazioni con \textbf{Apache Kafka}, \textbf{Apache Druid} e aver costruito un generatore di eventi, riutilizziamo tali componenti per creiamo una pipeline dati in grado di generare 5000000 di dati ed effettuare il \textbf{Data Injection} all'interno di \textbf{Druid}.
+\subsubsection{Svolgimento}
+\begin{itemize}
+    \item Come primo passo è stato creato un generatore di eventi in \textbf{Python}, utilizzando il modulo \textbf{Faker}. Tali eventi verranno pubblicati poi in Kafka, all'interno del topic \textbf{registrazione}. Il modello relazionale dei dati è il seguente (i tipi riportati sono affini al DBMS \textbf{PostGreSQL}).
+\end{itemize}
+
+\begin{lstlisting}[language=SQL]
+CREATE TABLE registrazione(nome text, cognome text, indirizzo text,
+citta text, stato text, cap int, email text, telefono text, eta int,
+altezza decimal(5,2), peso decimal(5,2), reddito decimal(6,2),
+datan date, professione text, istruzione text, hobby text, nfigli int,
+codice_cliente int, datareg timestamp, ultimoacc timestamp);
+\end{lstlisting}
 \bibliographystyle{IEEEtran}
 \bibliography{https://Kafka.apache.org/documentation/}
 \bibliography{https://ably.com/topic/pub-sub#the-pub-sub-model-explained}
