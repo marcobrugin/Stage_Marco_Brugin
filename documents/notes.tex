@@ -1272,6 +1272,24 @@ print("End")
             FROM accessi
             GROUP BY DATE_TRUNC('hour', __time), citta               
 \end{lstlisting}
+\begin{center}
+    \begin{tblr}{
+  colspec={XXX},
+  row{odd}={bg=lightgray},  
+  row{1}={bg=black,fg=white},
+}
+\centering
+  Query & \centering Apache Druid [s] & \centering PostgreSQL [s] \\\hline 
+  \centering
+  query1 &  \centering   & \centering  \\ \hline
+  \centering
+  query2 &  \centering  &  \centering  \\ \hline 
+  \centering
+  query3 & \centering  & \centering  \\ \hline
+  \centering  query4 & \centering  & \centering  \\ \hline
+  \end{tblr}
+\end{center}
+\subsubsection{Conclusioni}
 
 \bibliographystyle{IEEEtran}
 \bibliography{https://Kafka.apache.org/documentation/}
