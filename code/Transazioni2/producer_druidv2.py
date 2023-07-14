@@ -71,7 +71,7 @@ for n in range(500):
         codice_cliente= random.choice(codici_cliente)
         datareg= random.choice(datereg)
         accesso= datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        my_data = {"__time": accesso, "nome": nome, "cognome": cognome, "indirizzo": indirizzo, "citta": citta, "stato": stato, "cap": cap,
+        my_data = {"Accesso": accesso, "nome": nome, "cognome": cognome, "indirizzo": indirizzo, "citta": citta, "stato": stato, "cap": cap,
         "email": email, "telefono": telefono, "eta": eta, "altezza": altezza, "peso": peso,
         "reddito":reddito, "datan":  datan, "professione":  professione, "istruzione": istruzione,
         "hobby": hobby,
