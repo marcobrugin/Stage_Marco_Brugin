@@ -1,0 +1,134 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Welcome to Overleaf --- just edit your LaTeX on the left,
+% and we'll compile it for you on the right. If you open the
+% 'Share' menu, you can invite other users to edit at the same
+% time. See www.overleaf.com/learn for more info. Enjoy!
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{glossaries}
+
+\makeglossaries
+
+\newglossaryentry{Evento}
+{
+    name=Evento,
+    description={è la rappresentazione logica (segnali) che indicano che  è successo qualcosa (un cambiamento di stato). Ogni evento è costituito da: una chiave, un valore, un timestamp e altri metadati facoltativi}
+}
+\newglossaryentry{Produttori (producer)}
+{
+    name=Produttori (producer),
+    description={agenti che svolgono l'azione di  pubblicare eventi su Kafka}
+}
+\newglossaryentry{Consumatori (consumer)}
+{
+    name=Consumatori (consumer),
+    description={agenti che rivestono l'operazione di  sottoscrizione a categorie di eventi e gli elaborano}
+}
+\newglossaryentry{Editori}
+{
+    name=Editori,
+    description={agenti che hanno il compito di estrarre  il dato dall'evento e lo 	archiviano}
+    
+}
+\newglossaryentry{Sottoscrittori}
+{
+    name=Sottoscrittori,
+    description={agenti che hanno il compito di  consumare e risponde all'evento generato con una azione in grado di gestirla }
+    
+}
+\newglossaryentry{Origini}
+{
+    name=Origini,
+    description={indica l'origine del dato, da dove viene prodotto}
+    
+}
+\newglossaryentry{Sink}
+{
+    name=Sink,
+    description={agente che indicano la destinazione del dato}
+    
+}
+\newglossaryentry{Event Handler}
+{
+    name=Event Handler,
+    description={un gestore di eventi è una routine di callback che opera in modo asincrono una volta che si verifica un evento}
+    
+}
+\newglossaryentry{On-promise}
+{
+    name=On-promise,
+    description={fornitura di programmi informatici installati e gestiti attraverso computer locali}
+    
+}
+\newglossaryentry{Topic}
+{
+    name=Topic,
+    description={Topic o argomento  non sono altro che cartelle del FS dove si archiviano gli eventi }
+    
+
+}
+\newglossaryentry{data warehouse}
+{
+    name=data warehouse ,
+    description={è un sistema di archiviazione digitale che mette in collegamento e armonizza consistenti quantità di dati provenienti da molteplici fonti di vario tipo}
+    
+
+}
+\newglossaryentry{OLAP}
+{
+    name=OLAP,
+    description={acronimo di On-Line Analytical Processing, è un insieme di metodi finalizzato ad  efettuare analisi rapide e approfondite su grandi volumi di dati. provenienti da uno o più data warehouse}
+}
+\newglossaryentry{OLTP}
+{
+    name=OLTP,
+    description={acronimo di Online transaction processing, indica un insieme di tecniche finalizzate a elaborare centinaia a migliaia di transazioni al secondo o più. Per creare la velocità e la precisione necessarie su larga scala, i processi OLTP utilizzano transazioni piccole e facili da eseguire che possono essere rapidamente verificate}
+}
+\newglossaryentry{Hadoop}
+{
+    name=Hadoop,
+    description={è un framework open source che permette l'archiviazione e l'elaborazione distribuite di grandi set di dati in cluster di computer utilizzando semplici modelli di programmazione}
+}
+\newglossaryentry{Postgres}
+{
+    name=PostGres,
+    description={chiamato come PostgreSQL è un database relazione open source, molto utilizzato a livello mondiale, fornisce il supporto per diverse funzioni SQL, anche avanzate}
+}
+\newglossaryentry{Data Injection}
+{
+    name=Data Injection,
+    description={metodo attraverso cui un insieme di dati vengono iniettati (inseriti) da un sistema software ad un altro}
+}
+\newglossaryentry{Docker Compose}
+{
+    name=Docker Compose,
+    description={è uno strumento per definire e avviare applicazioni Docker multicontainer. È possibile utilizzare un file YAML per configurare i servizi dell'applicazione e, con un singolo comando, crearli ed avviarli da tale file. Il suo utilizzo è ristretto a esecuzioni su singola macchina}
+}
+\newglossaryentry{Container}
+{
+    name=Container,
+    description={è un ambiente software completamente isolata che gira nativamente nel kernel della macchina ospitante. Un container contiene tutto il necessario per l'esecuzione dell'applicazione che ospita}
+}
+\title{Glossario}
+\author{Marco Brugin}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+
+
+\begin{abstract}
+    
+
+Il documento contiene la descrizione di alcuni termini specifici del dominio di riferimento.
+\end{abstract}
+\clearpage
+
+\glsaddall{}
+\printglossary[nonumberlist]
+
+\end{document}
