@@ -614,7 +614,7 @@ Lo schema logico del dataset è il seguente:
   row{1}={bg=black,fg=white},
 }
 \centering
-  Query & \centering Apache Druid [s] & \centering PostgreSQL [s] \\\hline 
+  & \centering Apache Druid [s] & \centering PostgreSQL [s] \\\hline 
   \centering
   query1 &  \centering 0.007  & \centering 0.77 \\ \hline
   \centering
@@ -863,7 +863,7 @@ for n in range(500):
         codice_cliente= random.choice(codici_cliente)
         datareg= random.choice(datereg)
         accesso= datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        my_data = {"__time": accesso, "nome": nome, "cognome": cognome, "indirizzo": indirizzo, "citta": citta, "stato": stato, "cap": cap,
+        my_data = {"Accesso": accesso, "nome": nome, "cognome": cognome, "indirizzo": indirizzo, "citta": citta, "stato": stato, "cap": cap,
         "email": email, "telefono": telefono, "eta": eta, "altezza": altezza, "peso": peso,
         "reddito":reddito, "datan":  datan, "professione":  professione, "istruzione": istruzione,
         "hobby": hobby,
@@ -903,7 +903,7 @@ volumes:
 services:
   postgres:
     container_name: postgres
-    image: postgres:13
+    image: postgres:latest
     networks: 
       - kafka-druid
     ports:
@@ -1094,7 +1094,7 @@ DRUID_LOG4J=<?xml version="1.0" encoding="UTF-8" ?><Configuration status="WARN">
 Dopo tale operazione tutti i container relativi ad \textbf{Apache Druid} saranno in esecuzione
 \item Ora si configurano  i container realtvi relativi ad \textbf{Apache Kafka}, per semplicità utilizzeremo un solo nodo come \textbf{Broker} e riutilizzeremo il nodo \textbf{Zookeeper} generato precedentemente come servizio di configurazione dei nodi
 \begin{lstlisting}[yaml]
-    networks:
+networks:
   kafka-druid:
     name: kafka-druid
     driver: bridge
@@ -1224,7 +1224,7 @@ for n in range(500):
         codice_cliente= random.choice(codici_cliente)
         datareg= random.choice(datereg)
         accesso= datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        my_data = {"__time": accesso, "nome": nome, "Cognome": cognome, "indirizzo": indirizzo, "citta": citta, "stato": stato, "cap": cap,
+        my_data = {"Accesso": accesso, "nome": nome, "Cognome": cognome, "indirizzo": indirizzo, "citta": citta, "stato": stato, "cap": cap,
         "email": email, "telefono": telefono, "eta": eta, "altezza": altezza, "peso": peso,
         "reddito":reddito, "datan":  datan, "professione":  professione, "istruzione": istruzione,
         "hobby": hobby,
@@ -1250,11 +1250,11 @@ print("End")
             FROM accessi
             GROUP BY DATE_TRUNC('day', __time), citta
       
-- query 2: SELECT stato, AVG(eta), AS "Media_eta", AVG(reddito) AS "Media_reddito"
+- query 2: SELECT stato, AVG(eta) AS "Media_eta", AVG(reddito) AS "Media_reddito"
             FROM accessi
             GROUP BY stato
       
-- query 3: SELECT DATE_TRUNC('year', ___time) as "Anno", stato, professione, istruzione, nfigli, COUNT(*)
+- query 3: SELECT DATE_TRUNC('year', __time) as "Anno", stato, professione, istruzione, nfigli, COUNT(*)
             FROM accessi
             WHERE nfigli> 0
             GROUP BY DATE_TRUNC('year', __time), stato, professione, istruzione, nfigli
@@ -1271,18 +1271,18 @@ print("End")
   row{1}={bg=black,fg=white},
 }
 \centering
-  Query & \centering Apache Druid [s] & \centering PostgreSQL [s] \\\hline 
+ & \centering Apache Druid [s] & \centering PostgreSQL [s] \\\hline 
   \centering
-  query1 &  \centering   & \centering  \\ \hline
+  query1 &  \centering  0.2 & \centering 1.2 \\ \hline
   \centering
-  query2 &  \centering  &  \centering  \\ \hline 
+  query2 &  \centering 0.1 &  \centering 1.9 \\ \hline 
   \centering
-  query3 & \centering  & \centering  \\ \hline
-  \centering  query4 & \centering  & \centering  \\ \hline
+  query3 & \centering 0.4 & \centering 2 \\ \hline
+  \centering  query4 & \centering 0.2 & \centering 1.1 \\ \hline
   \end{tblr}
 \end{center}
 \subsubsection{Conclusioni}
-
+Dalla seguente sperimentazione si evince una chiara superiorità di \textbf{Apache Druid} di un ordine di grandezza su un comune database relazione come \textbf{PostgreSQL}, in particolare nell'esecuzione di query che coninvolgono raggrupamenti, anche su intervalli temporali (ora, giorno, anno).
 \bibliographystyle{IEEEtran}
 \bibliography{https://Kafka.apache.org/documentation/}
 \bibliography{https://ably.com/topic/pub-sub#the-pub-sub-model-explained}

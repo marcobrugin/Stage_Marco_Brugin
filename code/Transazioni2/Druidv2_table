@@ -15,20 +15,20 @@ Max rows in memory a 800000
 - query 1: SELECT DATE_TRUNC('day', __time) as "Giorno", citta, COUNT(*) AS "Accessi"
            FROM accessi
            GROUP BY DATE_TRUNC('day', __time), citta
-DRUID:             POSTGRES:
-- query 2: SELECT stato, AVG(eta), AS "Media_eta", AVG(reddito) AS "Media_reddito"
+DRUID: 0.2s            POSTGRES:1.2s
+- query 2: SELECT stato, AVG(eta) AS "Media_eta", AVG(reddito) AS "Media_reddito"
            FROM accessi
            GROUP BY stato
-DRUID:             POSTGRES:
-- query 3: SELECT DATE_TRUNC('year', ___time) as "Anno", stato, professione, istruzione, nfigli, COUNT(*)
+DRUID:0.1s             POSTGRES:0.9s
+- query 3: SELECT DATE_TRUNC('year', __time) as "Anno", stato, professione, istruzione, nfigli, COUNT(*)
            FROM accessi
            WHERE nfigli> 0
            GROUP BY DATE_TRUNC('year', __time), stato, professione, istruzione, nfigli
            ORDER BY 5 DESC
-DRUID:             POSTGRES:
+DRUID:0.4s             POSTGRES:2s
 
 - query 4: SELECT DATE_TRUNC('hour',__time), citta,  AVG(eta) AS "Media Oraria"
            FROM accessi
            GROUP BY DATE_TRUNC('hour', __time), citta          
 
-DRUID:             POSTGRES:
+DRUID:0.2s             POSTGRES:1.1s
