@@ -1094,7 +1094,7 @@ DRUID_LOG4J=<?xml version="1.0" encoding="UTF-8" ?><Configuration status="WARN">
 Dopo tale operazione tutti i container relativi ad \textbf{Apache Druid} saranno in esecuzione
 \item Ora si configurano  i container realtvi relativi ad \textbf{Apache Kafka}, per semplicità utilizzeremo un solo nodo come \textbf{Broker} e riutilizzeremo il nodo \textbf{Zookeeper} generato precedentemente come servizio di configurazione dei nodi
 \begin{lstlisting}[yaml]
-    networks:
+networks:
   kafka-druid:
     name: kafka-druid
     driver: bridge
