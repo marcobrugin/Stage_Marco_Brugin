@@ -9,7 +9,7 @@ producer = KafkaProducer(
     bootstrap_servers = ["localhost:29092"],  
     value_serializer = lambda x:json.dumps(x).encode("utf-8")  
     )  
-print("Conncet succefully") 
+print("Connect succefully") 
 fake = Faker()
 max=random.randint(4,20)
 nomi= [fake.first_name() for _ in range(max)]
@@ -48,9 +48,6 @@ max=random.randint(4,20)
 codici_cliente=[fake.random_number(digits=6) for _ in range(max)]
 max=random.randint(4,20)
 datereg= [fake.date_time_between(start_date="-1y", end_date="now").strftime("%Y-%m-%d %H:%M:%S") for _ in range(max)]
-max=random.randint(4,20)
-
-max=random.randint(4,20)
 volume=[]
 for n in range(500):
     for j in range(10000):
@@ -84,7 +81,6 @@ for n in range(500):
         producer.send("accessi", value = my_data) 
         element=[nome, cognome, indirizzo, citta, stato, cap, email, telefono, eta, altezza, peso, reddito, datan, professione, istruzione, hobby, nfigli, codice_cliente, datareg, accesso]
         volume.append(element)
-        print("Send")
         sleep(1)
 with open('data.csv', 'w', newline='') as file:
     writer = csv.writer(file, quoting=csv.QUOTE_NONNUMERIC, delimiter=',')
