@@ -13,7 +13,8 @@
 \usepackage[english]{babel}
 \usepackage{framed}
 \usepackage[dvipsnames]{xcolor}
-
+\usepackage{xcolor}
+\usepackage{tabularray}
 
 
 
@@ -606,22 +607,26 @@ Lo schema logico del dataset è il seguente:
     WHERE gradimento>3 
     GROUP BY DATA_TRUNC('HOUR',__time) as '__time', cliente, prodotto, gradimento
 \end{lstlisting}
-\begin{table}[H]
+\begin{center}
+    \begin{tblr}{
+  colspec={XXX},
+  row{odd}={bg=lightgray},  
+  row{1}={bg=black,fg=white},
+}
 \centering
-    \begin{tabular}{|c|c|c|}
-        \hline
-        \textbf{Query} & \textbf{Apache Druid} & \textbf{PostgreSQL} \\
-        \hline
-        \makebox{query1} & 
- \makebox{}0.007s & 0.77s \\ \hline
-       \makebox{query2} & 0.45s & 0.57s \\ \hline
-      \makebox{query3}  & 0.30s & 0.60s \\ \hline
+  Query & \centering Apache Druid [s] & \centering PostgreSQL [s] \\\hline 
+  \centering
+  query1 &  \centering 0.007  & \centering 0.77 \\ \hline
+  \centering
+  query2 &  \centering 0.45 &  \centering 0.57 \\ \hline 
+  \centering
+  query3 & \centering 0.30 & \centering 0.60 \\ \hline
+  \end{tblr}
+\end{center}
 
-    \end{tabular}
-\end{table}
 \section{Test}
 \subsection{High Availability}
-Per andare a testare l'alta affidabilità, si è andati a creare un cluster di nodi formato da: 1 nodo Zookeeper, 3 nodi broker (Kafka1, Kafka2,Kafka3) e si è andati ad istanziare un produttore e consumatore collegati al broker Kafka1. Ora per testare l'alta affidabilità basta simulare un malfunzionamento e verificare se i messaggi che il broker Kafka1 non è riuscito ad inviare al consumatore sono accessibili attraverso i server Kafka2 e Kafka3. 
+Per andare a testare l'alta affidabilità, si è andati a creare un cluster di nodi formato da: 1 nodo Zookeeper, 3 nodi broker (Kafka1, Kafka2, Kafka3) e si è andati ad istanziare un produttore e consumatore collegati al broker Kafka1. Ora per testare l'alta affidabilità basta simulare un malfunzionamento e verificare se i messaggi che il broker Kafka1 non è riuscito ad inviare al consumatore sono accessibili attraverso i server Kafka2 e Kafka3. 
 
 \subsubsection{Svolgimento}
 \begin{itemize}
