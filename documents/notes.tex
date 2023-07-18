@@ -483,7 +483,7 @@ Ogni segmento ha un ciclo di vita che coinvolge le seguenti tre aree principali:
 \subsubsection{Injection dei dati}
  I principali metodi di ingestione di Druid sono tutti basati su pull e offrono garanzie transazionali (verrà caricato o tutto o niente).
  \begin{itemize}
-     \item Metodi di ingestione "seekable-stream" supervisionati come Kafka e Kinesis . Con questi metodi, Druid esegue il commit degli offset del flusso nel proprio archivio di metadati insieme ai metadati del segmento, nella stessa transazione, in qyesti casi è possibile andare ad effettuare operazioni di {rollup}\ref{sub} sui dati grezzi;
+     \item Metodi di ingestione "seekable-stream" supervisionati come Kafka e Kinesis . Con questi metodi, Druid esegue il commit degli offset del flusso nel proprio archivio di metadati insieme ai metadati del segmento, nella stessa transazione, in qyesti casi è possibile andare ad effettuare operazioni di {rollup}\ref{subsection:rollup} sui dati grezzi;
     \item Inserimento batch basato su Hadoop  . Ogni attività pubblica tutti i metadati del segmento in un'unica transazione.
     \item Importazione batch nativa . In modalità parallela, l'attività del supervisore pubblica tutti i metadati del segmento in un'unica transazione al termine delle attività secondarie.
  \end{itemize}
@@ -554,7 +554,7 @@ Se lo schema lo richiede è possibile importare anche timestamp secondari.
 È possibile fare in modo che \textbf{Druid} deduca lo schema e i tipi per i tuoi dati parzialmente o completamente impostando. \\
 Nella deduzione del tipo \textbf{Druid} sceglie il tipo nativo più appropiato.\\
 Per le colonne di tipo misto vengono archiviate nel tipo meno restrittivo che può rappresentare tutti i valori nella colonna.
-\subsection{Data rollup}
+\subsection{Data rollup}\label{subsection:rollup}
 Al momento dell'acquisizione dei dati \textbf{Apache Druid} può eseguire operazioni di raggrupamento sui dati per ridurre la quantità di dati grezzi da archiviare. \\
 Da questo punto di vista il \textbf{rollup} non è altro che una forma di riepilogo e preaggregamento dei dati finalizzato a ridurre lìordine di grandezza delle righe da archiviare.\\
 Il \textbf{rollup} se da un lato porta una riduzione drastica degli eventi da analizzare, dall'altro non permette più di interrogare i singoli eventi.\\
