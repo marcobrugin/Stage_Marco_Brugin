@@ -480,11 +480,12 @@ Ogni segmento ha un ciclo di vita che coinvolge le seguenti tre aree principali:
     \item Archiviazione profonda: i file di dati del segmento vengono inseriti nell'archiviazione profonda una volta terminata la costruzione di un segmento. Ciò avviene immediatamente prima della pubblicazione dei metadati nell'archivio dei metadati.
     \item Disponibilità per l'interrogazione: i segmenti sono disponibili per l'interrogazione su alcuni server di dati Druid, come un'attività in tempo reale o un processo storico.
 \end{itemize}
+\pagebreak
 \subsubsection{Injection dei dati}
  I principali metodi di ingestione di Druid sono tutti basati su pull e offrono garanzie transazionali (verrà caricato o tutto o niente).
  \begin{itemize}
-     \item Metodi di ingestione "seekable-stream" supervisionati come Kafka e Kinesis . Con questi metodi, Druid esegue il commit degli offset del flusso nel proprio archivio di metadati insieme ai metadati del segmento, nella stessa transazione, in qyesti casi è possibile andare ad effettuare operazioni di {rollup}\ref{subsection:rollup} sui dati grezzi;
-    \item Inserimento batch basato su Hadoop  . Ogni attività pubblica tutti i metadati del segmento in un'unica transazione.
+    \item Metodi di ingestione "seekable-stream" supervisionati come Kafka e Kinesis . Con questi metodi, Druid esegue il commit degli offset del flusso nel proprio archivio di metadati insieme ai metadati del segmento, nella stessa transazione, in questo caso \textbf{Apache Druid}  pubblica i segmenti prima che tutti i dati per un blocco temporale siano stati ricevuti;
+    \item Inserimento batch basato su Hadoop; Ogni attività pubblica tutti i metadati del segmento in un'unica transazione. 
     \item Importazione batch nativa . In modalità parallela, l'attività del supervisore pubblica tutti i metadati del segmento in un'unica transazione al termine delle attività secondarie.
  \end{itemize}
 \subsection{Casi d'uso}
