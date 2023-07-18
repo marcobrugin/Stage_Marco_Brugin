@@ -483,7 +483,7 @@ Ogni segmento ha un ciclo di vita che coinvolge le seguenti tre aree principali:
 \subsubsection{Injection dei dati}
  I principali metodi di ingestione di Druid sono tutti basati su pull e offrono garanzie transazionali (verrà caricato o tutto o niente).
  \begin{itemize}
-     \item Metodi di ingestione "seekable-stream" supervisionati come Kafka e Kinesis . Con questi metodi, Druid esegue il commit degli offset del flusso nel proprio archivio di metadati insieme ai metadati del segmento, nella stessa transazione.
+     \item Metodi di ingestione "seekable-stream" supervisionati come Kafka e Kinesis . Con questi metodi, Druid esegue il commit degli offset del flusso nel proprio archivio di metadati insieme ai metadati del segmento, nella stessa transazione, in qyesti casi è possibile andare ad effettuare operazioni di {rollup}\ref{sub} sui dati grezzi;
     \item Inserimento batch basato su Hadoop  . Ogni attività pubblica tutti i metadati del segmento in un'unica transazione.
     \item Importazione batch nativa . In modalità parallela, l'attività del supervisore pubblica tutti i metadati del segmento in un'unica transazione al termine delle attività secondarie.
  \end{itemize}
@@ -568,10 +568,15 @@ In ogni caso, per soddisfare entrambi i casi d'uso appena citati è possibile an
 \subsubsection{Tipi di rollup}
 A seconda del metodo di importazione, \textbf{Apache Druid} presenta due metodi differenti di \textbf{rollup}.
 \begin{itemize}
-    \item rollup perfetto: \textbf{APache Druid} aggrega perefettamenete i dati a injection time;
+    \item rollup perfetto: \textbf{Apache Druid} aggrega perefettamenete i dati a injection time;
     \item Best-effort rollup: \textbf{Apache Druid} potrebbe non riuscire ad aggregare perfettamente di input pertanto si potrebbe verificare che più segmenti dati contengano dati con stesso timestamp e stesso valore di Dimension.
 \end{itemize}
-
+In generale I metodi di inserimento che garantiscono un rollup perfetto utilizzano un ulteriore passaggio di pre-elaborazione per determinare gli intervalli e il partizionamento prima dell'inserimento dei dati. Questa fase di pre-elaborazione esegue la scansione dell'intero set di dati di input. Anche se questo passaggio aumenta il tempo necessario per l'inserimento, fornisce le informazioni necessarie per un rollup perfetto.\\
+Mentre i metodi che garantiscono il \textbf{Best-effort rollup} lo fanno per i seguenti motivi: 
+\begin{itemize}
+    \item la parallelizzazione dell'inserimento avviene senza un passaggio di mescolamento necessario per il \textbf{rollup} perfetto;
+    \item Il metodo di importazione utilizza la pubblicazione incrementale , il che significa che finalizza e pubblica i segmenti prima che tutti i dati per un blocco temporale siano stati ricevuti, tutti i tipi di importazione di streaming vengono eseguiti in questa modalità.
+\end{itemize}
 \subsection{Lookups}
 In \textbf{Apache Druid} le \textbf{lookups} non sono altro che un modo per sostituire i valori dei \textbf{datasources} con delle chiavi senza dover effettivamente modificare i \textbf{datasources}. \\
 Un possibile esempio è la necessità di dover archiviare tutte le informazioni relative ad un gruppo di clienti, che non non verrano aggiornate frequentemente e gli aquisti che hanno effettuato tali clienti.\\
