@@ -554,6 +554,24 @@ Se lo schema lo richiede è possibile importare anche timestamp secondari.
 È possibile fare in modo che \textbf{Druid} deduca lo schema e i tipi per i tuoi dati parzialmente o completamente impostando. \\
 Nella deduzione del tipo \textbf{Druid} sceglie il tipo nativo più appropiato.\\
 Per le colonne di tipo misto vengono archiviate nel tipo meno restrittivo che può rappresentare tutti i valori nella colonna.
+\subsection{Data rollup}
+Al momento dell'acquisizione dei dati \textbf{Apache Druid} può eseguire operazioni di raggrupamento sui dati per ridurre la quantità di dati grezzi da archiviare. \\
+Da questo punto di vista il \textbf{rollup} non è altro che una forma di riepilogo e preaggregamento dei dati finalizzato a ridurre lìordine di grandezza delle righe da archiviare.\\
+Il \textbf{rollup} se da un lato porta una riduzione drastica degli eventi da analizzare, dall'altro non permette più di interrogare i singoli eventi.\\
+Al momento dell'\textbf{injection} il \textbf{rollup} è abilitato di default: \textbf{Apache Druid} raggrupa in automatico gli eventi caratterizzati da stesso valore di \textbf{timestamp} e stesso valore per le \textbf{Dimension}. \\
+Se il \textbf{rollup} è disabilitato, \textbf{Apache Druid} caricherà gli eventi così come sono stati generati.senza alcun riepilogo.
+\subsubsection{Casi d'uso}
+È convenienete andare ad utilizzare il \textbf{rollup} se si desiderano prestazioni ottimali e vicoli di spazio rigorosi o quando non si ha necessità di avere a disposizione dati grezzi con alta cadrdianlità. \\
+Mentre se si ha bisogno di risultati per righe, l'utilizzo del \textbf{rollup} non è la scelta più adatta; è necessario in quel caso efettuare delle operazionui di \textbf{GROUP BY} a query time.
+\\
+In ogni caso, per soddisfare entrambi i casi d'uso appena citati è possibile andare a configurare 2 datasource: uno con \textbf{rollup} attivo, con il riepilogo degli eventi generati, e uno con \textbf{rollup} disabilitato contenente tutti i dati grezzi.
+\subsubsection{Tipi di rollup}
+A seconda del metodo di importazione, \textbf{Apache Druid} presenta due metodi differenti di \textbf{rollup}.
+\begin{itemize}
+    \item rollup perfetto: \textbf{APache Druid} aggrega perefettamenete i dati a injection time;
+    \item Best-effort rollup: \textbf{Apache Druid} potrebbe non riuscire ad aggregare perfettamente di input pertanto si potrebbe verificare che più segmenti dati contengano dati con stesso timestamp e stesso valore di Dimension.
+\end{itemize}
+
 \subsection{Lookups}
 In \textbf{Apache Druid} le \textbf{lookups} non sono altro che un modo per sostituire i valori dei \textbf{datasources} con delle chiavi senza dover effettivamente modificare i \textbf{datasources}. \\
 Un possibile esempio è la necessità di dover archiviare tutte le informazioni relative ad un gruppo di clienti, che non non verrano aggiornate frequentemente e gli aquisti che hanno effettuato tali clienti.\\
@@ -1287,5 +1305,5 @@ Dalla seguente sperimentazione si evince una chiara superiorità di \textbf{Apac
 \bibliography{https://Kafka.apache.org/documentation/}
 \bibliography{https://ably.com/topic/pub-sub#the-pub-sub-model-explained}
 \bibliography{https://kafka.apache.org/quickstart}
-
+\bibliography{https://druid.apache.org/docs/latest/ingestion/rollup.html}
 \end{document}
