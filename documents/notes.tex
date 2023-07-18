@@ -1166,7 +1166,7 @@ email text, telefono text, eta int, altezza decimal(5,2), peso decimal(5,2), red
 datan date, professione text, istruzione text, hobby text, nfigli int, codice_cliente int, datareg timestamp,__time timestamp);
     
 \end{lstlisting}
-Utilizzando i seguenti parametri di configurazione per \textbf{Apache Druid}
+Utilizzando i seguenti parametri di configurazione per \textbf{Apache Druid} senza l'utilizzo della cache
 \begin{enumerate}
     \item granularity segment per day ;
     \item 800000 Max rows in memory.
@@ -1296,12 +1296,12 @@ print("End")
 \centering
  & \centering Apache Druid [s] & \centering PostgreSQL [s] \\\hline 
   \centering
-  query1 &  \centering  0.2 & \centering 1.2 \\ \hline
+  query1 &  \centering  0.6 & \centering 1.2 \\ \hline
   \centering
-  query2 &  \centering 0.1 &  \centering 1.9 \\ \hline 
+  query2 &  \centering 0.2 &  \centering 1.9 \\ \hline 
   \centering
-  query3 & \centering 0.4 & \centering 2 \\ \hline
-  \centering  query4 & \centering 0.2 & \centering 1.1 \\ \hline
+  query3 & \centering 0.6 & \centering 2 \\ \hline
+  \centering  query4 & \centering 0.6 & \centering 1.1 \\ \hline
   \end{tblr}
 \end{center}
 \subsubsection{Conclusioni}
