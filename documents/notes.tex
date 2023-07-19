@@ -578,28 +578,32 @@ Mentre i metodi che garantiscono il \textbf{Best-effort rollup} lo fanno per i s
     \item la parallelizzazione dell'inserimento avviene senza un passaggio di mescolamento necessario per il \textbf{rollup} perfetto;
     \item Il metodo di importazione utilizza la pubblicazione incrementale , il che significa che finalizza e pubblica i segmenti prima che tutti i dati per un blocco temporale siano stati ricevuti, tutti i tipi di importazione di streaming vengono eseguiti in questa modalità.
 \end{itemize}
-\subsection{Lookups}
-In \textbf{Apache Druid} le \textbf{lookups} non sono altro che un modo per sostituire i valori dei \textbf{datasources} con delle chiavi senza dover effettivamente modificare i \textbf{datasources}. \\
-Un possibile esempio è la necessità di dover archiviare tutte le informazioni relative ad un gruppo di clienti, che non non verrano aggiornate frequentemente e gli aquisti che hanno effettuato tali clienti.\\
-È facile capire che per ottimizzare la ricerca su tale modle di dati basta sostituire le informazioni di un clienti con un \textbf{ID}.\\ In questo modo le ricerche vengono ottimizzate, mentre per quanto riguarda gli aggiornamenti basta andare a modificare i dati degli utenti nel record di referenza con l'\textbf{ID} assegnato.
-\subsubsection{Esecuzione di query con Lookups}
-In \textbf{Apache Druid} le operazioni di ricerca con si effettuano con la funzione $LOOKUP$.
+\subsection{Le lookups}
+In \textbf{Apache Druid} le \textbf{lookup} sono una funzionalità che consentono di sostituire i valori delle \textbf{Dimension} con nuovi valori. Tale cocetto può essere paragonato alla unione di tabelle in un \textbf{data warehouse}.\\
+Le tabelle di \textbf{lookup} sono costituite da un campo \textbf{chiave} a cui viene associato un campo \textbf{valore} che andrà a sostituire la chiave.\\
+Le tabelle di \textbf{lookup} non hanno cronologia e lavorano indipendentemente dall'intervallo di tempo. su cui si esegue la query: restituiscono sempre il dato corrente.
+\subsubsection{Sintassi SQL di query con l'utilizzo delle tabelle di lookup}
+In \textbf{Apache Druid} le tabelle di \textbf{lookup} possono essere utilizzate attraverso funzione\\ $LOOKUP(keys,lookup\_table\_name)$.
 \begin{lstlisting}[language=SQL,showstringspaces=false,]
-SELECT LOOKUP(customer, 'Carlo Albero dalla Chiesa'), 
-SUM(cost)
+SELECT LOOKUP(store, 'store_to_country') AS country, SUM(revenue)
 FROM sales
 GROUP BY 1
 \end{lstlisting}
-In generale le \textbf{lookups} possono essere in genere di due tipi: iniettive e non iniettive. \\
-Nel primo tipo rietrano tutti i casi d'uso legati alla mappatura tra codice del paese e nome del paese; mentre nel secondo caso rientrano la mappatura tra codice del paese e lingua parlata.\\
-Nel caso di \textbf{lookups} iniettive si ha una mappatura di tutte le chiavi a valori univoci.\\
-Nel momento in cui si utilizzano le \textbf{lookups} bisogna tenere in considerazione che queste ultime non hanno memoria e restituiranno sempre il dato attuale indipendentemente dall'intervallod i tempo.\\
-Inoltre nel momento in cui si creano \textbf{lookups} iniettive \textbf{Apache Druid} è in grado di applicare ulteriori ottimizzazioni nella esecuzione delle query.
-\\Tale fatto deve essere tenuto in considerazione nel caso di aggregazioni, in quanto, nel caso in cui chiavi diverse puntino allo stesso valore (\textbf{lookups} non iniettiva), nel risultato di una query comparirano due valori che avrebbero dovuto essere aggregati.\\
-Ad ogni modo è consigliato effetuare tale operazione se possibile a pre-injection.
+Le tabelle di \textbf{lookup} consentendo le operazione di tipo join.
+\begin{lstlisting}[language=SQL,showstringspaces=false,]
+SELECT store_to_country.v AS country, SUM(sales.revenue) AS country_revenue
+FROM sales INNER JOIN lookup.store_to_country ON sales.store = store_to_country.k
+GROUP BY 1
+\end{lstlisting}
+\subsubsection{Tipi di lookup}
+In generale le tabelle di \textbf{lookup} possono essere di due tipi: iniettive e non iniettive. \\
+Nel primo tipo rietrano tutti i casi d'uso legati alla mappatura univoca tra chiave e valore; mentre nel secondo caso rientrano tutte le mappature nelle quali più chiavi riferiscono lo stesso valore.\\
+Nel momento in cui si creano tabelle di \textbf{lookup} iniettive \textbf{Apache Druid} è in grado di applicare ulteriori ottimizzazioni nella esecuzione delle query.
+\\Tale fatto deve essere tenuto in considerazione nel caso di aggregazioni, in quanto, nel caso in cui chiavi diverse puntino allo stesso valore (tabella di \textbf{lookup} non iniettiva), nel risultato di una query comparirano due valori che avrebbero dovuto essere aggregati.\\
 \subsubsection{Casi d'uso}
-Un semplice caso d'uso per le tabelle di \textbf{Lookup} è la risoluzione del problema degli aggiornamenti. In questo caso ogni aggiornamento di stato viene visto come un nuovo evento e viene aggiunto al \textbf{datasource} originale.\\
-Per estrarre sempre il dato più recente si utilizza una \textbf{lookup} iniettiva che mappa ogni chiave con il valore dell'attributo richiesto più recente.
+Le tabelle di \textbf{lookup} sono particolarmente utili nei processi di \textbf{Data enrichment}.\\
+Inoltre posssono andare a risolvere anche essere una possibile soluzione al problema degli aggiornamenti. In questo caso ogni aggiornamento di stato viene visto come un nuovo evento e viene aggiunto al \textbf{datasource} originale.\\
+Per estrarre sempre il dato più recente si utilizza una \textbf{lookup} iniettiva che mappa ogni chiave con il valore dell'attributo richiesto. Essendo le tabelle di \textbf{lookup} indipendenti dagli intervalli temporali, verrà reatsituito il valore più recente. 
 \subsection{Confronto Apache Druid e PostgreSQL}
 Per andare ad eveidenziare pregi e diffetti di \textbf{Apache Druid} è stato scelto di confrontarlo con un database relazionale come \textbf{PostgreSQL}, nella esecuzione di query su un dataset di 1 milione di righe.\\
 Il test effettuato non usufruisce della cache.
