@@ -585,7 +585,7 @@ Un possibile esempio è la necessità di dover archiviare tutte le informazioni 
 \subsubsection{Esecuzione di query con Lookups}
 In \textbf{Apache Druid} le operazioni di ricerca con si effettuano con la funzione $LOOKUP$.
 \begin{lstlisting}[language=SQL,showstringspaces=false,]
-SELECT LOOKUP(customer, 'Carlo Albero dalla Chiesa') AS cliente, 
+SELECT LOOKUP(customer, 'Carlo Albero dalla Chiesa'), 
 SUM(cost)
 FROM sales
 GROUP BY 1
@@ -621,15 +621,15 @@ Lo schema logico del dataset è il seguente:
     query1: 
     SELECT * FROM transazione
     query2: 
-    SELECT DATA_TRUNC('MINUTE',__time) as '__time', cliente, prodotto,COUNT(*) 
+    SELECT DATA_TRUNC('MINUTE',__time), cliente, prodotto, COUNT(*) 
     FROM transazione 
     WHERE gradimento>3 
-    GROUP BY DATA_TRUNC('MINUTE',__time) as '__time', cliente, prodotto
+    GROUP BY DATA_TRUNC('MINUTE',__time), cliente, prodotto
     query3: 
-    SELECT DATA_TRUNC('HOUR',__time) as '__time', cliente, prodotto, gradimento 
+    SELECT DATA_TRUNC('HOUR',__time), cliente, prodotto, gradimento 
     FROM transazione 
     WHERE gradimento>3 
-    GROUP BY DATA_TRUNC('HOUR',__time) as '__time', cliente, prodotto, gradimento
+    GROUP BY DATA_TRUNC('HOUR',__time), cliente, prodotto, gradimento
 \end{lstlisting}
 \begin{center}
     \begin{tblr}{
@@ -761,7 +761,7 @@ Le note riportate si riferiscono ad un sistema operativo Linux dove è già stat
 
 \end{itemize}
 \pagebreak
-\subsection{Creazione di un generatore di dati ed efettui uan injection in Apache Druid tramite Apache Kafka}
+\subsection{Creazione di un generatore di dati ed effettui una injection in Apache Druid tramite Apache Kafka}
 Come prima operazione di è andati a creare un producer di eventi in python che simuli il cambiamento di stato di un parcheggio.
 \begin{lstlisting}[language=Python]
     from time import sleep  
@@ -1270,23 +1270,34 @@ print("End")
 
 \noindent Una volta effettuato l'\textbf{injection} di dati su entrambi i sistemi per misurare le performance si eseguiranno le seguenti query.
 \begin{lstlisting}
- - query 1: SELECT DATE_TRUNC('day', __time) as "Giorno", citta, COUNT(*) AS "Accessi"
+ - query 1: SELECT DATE_TRUNC('day', __time), citta, COUNT(*)
             FROM accessi
             GROUP BY DATE_TRUNC('day', __time), citta
       
-- query 2: SELECT stato, AVG(eta) AS "Media_eta", AVG(reddito) AS "Media_reddito"
+- query 2: SELECT stato, AVG(eta), AVG(reddito)
             FROM accessi
             GROUP BY stato
       
-- query 3: SELECT DATE_TRUNC('year', __time) as "Anno", stato, professione, istruzione, nfigli, COUNT(*)
+- query 3: SELECT DATE_TRUNC('year', __time), stato, professione, istruzione, nfigli, COUNT(*)
             FROM accessi
             WHERE nfigli> 0
             GROUP BY DATE_TRUNC('year', __time), stato, professione, istruzione, nfigli
             ORDER BY 5 DESC
       
-- query 4: SELECT DATE_TRUNC('hour',__time), citta,  AVG(eta) AS "Media Oraria"
+- query 4: SELECT DATE_TRUNC('hour',__time), citta,  AVG(eta)
             FROM accessi
-            GROUP BY DATE_TRUNC('hour', __time), citta               
+            GROUP BY DATE_TRUNC('hour', __time), citta  
+
+- query 5: SELECT DATE_TRUNC('year', __time), DATE_TRUNC('month', __time), DATE_TRUNC('day', __time), stato, professione, istruzione, nfigli, COUNT(*) 
+        FROM accessi
+        GROUP BY DATE_TRUNC('year', __time), DATE_TRUNC('month', __time), DATE_TRUNC('day', __time), stato, professione, istruzione, nfigli
+        ORDER BY 5 DESC
+
+- query 6: SELECT DATE_TRUNC('year', __time), DATE_TRUNC('month', __time), DATE_TRUNC('day', __time), 
+    DATE_TRUNC('hour', __time), stato, professione, istruzione, nfigli, COUNT(*) 
+            FROM accessi
+            GROUP BY DATE_TRUNC('year', __time), DATE_TRUNC('month', __time), DATE_TRUNC('day', __time), DATE_TRUNC('hour', __time), stato, professione, istruzione, nfigli
+            ORDER BY 5 DESC           
 \end{lstlisting}
 \begin{center}
     \begin{tblr}{
@@ -1303,6 +1314,8 @@ print("End")
   \centering
   query3 & \centering 0.6 & \centering 2 \\ \hline
   \centering  query4 & \centering 0.6 & \centering 1.1 \\ \hline
+  \centering  query5 & \centering  & \centering  \\ \hline
+  \centering  query6 & \centering  & \centering  \\ \hline
   \end{tblr}
 \end{center}
 \subsubsection{Conclusioni}
