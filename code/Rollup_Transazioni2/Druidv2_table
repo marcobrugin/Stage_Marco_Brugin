@@ -15,30 +15,30 @@ con roll up su hour
 - query 1: SELECT DATE_TRUNC('day', __time) as "Giorno", citta, COUNT(*) AS "Accessi"
            FROM accessi
            GROUP BY DATE_TRUNC('day', __time), citta
-DRUID: 0.2s            POSTGRES:1.2s
+DRUID_rollup:  Druid_no_rollup:           POSTGRES:
 - query 2: SELECT stato, AVG(eta) AS "Media_eta", AVG(reddito) AS "Media_reddito"
            FROM accessi
            GROUP BY stato
-DRUID:0.1s             POSTGRES:0.9s
+DRUID:             POSTGRES:
 - query 3: SELECT DATE_TRUNC('year', __time) as "Anno", stato, professione, istruzione, nfigli, COUNT(*)
            FROM accessi
            WHERE nfigli> 0
            GROUP BY DATE_TRUNC('year', __time), stato, professione, istruzione, nfigli
            ORDER BY 5 DESC
-DRUID:0.4s             POSTGRES:2s
+DRUID_rollup:   Druid_no_rollup:             POSTGRES:
 
 - query 4: SELECT DATE_TRUNC('hour',__time), citta,  AVG(eta) AS "Media Oraria"
            FROM accessi
            GROUP BY DATE_TRUNC('hour', __time), citta          
 
-DRUID:0.2s             POSTGRES:1.1s
+DRUID_rollup:  Druid_no_rollup:             POSTGRES:
 
 - query 5: SELECT DATE_TRUNC('year', __time), DATE_TRUNC('month', __time), DATE_TRUNC('day', __time), stato, professione, istruzione, nfigli, COUNT(*) 
         FROM accessi
         GROUP BY DATE_TRUNC('year', __time), DATE_TRUNC('month', __time), DATE_TRUNC('day', __time), stato, professione, istruzione, nfigli
         ORDER BY 5 DESC
 
-DRUID: 1.05 s          POSTGRES: 2.8 s
+DRUID_rollup:  Druid_no_rollup:          POSTGRES: 
 
 - query 6: SELECT DATE_TRUNC('year', __time), DATE_TRUNC('month', __time), DATE_TRUNC('day', __time), 
     DATE_TRUNC('hour', __time), stato, professione, istruzione, nfigli, COUNT(*) 
@@ -46,4 +46,4 @@ DRUID: 1.05 s          POSTGRES: 2.8 s
             GROUP BY DATE_TRUNC('year', __time), DATE_TRUNC('month', __time), DATE_TRUNC('day', __time), DATE_TRUNC('hour', __time), stato, professione, istruzione, nfigli
             ORDER BY 5 DESC
 
-DRUID:1.30 s             POSTGRES:3.3 s 
+DRUID_rollup:  Druid_no_rollup:              POSTGRES:
