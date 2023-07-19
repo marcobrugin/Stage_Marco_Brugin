@@ -1,0 +1,49 @@
+CREATE TABLE accessi( nome text, cognome text, indirizzo text, citta text, stato text, cap int, 
+email text, telefono text, eta int, altezza decimal(5,2), peso decimal(5,2), reddito decimal(6,2), 
+datan date, professione text, istruzione text, hobby text, nfigli int, codice_cliente int, datareg timestamp,__time timestamp);
+COPY accessi(nome, cognome, indirizzo, citta, stato, cap, 
+email, telefono, eta, altezza, peso, reddito, 
+datan, professione, istruzione, hobby, nfigli, codice_cliente, datareg, __time)
+From '/data.csv'
+Delimiter ','
+csv header;
+5000000 records
+segment raggrupati per day 
+Max rows in memory a 800000
+con roll up su hour 
+
+- query 1: SELECT DATE_TRUNC('day', __time) as "Giorno", citta, COUNT(*) AS "Accessi"
+           FROM accessi
+           GROUP BY DATE_TRUNC('day', __time), citta
+DRUID: 0.2s            POSTGRES:1.2s
+- query 2: SELECT stato, AVG(eta) AS "Media_eta", AVG(reddito) AS "Media_reddito"
+           FROM accessi
+           GROUP BY stato
+DRUID:0.1s             POSTGRES:0.9s
+- query 3: SELECT DATE_TRUNC('year', __time) as "Anno", stato, professione, istruzione, nfigli, COUNT(*)
+           FROM accessi
+           WHERE nfigli> 0
+           GROUP BY DATE_TRUNC('year', __time), stato, professione, istruzione, nfigli
+           ORDER BY 5 DESC
+DRUID:0.4s             POSTGRES:2s
+
+- query 4: SELECT DATE_TRUNC('hour',__time), citta,  AVG(eta) AS "Media Oraria"
+           FROM accessi
+           GROUP BY DATE_TRUNC('hour', __time), citta          
+
+DRUID:0.2s             POSTGRES:1.1s
+
+- query 5: SELECT DATE_TRUNC('year', __time), DATE_TRUNC('month', __time), DATE_TRUNC('day', __time), stato, professione, istruzione, nfigli, COUNT(*) 
+        FROM accessi
+        GROUP BY DATE_TRUNC('year', __time), DATE_TRUNC('month', __time), DATE_TRUNC('day', __time), stato, professione, istruzione, nfigli
+        ORDER BY 5 DESC
+
+DRUID: 1.05 s          POSTGRES: 2.8 s
+
+- query 6: SELECT DATE_TRUNC('year', __time), DATE_TRUNC('month', __time), DATE_TRUNC('day', __time), 
+    DATE_TRUNC('hour', __time), stato, professione, istruzione, nfigli, COUNT(*) 
+            FROM accessi
+            GROUP BY DATE_TRUNC('year', __time), DATE_TRUNC('month', __time), DATE_TRUNC('day', __time), DATE_TRUNC('hour', __time), stato, professione, istruzione, nfigli
+            ORDER BY 5 DESC
+
+DRUID:1.30 s             POSTGRES:3.3 s 
