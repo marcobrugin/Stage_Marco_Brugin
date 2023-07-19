@@ -599,14 +599,14 @@ GROUP BY 1
 In generale le tabelle di \textbf{lookup} possono essere di due tipi: iniettive e non iniettive. \\
 Nel primo tipo rietrano tutti i casi d'uso legati alla mappatura univoca tra chiave e valore; mentre nel secondo caso rientrano tutte le mappature nelle quali più chiavi riferiscono lo stesso valore.\\
 Nel momento in cui si creano tabelle di \textbf{lookup} iniettive \textbf{Apache Druid} è in grado di applicare ulteriori ottimizzazioni nella esecuzione delle query.
-\\Tale fatto deve essere tenuto in considerazione nel caso di aggregazioni, in quanto, nel caso in cui chiavi diverse puntino allo stesso valore (tabella di \textbf{lookup} non iniettiva), nel risultato di una query comparirano due valori che avrebbero dovuto essere aggregati.\\
+\\Tale fatto deve essere tenuto in considerazione nel caso di aggregazioni, in quanto, nel caso in cui chiavi diverse puntino allo stesso valore (tabella di \textbf{lookup} non iniettiva), nel risultato di una query comparirano due valori che avrebbero dovuto essere aggregati.
 \subsubsection{Casi d'uso}
 Le tabelle di \textbf{lookup} sono particolarmente utili nei processi di \textbf{Data enrichment}.\\
 Inoltre posssono andare a risolvere anche essere una possibile soluzione al problema degli aggiornamenti. In questo caso ogni aggiornamento di stato viene visto come un nuovo evento e viene aggiunto al \textbf{datasource} originale.\\
 Per estrarre sempre il dato più recente si utilizza una \textbf{lookup} iniettiva che mappa ogni chiave con il valore dell'attributo richiesto. Essendo le tabelle di \textbf{lookup} indipendenti dagli intervalli temporali, verrà reatsituito il valore più recente. 
 \subsection{Confronto Apache Druid e PostgreSQL}
 Per andare ad eveidenziare pregi e diffetti di \textbf{Apache Druid} è stato scelto di confrontarlo con un database relazionale come \textbf{PostgreSQL}, nella esecuzione di query su un dataset di 1 milione di righe.\\
-Il test effettuato non usufruisce della cache.
+Il test effettuato non usufruisce della cache.\\
 Lo schema logico del dataset è il seguente:
 \begin{lstlisting}[language=SQL]
     CREATE TABLE transazione
@@ -765,8 +765,8 @@ Le note riportate si riferiscono ad un sistema operativo Linux dove è già stat
 
 \end{itemize}
 \pagebreak
-\subsection{Creazione di un generatore di dati ed effettui una injection in Apache Druid tramite Apache Kafka}
-Come prima operazione di è andati a creare un producer di eventi in python che simuli il cambiamento di stato di un parcheggio.
+\subsection{Creazione di un generatore e consumatore di eventi in python con Apache Kafka}
+Come prima operazione di è andati a creare un producer di eventi in python che simuli il cambiamento di stato di un valore.
 \begin{lstlisting}[language=Python]
     from time import sleep  
     from json import dumps  
@@ -793,6 +793,93 @@ Come prima operazione di è andati a creare un producer di eventi in python che 
 \begin{itemize}
     \item Come prima operazione abbiamo mandato in esecuzione il kluster di nodi \textbf{Apache Kafka} formato da 1 nodo \textbf{Zookeeper} e 3 nodi \textbf{Broker} (Kafka1, Kafka2, Kafka3).
 \end{itemize}
+\begin{lstlisting}
+  networks:
+    kafka-druid:
+      name: kafka-druid
+      driver: bridge
+      external: true
+
+services:
+  zoo1:
+    image: confluentinc/cp-zookeeper:7.3.2
+    hostname: zoo1
+    networks: 
+      - kafka-druid 
+    container_name: zoo1
+    ports:
+      - "2182:2181"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_SERVER_ID: 1
+      ZOOKEEPER_SERVERS: zoo1:2888:3888
+
+
+  kafka1:
+    image: confluentinc/cp-kafka:7.3.2
+    hostname: kafka1
+    networks: 
+      - kafka-druid
+    container_name: kafka1
+    ports:
+      - "9092:9092"
+      - "29092:29092"
+    environment:
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka1:19092,EXTERNAL://${DOCKER_HOST_IP:-127.0.0.1}:9092,DOCKER://host.docker.internal:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT,DOCKER:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+      KAFKA_ZOOKEEPER_CONNECT: "zoo1:2181"
+      KAFKA_BROKER_ID: 1
+      KAFKA_LOG4J_LOGGERS: "kafka.controller=INFO,kafka.producer.async.DefaultEventHandler=INFO,state.change.logger=INFO"
+      KAFKA_AUTHORIZER_CLASS_NAME: kafka.security.authorizer.AclAuthorizer
+      KAFKA_ALLOW_EVERYONE_IF_NO_ACL_FOUND: "true"
+    depends_on:
+      - zoo1
+
+  kafka2:
+    image: confluentinc/cp-kafka:7.3.2
+    hostname: kafka2
+    networks: 
+      - kafka-druid
+    container_name: kafka2
+    ports:
+      - "9093:9093"
+      - "29093:29093"
+    environment:
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka2:19093,EXTERNAL://${DOCKER_HOST_IP:-127.0.0.1}:9093,DOCKER://host.docker.internal:29093
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT,DOCKER:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+      KAFKA_ZOOKEEPER_CONNECT: "zoo1:2181"
+      KAFKA_BROKER_ID: 2
+      KAFKA_LOG4J_LOGGERS: "kafka.controller=INFO,kafka.producer.async.DefaultEventHandler=INFO,state.change.logger=INFO"
+      KAFKA_AUTHORIZER_CLASS_NAME: kafka.security.authorizer.AclAuthorizer
+      KAFKA_ALLOW_EVERYONE_IF_NO_ACL_FOUND: "true"
+    depends_on:
+      - zoo1
+
+
+  kafka3:
+    image: confluentinc/cp-kafka:7.3.2
+    hostname: kafka3
+    networks: 
+      - kafka-druid
+    container_name: kafka3
+    ports:
+      - "9094:9094"
+      - "29094:29094"
+    environment:
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka3:19094,EXTERNAL://${DOCKER_HOST_IP:-127.0.0.1}:9094,DOCKER://host.docker.internal:29094
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT,DOCKER:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+      KAFKA_ZOOKEEPER_CONNECT: "zoo1:2181"
+      KAFKA_BROKER_ID: 3
+      KAFKA_LOG4J_LOGGERS: "kafka.controller=INFO,kafka.producer.async.DefaultEventHandler=INFO,state.change.logger=INFO"
+      KAFKA_AUTHORIZER_CLASS_NAME: kafka.security.authorizer.AclAuthorizer
+      KAFKA_ALLOW_EVERYONE_IF_NO_ACL_FOUND: "true"
+    depends_on:
+      - zoo1
+
+\end{lstlisting}
 \begin{figure}[h]
     \centering
     \includegraphics[scale=0.5]{images/kluster_producer.png}
@@ -800,7 +887,37 @@ Come prima operazione di è andati a creare un producer di eventi in python che 
     \label{fig:my_label}
 \end{figure}
 Dopo di che si è andati a creare un topic in \textbf{Apache Kafka} chiamato \textbf{druid} e si è andati ad eseguire il producer appena creato.
-\\In seguito siamo andati ad eseguire l'injection dei dati in \textbf{Apache Druid} utilizzando la gui fornita da \textbf{Apache Druid}.
+\begin{lstlisting}
+  sudo docker exec kafka1 kafka-topics --bootstrap-server kafka1:9092 --create --topic druid
+\end{lstlisting}
+\pagebreak
+\begin{itemize}
+    \item Dopo di che siamo andati a creare un consumatore di eventi in python in grado di consumare gli eventi provenienti dal quel topic.
+\end{itemize}
+\begin{lstlisting}[language=Python]
+from json import loads  
+from kafka import KafkaConsumer  
+import json
+
+consumer = KafkaConsumer(  
+    'druid',  
+     bootstrap_servers = ['kafka1:9092', 'kafka2:9093','kafka3:9094'],  
+     auto_offset_reset = 'earliest',  
+     enable_auto_commit = True,  
+     group_id = 'my-group',  
+     value_deserializer = lambda x : json.loads(x.decode('utf-8'))  
+     )  
+for message in consumer:  
+    message = message.value  
+    print(message)      
+\end{lstlisting}
+\begin{itemize}
+  \item Dopo di che per eseguire il producer e il consumatore si è andati ad utilizzare i seguenti comandi su due terminali distinti
+\end{itemize}
+\begin{lstlisting}
+  python3 producer.py
+  python3 consumer.py
+\end{lstlisting}
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.5]{images/consumer.png}
@@ -1323,7 +1440,7 @@ print("End")
   \end{tblr}
 \end{center}
 \subsubsection{Conclusioni}
-Dalla seguente sperimentazione si evince una chiara superiorità di \textbf{Apache Druid} di un ordine di grandezza su un comune database relazione come \textbf{PostgreSQL}, in particolare nell'esecuzione di query che coninvolgono raggrupamenti, anche su intervalli temporali (ora, giorno, anno).
+Dalla seguente sperimentazione si evince una chiara superiorità di \textbf{Apache Druid} di un ordine di grandezza su un comune database relazione come \textbf{PostgreSQL}, in particolare nell'esecuzione di query che coninvolgono raggrupamenti, anche su intervalli temporali (ora, giorno, mese, anno).
 \bibliographystyle{IEEEtran}
 \bibliography{https://Kafka.apache.org/documentation/}
 \bibliography{https://ably.com/topic/pub-sub#the-pub-sub-model-explained}
