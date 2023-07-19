@@ -38,7 +38,7 @@ DRUID:0.2s             POSTGRES:1.1s
         GROUP BY DATE_TRUNC('year', __time), DATE_TRUNC('month', __time), DATE_TRUNC('day', __time), stato, professione, istruzione, nfigli
         ORDER BY 5 DESC
 
-DRUID:           POSTGRES:
+DRUID: 1.05 s          POSTGRES: 2.8 s
 
 - query 6: SELECT DATE_TRUNC('year', __time), DATE_TRUNC('month', __time), DATE_TRUNC('day', __time), 
     DATE_TRUNC('hour', __time), stato, professione, istruzione, nfigli, COUNT(*) 
@@ -46,4 +46,4 @@ DRUID:           POSTGRES:
             GROUP BY DATE_TRUNC('year', __time), DATE_TRUNC('month', __time), DATE_TRUNC('day', __time), DATE_TRUNC('hour', __time), stato, professione, istruzione, nfigli
             ORDER BY 5 DESC
 
-DRUID:              POSTGRES:
+DRUID:1.30 s             POSTGRES:3.3 s 
