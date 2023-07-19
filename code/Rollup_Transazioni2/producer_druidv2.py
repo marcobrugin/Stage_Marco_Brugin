@@ -11,42 +11,42 @@ producer = KafkaProducer(
     )  
 print("Connect succefully") 
 fake = Faker()
-max=random.randint(2,5)
+max=random.randint(2,4)
 nomi= [fake.first_name() for _ in range(max)]
-max=random.randint(2,5)
+max=random.randint(2,4)
 cognomi= [fake.last_name() for _ in range(max)]
-max=random.randint(2,5)
+max=random.randint(2,4)
 indirizzi= [fake.address() for _ in range(max)]
 #la libreria faker genera indirizzi con \n, che vanno sostituiti con uno spazio
 for i in range(len(indirizzi)):
     indirizzi[i]=indirizzi[i].replace('\n', ' ')
-max=random.randint(2,7)
+max=random.randint(2,4)
 _citta=[fake.city() for _ in range(max)]
-max=random.randint(2,7)
+max=random.randint(2,4)
 stati=[fake.country() for _ in range(max)]
-max=random.randint(2,7)
+max=random.randint(2,4)
 _cap=[fake.zipcode() for _ in range(max)]
-max=random.randint(2,7)
+max=random.randint(2,4)
 _email=[fake.email() for _ in range(max)]
-max=random.randint(2,7)
+max=random.randint(2,4)
 telefoni=[fake.phone_number() for _ in range(max)]
-max=random.randint(2,7)
+max=random.randint(2,4)
 _eta= [random.randint(18, 89) for _ in range(max)]
-max=random.randint(2,7)
+max=random.randint(2,4)
 altezze= [round(random.uniform(120, 210), 2) for _ in range(max)]
-max=random.randint(2,7)
+max=random.randint(2,4)
 pesi= [round(random.uniform(30, 180), 2) for _ in range(max)]
-max=random.randint(2,7)
+max=random.randint(2,4)
 redditi= [round(random.uniform(1000, 10000), 2) for _ in range(max)]
-max=random.randint(2,7)
+max=random.randint(2,4)
 daten= [fake.date_of_birth(minimum_age=18, maximum_age=89).strftime("%Y-%m-%d") for _ in range(max)]
-max=random.randint(2,7)
+max=random.randint(2,4)
 professioni= [fake.job() for _ in range(max)]
-max=random.randint(2,7)
+max=random.randint(2,4)
 _nfigli= [random.randint(0, 5) for _ in range(max)]
-max=random.randint(2,7)
+max=random.randint(2,4)
 codici_cliente=[fake.random_number(digits=6) for _ in range(max)]
-max=random.randint(2,7)
+max=random.randint(2,4)
 datereg= [fake.date_time_between(start_date="-1y", end_date="now").strftime("%Y-%m-%d %H:%M:%S") for _ in range(max)]
 volume=[]
 for n in range(500):
