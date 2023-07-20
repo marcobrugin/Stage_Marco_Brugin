@@ -30,7 +30,7 @@ max_ni=random.randint(2,4)
 max_co=random.randint(2,4)
 max_dg=random.randint(2,4)
 volume=[]
-for n in range(500):
+for n in range(50):
     nomi= [fake.first_name() for _ in range(max_n)]
     cognomi= [fake.last_name() for _ in range(max_c)]
     indirizzi= [fake.address() for _ in range(max_i)]
@@ -50,7 +50,7 @@ for n in range(500):
     _nfigli= [random.randint(0, 5) for _ in range(max_ni)]
     codici_cliente=[fake.random_number(digits=6) for _ in range(max_co)]
     datereg= [fake.date_time_between(start_date="-1y", end_date="now").strftime("%Y-%m-%d %H:%M:%S") for _ in range(max_dg)]
-    for j in range(10000):
+    for j in range(100000):
         nome= random.choice(nomi)
         cognome= random.choice(cognomi)
         indirizzo= random.choice(indirizzi)
