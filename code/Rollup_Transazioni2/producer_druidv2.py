@@ -16,18 +16,9 @@ max_i=random.randint(4,10)
 #la libreria faker genera indirizzi con \n, che vanno sostituiti con uno spazio
 max_ci=random.randint(4,10)
 max_s=random.randint(4,10)
-max_ca=random.randint(4,10)
-max_e=random.randint(4,10)
-max_t=random.randint(4,10)
-max_et=random.randint(4,10)
-max_a=random.randint(4,10)
-max_p=random.randint(4,10)
 max_r=random.randint(4,10)
 max_d=random.randint(4,10)
-max_pr=random.randint(4,10)
-max_ni=random.randint(4,10)
-max_co=random.randint(4,10)
-max_dg=random.randint(4,10)
+
 volume=[]
 for n in range(50):
    nomi= [fake.first_name() for _ in range(max_n)]
