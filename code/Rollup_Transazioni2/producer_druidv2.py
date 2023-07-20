@@ -49,45 +49,29 @@ max_dg=random.randint(2,4)
 
 volume=[]
 for n in range(500):
-    nomi= [fake.first_name() for _ in range(max_n)]
-    cognomi= [fake.last_name() for _ in range(max_c)]
-    indirizzi= [fake.address() for _ in range(max_i)]
-    for i in range(len(indirizzi)):
-        indirizzi[i]=indirizzi[i].replace('\n', ' ')
-    _citta=[fake.city() for _ in range(max_ci)]
-    stati=[fake.country() for _ in range(max_s)]
-    _cap=[fake.zipcode() for _ in range(max_ca)]
-    _email=[fake.email() for _ in range(max_e)]
-    telefoni=[fake.phone_number() for _ in range(max_t)]
-    _eta= [random.randint(18, 89) for _ in range(max_et)]
-    altezze= [round(random.uniform(120, 210), 2) for _ in range(max_a)]
-    pesi= [round(random.uniform(30, 180), 2) for _ in range(max_p)]
-    redditi= [round(random.uniform(1000, 10000), 2) for _ in range(max_r)]
-    daten= [fake.date_of_birth(minimum_age=18, maximum_age=89).strftime("%Y-%m-%d") for _ in range(max_d)]
-    professioni= [fake.job() for _ in range(max_pr)]
-    _nfigli= [random.randint(0, 5) for _ in range(max_ni)]
-    codici_cliente=[fake.random_number(digits=6) for _ in range(max_co)]
-    datereg= [fake.date_time_between(start_date="-1y", end_date="now").strftime("%Y-%m-%d %H:%M:%S") for _ in range(max_dg)]
     for j in range(10000):
-        nome= random.choice(nomi)
-        cognome= random.choice(cognomi)
+        nome= random.choice([fake.first_name() for _ in range(max_n)])
+        cognome= random.choice([fake.last_name() for _ in range(max_c)])
+        indirizzi= [fake.address() for _ in range(max_i)]
+        for i in range(len(indirizzi)):
+            indirizzi[i]=indirizzi[i].replace('\n', ' ')
         indirizzo= random.choice(indirizzi)
-        citta= random.choice(_citta)
-        stato= random.choice(stati)
-        cap= random.choice(_cap)
-        email= random.choice(_email)
-        telefono= random.choice(telefoni)
-        eta= random.choice(_eta)
-        altezza= random.choice(altezze)
-        peso= random.choice(pesi)
-        reddito= random.choice(redditi)
-        datan= random.choice(daten)
-        professione= random.choice(professioni)
+        citta= random.choice([fake.city() for _ in range(max_ci)])
+        stato= random.choice([fake.country() for _ in range(max_s)])
+        cap= random.choice([fake.zipcode() for _ in range(max_ca)])
+        email= random.choice([fake.email() for _ in range(max_e)])
+        telefono= random.choice([fake.phone_number() for _ in range(max_t)])
+        eta= random.choice([random.randint(18, 89) for _ in range(max_et)])
+        altezza= random.choice([round(random.uniform(120, 210), 2) for _ in range(max_a)])
+        peso= random.choice([round(random.uniform(30, 180), 2) for _ in range(max_p)])
+        reddito= random.choice([round(random.uniform(1000, 10000), 2) for _ in range(max_r)])
+        datan= random.choice([fake.date_of_birth(minimum_age=18, maximum_age=89).strftime("%Y-%m-%d") for _ in range(max_d)])
+        professione= random.choice([fake.job() for _ in range(max_pr)])
         istruzione= fake.random_element(elements=("Scuola Secondaria", "Laurea triennale", "Laurea Magistrale", "Dottorato"))
         hobby= fake.random_element(elements=("Leggere","Viaggiare","Giocare a calcio","Giocare ai videogiochi","Fare sport"))
-        nfigli= random.choice(_nfigli)
-        codice_cliente= random.choice(codici_cliente)
-        datareg= random.choice(datereg)
+        nfigli= random.choice([random.randint(0, 5) for _ in range(max_ni)])
+        codice_cliente= random.choice([fake.random_number(digits=6) for _ in range(max_co)])
+        datareg= random.choice([fake.date_time_between(start_date="-1y", end_date="now").strftime("%Y-%m-%d %H:%M:%S") for _ in range(max_dg)])
         accesso= datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         my_data = {"Accesso": accesso, "nome": nome, "cognome": cognome, "indirizzo": indirizzo, "citta": citta, "stato": stato, "cap": cap,
         "email": email, "telefono": telefono, "eta": eta, "altezza": altezza, "peso": peso,
