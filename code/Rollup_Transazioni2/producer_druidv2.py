@@ -12,41 +12,23 @@ producer = KafkaProducer(
 print("Connect succefully") 
 fake = Faker()
 max_n=random.randint(2,4)
-
 max_c=random.randint(2,4)
-
 max_i=random.randint(2,4)
-
 #la libreria faker genera indirizzi con \n, che vanno sostituiti con uno spazio
-
 max_ci=random.randint(2,4)
-
 max_s=random.randint(2,4)
-
 max_ca=random.randint(2,4)
-
 max_e=random.randint(2,4)
-
 max_t=random.randint(2,4)
-
 max_et=random.randint(2,4)
-
 max_a=random.randint(2,4)
-
 max_p=random.randint(2,4)
-
 max_r=random.randint(2,4)
-
 max_d=random.randint(2,4)
-
 max_pr=random.randint(2,4)
-
 max_ni=random.randint(2,4)
-
 max_co=random.randint(2,4)
-
 max_dg=random.randint(2,4)
-
 volume=[]
 for n in range(500):
     nomi= [fake.first_name() for _ in range(max_n)]
