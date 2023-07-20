@@ -25,7 +25,7 @@ DRUID:0.1s             POSTGRES:0.9s
            WHERE nfigli> 0
            GROUP BY DATE_TRUNC('year', __time), stato, professione, istruzione, nfigli
            ORDER BY 5 DESC
-DRUID:0.4s             POSTGRES:2s
+DRUID:1.20 s             POSTGRES:2s
 
 - query 4: SELECT DATE_TRUNC('hour',__time), citta,  AVG(eta) AS "Media Oraria"
            FROM accessi
