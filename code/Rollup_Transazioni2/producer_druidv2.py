@@ -30,14 +30,13 @@ max_co=random.randint(4,10)
 max_dg=random.randint(4,10)
 volume=[]
 for n in range(50):
-   
-    for j in range(100000):
-        nomi= [fake.first_name() for _ in range(max_n)]
-        cognomi= [fake.last_name() for _ in range(max_c)]
-        _citta=[fake.city() for _ in range(max_ci)]
-        stati=[fake.country() for _ in range(max_s)]
-        redditi= [round(random.uniform(1000, 10000), 2) for _ in range(max_r)]
-        daten= [fake.date_of_birth(minimum_age=18, maximum_age=89).strftime("%Y-%m-%d") for _ in range(max_d)]
+   nomi= [fake.first_name() for _ in range(max_n)]
+   cognomi= [fake.last_name() for _ in range(max_c)]
+   _citta=[fake.city() for _ in range(max_ci)]
+   stati=[fake.country() for _ in range(max_s)]
+   redditi= [round(random.uniform(1000, 10000), 2) for _ in range(max_r)]
+   daten= [fake.date_of_birth(minimum_age=18, maximum_age=89).strftime("%Y-%m-%d") for _ in range(max_d)]
+   for j in range(100000):
         nome= random.choice(nomi)
         cognome= random.choice(cognomi)
         citta= random.choice(_citta)
@@ -51,7 +50,7 @@ for n in range(50):
         "reddito":reddito, "datan":  datan, "istruzione": istruzione,
         "hobby": hobby
         }
-        producer.send("test_rollup", value = my_data) 
+        producer.send("druid_rollup", value = my_data) 
         element=[nome, cognome, citta, stato,reddito, datan,istruzione, hobby,accesso]
         volume.append(element)
 with open('data.csv', 'w', newline='') as file:
