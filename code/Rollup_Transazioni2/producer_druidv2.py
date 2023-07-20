@@ -96,7 +96,7 @@ for n in range(500):
         "nfigli": nfigli, "nfigli":codice_cliente, 
         "datareg": datareg, 
         }
-        producer.send("accessi", value = my_data) 
+        producer.send("test_rollup", value = my_data) 
         element=[nome, cognome, indirizzo, citta, stato, cap, email, telefono, eta, altezza, peso, reddito, datan, professione, istruzione, hobby, nfigli, codice_cliente, datareg, accesso]
         volume.append(element)
 with open('data.csv', 'w', newline='') as file:
