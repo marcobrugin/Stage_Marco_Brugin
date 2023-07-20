@@ -30,13 +30,14 @@ max_co=random.randint(4,10)
 max_dg=random.randint(4,10)
 volume=[]
 for n in range(50):
-    nomi= [fake.first_name() for _ in range(max_n)]
-    cognomi= [fake.last_name() for _ in range(max_c)]
-    _citta=[fake.city() for _ in range(max_ci)]
-    stati=[fake.country() for _ in range(max_s)]
-    redditi= [round(random.uniform(1000, 10000), 2) for _ in range(max_r)]
-    daten= [fake.date_of_birth(minimum_age=18, maximum_age=89).strftime("%Y-%m-%d") for _ in range(max_d)]
+   
     for j in range(100000):
+        nomi= [fake.first_name() for _ in range(max_n)]
+        cognomi= [fake.last_name() for _ in range(max_c)]
+        _citta=[fake.city() for _ in range(max_ci)]
+        stati=[fake.country() for _ in range(max_s)]
+        redditi= [round(random.uniform(1000, 10000), 2) for _ in range(max_r)]
+        daten= [fake.date_of_birth(minimum_age=18, maximum_age=89).strftime("%Y-%m-%d") for _ in range(max_d)]
         nome= random.choice(nomi)
         cognome= random.choice(cognomi)
         citta= random.choice(_citta)
