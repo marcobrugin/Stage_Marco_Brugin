@@ -34,7 +34,7 @@ for n in range(50):
         my_data = {"accesso": accesso, "nome": nome, "cognome": cognome, "datan":  datan, "citta": citta, "stato": stato, "istruzione": istruzione,
         "hobby": hobby
         }
-        producer.send("test_rollup2", value = my_data) 
+        producer.send("test_rollup3", value = my_data) 
         element=[nome, cognome, citta, stato, datan,istruzione, hobby,accesso]
         volume.append(element)
 with open('data.csv', 'w', newline='') as file:
