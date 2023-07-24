@@ -23,17 +23,17 @@ for n in range(50):
   
    for j in range(100000):
         accesso=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        nome=utenti[random.randint(0,499)][0]
-        cognome=utenti[random.randint(0,499)][1]
-        datan=utenti[random.randint(0,499)][2]
-        citta=utenti[random.randint(0,499)][3]
-        stato=utenti[random.randint(0,499)][4]
-        istruzione=utenti[random.randint(0,499)][5]
-        hobby=utenti[random.randint(0,499)][6]
+        nome=utenti[random.randint(0,149)][0]
+        cognome=utenti[random.randint(0,149)][1]
+        datan=utenti[random.randint(0,149)][2]
+        citta=utenti[random.randint(0,149)][3]
+        stato=utenti[random.randint(0,149)][4]
+        istruzione=utenti[random.randint(0,149)][5]
+        hobby=utenti[random.randint(0,149)][6]
         my_data = {"accesso": accesso, "nome": nome, "cognome": cognome, "datan":  datan, "citta": citta, "stato": stato, "istruzione": istruzione,
         "hobby": hobby
         }
-        producer.send("rollup1", value = my_data) 
+        producer.send("test_rollup1", value = my_data) 
         element=[nome, cognome, citta, stato, datan,istruzione, hobby,accesso]
         volume.append(element)
 with open('data.csv', 'w', newline='') as file:
