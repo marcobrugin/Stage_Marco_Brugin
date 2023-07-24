@@ -16,32 +16,24 @@ con roll up su hour
            FROM accessi
            GROUP BY DATE_TRUNC('day', __time), citta
 DRUID_rollup:  Druid_no_rollup:           POSTGRES:
-- query 2: SELECT stato, AVG(eta) AS "Media_eta", AVG(reddito) AS "Media_reddito"
-           FROM accessi
-           GROUP BY stato
-DRUID:             POSTGRES:
-- query 3: SELECT DATE_TRUNC('year', __time) as "Anno", stato, professione, istruzione, nfigli, COUNT(*)
+
+- query 2: SELECT DATE_TRUNC('year', __time) as "Anno", DATE_TRUNC('month', __time),  stato,  COUNT(*)
            FROM accessi
            WHERE nfigli> 0
-           GROUP BY DATE_TRUNC('year', __time), stato, professione, istruzione, nfigli
+           GROUP BY DATE_TRUNC('year', __time), DATE_TRUNC('month', __time),  stato
            ORDER BY 5 DESC
 DRUID_rollup:   Druid_no_rollup:             POSTGRES:
 
-- query 4: SELECT DATE_TRUNC('hour',__time), citta,  AVG(eta) AS "Media Oraria"
-           FROM accessi
-           GROUP BY DATE_TRUNC('hour', __time), citta          
 
-DRUID_rollup:  Druid_no_rollup:             POSTGRES:
-
-- query 5: SELECT DATE_TRUNC('year', __time), DATE_TRUNC('month', __time), DATE_TRUNC('day', __time), stato, professione, istruzione, nfigli, COUNT(*) 
+- query 3: SELECT DATE_TRUNC('year', __time), DATE_TRUNC('month', __time), DATE_TRUNC('day', __time), stato, citta, COUNT(*) 
         FROM accessi
-        GROUP BY DATE_TRUNC('year', __time), DATE_TRUNC('month', __time), DATE_TRUNC('day', __time), stato, professione, istruzione, nfigli
+        GROUP BY DATE_TRUNC('year', __time), DATE_TRUNC('month', __time), DATE_TRUNC('day', __time), stato, citta
         ORDER BY 5 DESC
 
 DRUID_rollup:  Druid_no_rollup:          POSTGRES: 
 
-- query 6: SELECT DATE_TRUNC('year', __time), DATE_TRUNC('month', __time), DATE_TRUNC('day', __time), 
-    DATE_TRUNC('hour', __time), stato, professione, istruzione, nfigli, COUNT(*) 
+- query 4: SELECT DATE_TRUNC('year', __time), DATE_TRUNC('month', __time), DATE_TRUNC('day', __time), 
+    DATE_TRUNC('hour', __time), stato, citta, COUNT(*) 
             FROM accessi
             GROUP BY DATE_TRUNC('year', __time), DATE_TRUNC('month', __time), DATE_TRUNC('day', __time), DATE_TRUNC('hour', __time), stato, professione, istruzione, nfigli
             ORDER BY 5 DESC
