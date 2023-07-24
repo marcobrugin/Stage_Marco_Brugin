@@ -12,3 +12,8 @@
 *.ist   
 *.glg
 *.gls
+*.log
+*.out
+*.synctex.gz
+*.log
+*.synctex.gz(busy)
