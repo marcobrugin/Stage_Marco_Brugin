@@ -1443,7 +1443,7 @@ print("End")
 \end{center}
 \paragraph{Conclusioni}
 Dalla seguente sperimentazione si evince una chiara superiorità di \textbf{Apache Druid} di un ordine di grandezza su un comune database relazione come \textbf{PostgreSQL}, in particolare nell'esecuzione di query che coninvolgono raggrupamenti, anche su intervalli temporali (ora, giorno, mese, anno).
-\subsubsection{Confronto tra Apache Druid cone senza rollup e  Postgres}
+\subsubsection{Confronto tra Apache Druid con e senza rollup}
 Per mettere in evidenza la funzionalità di \textbf{rollup} si va a confrontare le prestazioni che \textbf{Apache Druid} sviluppa in un datasource da 5000000 di dati con e senza \textbf{rollup}. Per completezza verrà anche fatto un confronto con un classico database relazione come \textbf{PostgreSQL}.\\
 Lo schema relazione è il seguente:
 \begin{lstlisting}[language=SQL]
