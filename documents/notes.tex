@@ -1290,10 +1290,10 @@ email text, telefono text, eta int, altezza decimal(5,2), peso decimal(5,2), red
 datan date, professione text, istruzione text, hobby text, nfigli int, codice_cliente int, datareg timestamp,__time timestamp);
     
 \end{lstlisting}
-Utilizzando i seguenti parametri di configurazione per \textbf{Apache Druid} senza l'utilizzo della cache
+Utilizzando i seguenti parametri di configurazione per \textbf{Apache Druid} senza l'utilizzo della cache:
 \begin{enumerate}
     \item granularity segment per day ;
-    \item 800000 Max rows in memory.
+    \item 800000 max rows in memory.
 \end{enumerate}
 Inoltre per consentire l'utilizzo degli stessi dati sia in \textbf{Apache Druid} che in \textbf{Postgres},  il generatore degli eventi viene modificato in modo tale da poter memorizzare gli eventi generati all'interno di un file *.csv  . 
 \pagebreak
@@ -1394,8 +1394,8 @@ print("End")
 \noindent Una volta effettuato l'\textbf{injection} di dati su entrambi i sistemi per misurare le performance si eseguiranno le seguenti query.
 \begin{lstlisting}
  - query 1: SELECT DATE_TRUNC('day', __time), citta, COUNT(*)
-            FROM accessi
-            GROUP BY DATE_TRUNC('day', __time), citta
+             FROM accessi
+             GROUP BY DATE_TRUNC('day', __time), citta
       
 - query 2: SELECT stato, AVG(eta), AVG(reddito)
             FROM accessi
@@ -1441,8 +1441,113 @@ print("End")
   \centering  query6 & \centering 1.30 & \centering 3.3 \\ \hline
   \end{tblr}
 \end{center}
-\subsubsection{Conclusioni}
+\paragraph{Conclusioni}
 Dalla seguente sperimentazione si evince una chiara superiorità di \textbf{Apache Druid} di un ordine di grandezza su un comune database relazione come \textbf{PostgreSQL}, in particolare nell'esecuzione di query che coninvolgono raggrupamenti, anche su intervalli temporali (ora, giorno, mese, anno).
+\subsubsection{Confronto tra Apache Druid cone senza rollup e  Postgres}
+Per mettere in evidenza la funzionalità di \textbf{rollup} si va a confrontare le prestazioni che \textbf{Apache Druid} sviluppa in un datasource da 5000000 di dati con e senza \textbf{rollup}. Per completezza verrà anche fatto un confronto con un classico database relazione come \textbf{PostgreSQL}.\\
+Lo schema relazione è il seguente:
+\begin{lstlisting}[language=SQL]
+CREATE TABLE accessi(__time timestamp, nome text, cognome text, citta text, stato text, datan date, istruzione text, hobby text); 
+\end{lstlisting}
+Utilizzando i seguenti parametri per \textbf{Apache Druid} senza l'utilizzo della cache: 
+\begin{itemize}
+    \item granularity segment per day;
+    \item 800000 max rows in memory;
+    \item query granularity hour 
+    \item \textbf{roll up} on (per il datasource con \textbf{roll up})
+\end{itemize}
+Per consentire l'utlizzo degli stessi dati anche in \textbf{PostgresSQL} verrà generato un file *.csv contenente tutti i dati generati.\\
+Il generatore dei dati è il seguente: 
+\begin{lstlisting}[language=Python]
+    from kafka import KafkaProducer  
+import json 
+import random
+import csv
+from faker import Faker
+import datetime
+producer = KafkaProducer(  
+    bootstrap_servers = ["localhost:29092"],  
+    value_serializer = lambda x:json.dumps(x).encode("utf-8")  
+    )  
+
+print("Connect succefully") 
+fake = Faker()
+locazione=[[fake.city(), fake.country()] for _ in range(200)]
+
+utenti=list()
+for i in range(150):
+    a=locazione[random.randint(0,99)]
+    citta=a[0]
+    stato=a[1]
+    utenti.append([fake.first_name(), fake.last_name(),fake.date_of_birth(minimum_age=18, maximum_age=89).strftime("%Y-%m-%d"), citta, stato, fake.random_element(elements=("Scuola Secondaria", "Laurea triennale", "Laurea Magistrale", "Dottorato")), fake.random_element(elements=("Leggere","Viaggiare","Giocare a calcio","Giocare ai videogiochi","Fare sport")) ] )
+volume=[]
+for n in range(50):
+  
+   for j in range(100000):
+        accesso=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        nome=utenti[random.randint(0,149)][0]
+        cognome=utenti[random.randint(0,149)][1]
+        datan=utenti[random.randint(0,149)][2]
+        citta=utenti[random.randint(0,149)][3]
+        stato=utenti[random.randint(0,149)][4]
+        istruzione=utenti[random.randint(0,149)][5]
+        hobby=utenti[random.randint(0,149)][6]
+        my_data = {"accesso": accesso, "nome": nome, "cognome": cognome, "datan":  datan, "citta": citta, "stato": stato, "istruzione": istruzione,
+        "hobby": hobby
+        }
+        producer.send("test_rollup", value = my_data) 
+        element=[nome, cognome, citta, stato, datan,istruzione, hobby,accesso]
+        volume.append(element)
+with open('data.csv', 'w', newline='') as file:
+    writer = csv.writer(file, quoting=csv.QUOTE_NONNUMERIC, delimiter=',')
+    writer.writerows(volume) 
+print(utenti)
+print("End")
+\end{lstlisting}
+Una volta effettuata l'\textbf{injection} dei dati  verrano efettuate le seguenti query per misurare le perfomance richieste.
+\begin{lstlisting}
+- query 1: SELECT DATE_TRUNC('day', __time) as "Giorno", citta, COUNT(*) AS "Accessi"
+            FROM accessi
+            GROUP BY DATE_TRUNC('day', __time), citta
+
+- query 2: SELECT DATE_TRUNC('year', __time) as "Anno", DATE_TRUNC('month', __time),  stato,  COUNT(*)
+            FROM accessi
+            GROUP BY DATE_TRUNC('year', __time), DATE_TRUNC('month', __time),  stato
+            ORDER BY 4 DESC
+
+
+
+
+
+- query 3: SELECT DATE_TRUNC('year', __time), DATE_TRUNC('month', __time), DATE_TRUNC('day', __time), stato, citta, COUNT(*) 
+            FROM accessi
+            GROUP BY DATE_TRUNC('year', __time), DATE_TRUNC('month', __time), DATE_TRUNC('day', __time), stato, citta
+            ORDER BY 5 DESC
+
+
+- query 4: SELECT DATE_TRUNC('year', __time), DATE_TRUNC('month', __time), DATE_TRUNC('day', __time), DATE_TRUNC('hour', __time), stato, citta, COUNT(*) 
+            FROM accessi
+            GROUP BY DATE_TRUNC('year', __time), DATE_TRUNC('month', __time), DATE_TRUNC('day', __time), DATE_TRUNC('hour', __time), stato, citta
+            ORDER BY 5 DESC
+
+\end{lstlisting}
+\begin{center}
+    \begin{tblr}{
+  colspec={XXXX},
+  row{odd}={bg=lightgray},  
+  row{1}={bg=black,fg=white},
+}
+\centering
+ & \centering Apache Druid con rollup[s] & \centering Apache Druid senza rollup [s] & \centering PostgreSQL [s] \\\hline 
+  \centering
+  query1 &  \centering 0.4  & \centering 0.5 & \centering 0.8 \\ \hline
+  \centering query2 &  \centering 0.4 & \centering 0.55 & \centering 1.1 \\ \hline
+ \centering
+  query3 &  \centering 0.57   & \centering 0.77  & \centering 1.5 \\ \hline
+ \centering
+  query4 &  \centering 0.54   & \centering 0.7  & \centering 1.6 \\ \hline
+  \end{tblr}
+\end{center}
 \bibliographystyle{IEEEtran}
 \bibliography{https://Kafka.apache.org/documentation/}
 \bibliography{https://ably.com/topic/pub-sub#the-pub-sub-model-explained}
