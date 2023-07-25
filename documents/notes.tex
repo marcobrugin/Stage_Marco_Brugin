@@ -1506,14 +1506,15 @@ print("End")
 \end{lstlisting}
 Una volta effettuata l'\textbf{injection} dei dati  verrano efettuate le seguenti query per misurare le perfomance richieste.
 \begin{lstlisting}
-- query 1: SELECT DATE_TRUNC('day', __time) as "Giorno", citta, COUNT(*) AS "Accessi"
+- query 1: SELECT DATE_TRUNC('day', __time), citta, COUNT(*)
             FROM accessi
             GROUP BY DATE_TRUNC('day', __time), citta
 
-- query 2: SELECT DATE_TRUNC('year', __time) as "Anno", DATE_TRUNC('month', __time),  stato,  COUNT(*)
+- query 2: SELECT DATE_TRUNC('year', __time), DATE_TRUNC('month', __time),  stato,  COUNT(*)
             FROM accessi
             GROUP BY DATE_TRUNC('year', __time), DATE_TRUNC('month', __time),  stato
             ORDER BY 4 DESC
+
 
 
 
