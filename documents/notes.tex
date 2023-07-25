@@ -1562,6 +1562,74 @@ Una volta effettuata l'\textbf{injection} dei dati  verrano efettuate le seguent
 \end{center}
 \paragraph{Conclusioni}
 Come riportato dal tabella sovrastante, le misure effettuate sul datasource con \textbf{rollup} sono migliori rispetto a quelle effettuate senza \textbf{rollup}, questo perchè grazie a tale funzionalità si riduce il numero di record da processare. Inoltre si può ancora sottolineare il divario con i database relazionali come \textbf{PostgreSQL}.
+\subsubsection{Utilizzo delle tabelle di lookup in Apache Druid}
+Le note riportarte in questa sezione si riferiscono alla creazione e utilizzo delle tabelle di \textbf{lookup} in un classico scenario di \textbf{data enrichment}.
+Il modello relazione dei dati generati sarà il seguente: 
+\begin{lstlisting}
+CREATE TABLE accessi(__time timestamp, citta text, stato text, codice_cliente);
+\end{lstlisting}
+La tebella di verrà utilizzata per andare a sotituire al \textit{codice\_cliente} il \textit{nome} e il \textit{cognome} del cliente.\\
+Il generatore degli eventi è il seguente:
+\begin{lstlisting}[language=Python]
+  from kafka import KafkaProducer  
+  import json 
+  import random
+  import csv
+  from faker import Faker
+  import datetime
+  producer = KafkaProducer(  
+      bootstrap_servers = ["localhost:29092"],  
+      value_serializer = lambda x:json.dumps(x).encode("utf-8")  
+      )  
+  print("Connect succefully") 
+  fake = Faker()
+  locazione=[[fake.city(), fake.country()] for _ in range(200)]
+  
+  utenti=list()
+  for i in range(150):
+      a=locazione[random.randint(0,99)]
+      citta=a[0]
+      stato=a[1]
+      a=random.randint(0,999)
+      utenti.append([a, fake.first_name(), fake.last_name(),fake.date_of_birth(minimum_age=18, maximum_age=89).strftime("%Y-%m-%d"), citta, stato] )
+  
+  for i in range(150):
+   print('\"'+str(utenti[i][0])+"\""+":"+"\""+utenti[i][1]+" "+utenti[i][2]+"\"")
+  volume=[]
+  for n in range(500):
+      accesso=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+      codice=utenti[random.randint(0,149)][0]
+      nome=utenti[random.randint(0,149)][1]
+      cognome=utenti[random.randint(0,149)][2]
+      datan=utenti[random.randint(0,149)][3]
+      citta=utenti[random.randint(0,149)][4]
+      stato=utenti[random.randint(0,149)][5]
+      my_data = {"accesso": accesso, "codice_cliente": str(codice),  "datan":  datan, "citta": citta, "stato": stato,
+      }
+      producer.send("lookup", value = my_data) 
+      element=[codice, nome, cognome, citta, stato, datan, accesso]
+      volume.append(element)
+  with open('data.csv', 'w', newline='') as file:
+      writer = csv.writer(file, quoting=csv.QUOTE_NONNUMERIC, delimiter=',')
+      writer.writerows(volume) 
+  print("End")
+\end{lstlisting}
+Una volta effettuata l'\textbf{injection} dei dati, si va a creare la tabella di \textbf{lookup} chiamata $tabella1$.
+\begin{figure}
+    \centering
+    \includegraphics[width=0.5\textwidth]{images/inserimento_lookup.png}
+    \caption{Creazione della tabella di lookup}
+\end{figure}
+In seguito si è andati ad eseguire la seguente query per verificare il corretto funzionamento della tabella di \textbf{lookup}.
+\begin{lstlisting}
+  SELECT LOOKUP(codice_cliente,'tabella1'), datan, citta, stato
+  FROM accessi
+\end{lstlisting}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\textwidth]{images/lookup.png}
+    \caption{Risultato della query}
+\end{figure}
 \bibliographystyle{IEEEtran}
 \bibliography{https://Kafka.apache.org/documentation/}
 \bibliography{https://ably.com/topic/pub-sub#the-pub-sub-model-explained}
