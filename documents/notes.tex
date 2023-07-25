@@ -1453,8 +1453,8 @@ Utilizzando i seguenti parametri per \textbf{Apache Druid} senza l'utilizzo dell
 \begin{itemize}
     \item granularity segment per day;
     \item 800000 max rows in memory;
-    \item query granularity hour 
-    \item \textbf{roll up} on (per il datasource con \textbf{roll up})
+    \item \textbf{roll up} on (per il datasource con \textbf{roll up});
+    \item query granularity hour.
 \end{itemize}
 Per consentire l'utlizzo degli stessi dati anche in \textbf{PostgresSQL} verrà generato un file *.csv contenente tutti i dati generati.\\
 Il generatore dei dati è il seguente: 
@@ -1531,6 +1531,17 @@ Una volta effettuata l'\textbf{injection} dei dati  verrano efettuate le seguent
             ORDER BY 5 DESC
 
 \end{lstlisting}
+\paragraph{Svolgimento}
+\begin{itemize}
+    \item Per attivare la funzionalità di \textbf{rollup} come prima operazione effettuare lìinjection dei in \textbf{Apache Druid}
+    \item In $configure schema$ andare a specificare il campo \textbf{rollup} su \textbf{true} e il campo \textbf{granularity} su \textbf{hour}
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.5\textwidth]{images/test_rollup.png}
+        \caption{Attivazione della funzionalità di rollup}
+    \end{figure}
+\end{itemize}
+
 \begin{center}
     \begin{tblr}{
   colspec={XXXX},
@@ -1548,6 +1559,8 @@ Una volta effettuata l'\textbf{injection} dei dati  verrano efettuate le seguent
   query4 &  \centering 0.54   & \centering 0.7  & \centering 1.6 \\ \hline
   \end{tblr}
 \end{center}
+\paragraph{Conclusioni}
+Come riportato dal tabella sovrastante, le misure effettuate sul datasource con \textbf{rollup} sono migliori rispetto a quelle effettuate senza \textbf{rollup}, questo perchè grazie a tale funzionalità si riduce il numero di record da processare. Inoltre si può ancora sottolineare il divario con i database relazionali come \textbf{PostgreSQL}.
 \bibliographystyle{IEEEtran}
 \bibliography{https://Kafka.apache.org/documentation/}
 \bibliography{https://ably.com/topic/pub-sub#the-pub-sub-model-explained}
