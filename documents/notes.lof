@@ -1,14 +1,17 @@
 \babel@toc {english}{}\relax 
 \contentsline {figure}{\numberline {1}{\ignorespaces Confronto tra architetture centralizzate e distribuite}}{13}{figure.1}%
 \contentsline {figure}{\numberline {2}{\ignorespaces Architettura Druid}}{15}{figure.2}%
-\contentsline {figure}{\numberline {3}{\ignorespaces Creazione del cluster}}{28}{figure.3}%
-\contentsline {figure}{\numberline {4}{\ignorespaces Creazione del topic}}{28}{figure.4}%
+\contentsline {figure}{\numberline {3}{\ignorespaces Creazione del cluster}}{29}{figure.3}%
+\contentsline {figure}{\numberline {4}{\ignorespaces Creazione del topic}}{29}{figure.4}%
 \contentsline {figure}{\numberline {5}{\ignorespaces Creazione del produttore}}{29}{figure.5}%
-\contentsline {figure}{\numberline {6}{\ignorespaces Creazione del consumatore}}{29}{figure.6}%
-\contentsline {figure}{\numberline {7}{\ignorespaces Test di alta affidabilità}}{29}{figure.7}%
+\contentsline {figure}{\numberline {6}{\ignorespaces Creazione del consumatore}}{30}{figure.6}%
+\contentsline {figure}{\numberline {7}{\ignorespaces Test di alta affidabilità}}{30}{figure.7}%
 \contentsline {figure}{\numberline {8}{\ignorespaces Creazione del cluster}}{30}{figure.8}%
-\contentsline {figure}{\numberline {9}{\ignorespaces Creazione dei topic}}{30}{figure.9}%
-\contentsline {figure}{\numberline {10}{\ignorespaces Connessione da altro host}}{30}{figure.10}%
+\contentsline {figure}{\numberline {9}{\ignorespaces Creazione dei topic}}{31}{figure.9}%
+\contentsline {figure}{\numberline {10}{\ignorespaces Connessione da altro host}}{31}{figure.10}%
 \contentsline {figure}{\numberline {11}{\ignorespaces Cluster Kafka}}{34}{figure.11}%
 \contentsline {figure}{\numberline {12}{\ignorespaces Iniezione dei dati}}{35}{figure.12}%
 \contentsline {figure}{\numberline {13}{\ignorespaces Load data - Streaming-Apache kafka}}{43}{figure.13}%
+\contentsline {figure}{\numberline {14}{\ignorespaces Attivazione della funzionalità di rollup}}{50}{figure.14}%
+\contentsline {figure}{\numberline {15}{\ignorespaces Creazione della tabella di lookup}}{52}{figure.15}%
+\contentsline {figure}{\numberline {16}{\ignorespaces Risultato della query}}{53}{figure.16}%
