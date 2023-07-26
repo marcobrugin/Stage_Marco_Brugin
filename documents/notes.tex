@@ -653,6 +653,23 @@ Lo schema logico del dataset è il seguente:
   query3 & \centering 0.30 & \centering 0.60 \\ \hline
   \end{tblr}
 \end{center}
+\section{Kubernetes}
+\subsection{Panoramica e caratteristiche principali}
+\textbf{Kubernetes} è una piattaforma open source utilizzata per l'orchestrazione e la gestione dei nodi.\\
+Il nome Kubernetes deriva dal greco, significa timoniere o pilota. \\
+È un servizio estendibile per la gestione di carichi di lavoro e servizi containerizzati. Presenta un grande ecosistema in rapida crescita.
+\subsection{Casi d'uso}
+I container sono un buon modo per raggruppare ed eseguire le applicazioni. In un ambiente di produzione, è necessario gestire i container ed assicurarsi che vi siano tempi di inattività. In tali casi entra in gioco \textbf{Kubernetes} che fornisce un \textbf{framework} finalizzato alla esecuzione di sistemi distribuiti in modo resiliente. \\
+\subsection{Funzionalità}
+\textbf{Kubernetes} fornisce le seguenti funzionalità:
+\begin{itemize}
+    \item \textbf{rilevamento dei servizi e bilanciamento del carico}: \textbf{Kubernetes} è in grado di bilanciare il carico e distribuire il traffico di rete in modo che la distribuzione sia stabile;
+    \item \textbf{orchestrazione dello storage}: \textbf{Kubernetes} consente di montare storage locali, provider di cloud pubblico e altro;
+    \item \textbf{rollout e rollback automatizzati}: puoi descrivere lo stato desiderato per i tuoi container distribuiti utilizzando Kubernetes e può cambiare lo stato effettivo nello stato desiderato a una velocità controllata.
+    \item \textbf{bin packing automatico}: è possibile impartire a \textbf{Kubernetes} quanta CPU e memoria (RAM) ha bisogno ogni container; inoltre \textbf{Kubernetes} può adattare i container ai tuoi nodi per utilizzare al meglio le tue risorse;
+    \item \textbf{riparazione automatica}: \textbf{Kubernetes} è in grado di rillevare i container che hanno avuto esito negativo, sotituirli e terminare i container non rispondono allo stato definito dall'utente;
+    \item \textbf{gestione dei secrets e della configurazione}: \textbf{Kubernetes} ti consente di archiviare e gestire informazioni riservate 
+\end{itemize}
 
 \section{Test}
 \subsection{High Availability}
@@ -1552,12 +1569,12 @@ Una volta effettuata l'\textbf{injection} dei dati  verrano efettuate le seguent
 \centering
  & \centering Apache Druid con rollup[s] & \centering Apache Druid senza rollup [s] & \centering PostgreSQL [s] \\\hline 
   \centering
-  query1 &  \centering 0.4  & \centering 0.5 & \centering 0.8 \\ \hline
-  \centering query2 &  \centering 0.4 & \centering 0.55 & \centering 1.1 \\ \hline
+  query1 &  \centering 0.3  & \centering 0.7 & \centering 0.8 \\ \hline
+  \centering query2 &  \centering 0.4 & \centering 0.75 & \centering 1.1 \\ \hline
  \centering
-  query3 &  \centering 0.57   & \centering 0.77  & \centering 1.5 \\ \hline
+  query3 &  \centering 0.25   & \centering 0.74  & \centering 1.5 \\ \hline
  \centering
-  query4 &  \centering 0.54   & \centering 0.7  & \centering 1.6 \\ \hline
+  query4 &  \centering 0.16   & \centering 0.8  & \centering 1.6 \\ \hline
   \end{tblr}
 \end{center}
 \paragraph{Conclusioni}
@@ -1635,4 +1652,5 @@ In seguito si è andati ad eseguire la seguente query per verificare il corretto
 \bibliography{https://ably.com/topic/pub-sub#the-pub-sub-model-explained}
 \bibliography{https://kafka.apache.org/quickstart}
 \bibliography{https://druid.apache.org/docs/latest/ingestion/rollup.html}
+\bibliography{https://kubernetes.io/docs/concepts/overview/}
 \end{document}
