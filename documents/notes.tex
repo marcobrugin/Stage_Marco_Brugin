@@ -657,7 +657,8 @@ Lo schema logico del dataset è il seguente:
 \subsection{Panoramica e caratteristiche principali}
 \textbf{Kubernetes} è una piattaforma open source utilizzata per l'orchestrazione e la gestione dei nodi.\\
 Il nome Kubernetes deriva dal greco, significa timoniere o pilota. \\
-È un servizio estendibile per la gestione di carichi di lavoro e servizi containerizzati. Presenta un grande ecosistema in rapida crescita.
+È un servizio estendibile per la gestione di carichi di lavoro e servizi containerizzati. Presenta un grande ecosistema in rapida crescita. \\
+
 \subsection{Casi d'uso}
 I container sono un buon modo per raggruppare ed eseguire le applicazioni. In un ambiente di produzione, è necessario gestire i container ed assicurarsi che vi siano tempi di inattività. In tali casi entra in gioco \textbf{Kubernetes} che fornisce un \textbf{framework} finalizzato alla esecuzione di sistemi distribuiti in modo resiliente. \\
 \subsection{Funzionalità}
@@ -670,6 +671,36 @@ I container sono un buon modo per raggruppare ed eseguire le applicazioni. In un
     \item \textbf{riparazione automatica}: \textbf{Kubernetes} è in grado di rillevare i container che hanno avuto esito negativo, sotituirli e terminare i container non rispondono allo stato definito dall'utente;
     \item \textbf{gestione dei secrets e della configurazione}: \textbf{Kubernetes} ti consente di archiviare e gestire informazioni riservate 
 \end{itemize}
+\subsection{Architettura}
+\textbf{Kubernetes} viene distribuito in un cluster. \\
+Un cluster è costituito da un insiemee di macchine \textbf{worker}, denominate nodi, che eseguono le applicazioni containerizzate. Ogni cluster ha almeno un nodo \textbf{worker}.\\
+I nodi \textbf{worker} ospitano i \textbf{POD} che rappresentano i componenti di lavoro dell'applicazione. Il \textbf{control pane} gestisce i nodi di lavoro e i \textbf{POD} del cluster. In ambienti di produzione per garantire tolleranza ai guasti e alta disponibilità il \textbf{control pane} e \textbf{POD} sono eseguiti su più calcolatori e un cluster esegue i nodi. 
+\subsubsection{I componenti del control pane}
+I componenti di \textbf{control pane} prendono decisioni globali sul cluster, oltre a rispondere ad eventi del cluster. Per semplicità i componenti di \textbf{control pane} vengono tutti eseguiti sulla stessa macchina.
+\paragraph{kube-apiserver}
+È un componente del \textbf{control pane} di  \textbf{Kubernetes} che espone l'\textbf{API Kubernetes}. L'implementazione principale è un \textbf{kube-apiserver}, progettato per scalare orrizontalmente, distribuendosi su più istanze. È possibile andare a bilanciare il traffico tra tali istanze. 
+\paragraph{ecc}
+È l'archivio di valore chiave coerente utilizzato come archivio di backup di \textbf{Kubernetes} per tutti i dati del cluster.
+\paragraph{kube-scheduler}
+È un componente del \textbf{control pane} a cui è affidato il compito di controllare la creazione dei \textbf{POD} senza assegnare nodi su cui eseguirli.\\
+Per prendere le decisioni di pianificazione vengono presi incosiderazione i seguenti fattori: 
+\begin{itemize}
+    \item requisiti di risorse individuali e collettivi;
+    \item  vincoli hardware/software/policy;
+    \item specifiche di affinità e anti-affinità;
+    \item località dei dati;
+    \item  interferenza tra carichi di lavoro e scadenze.
+\end{itemize}
+\paragraph{kube-controller-manager}
+È il componente adibito al controllo dei processi. \\
+Logicamente ogni \textbf{controller} è un processo separato, ma per ridurre la complessità, sono tutti compilati in un unico binario ed eseguiti in un unico processo.
+\paragraph{cloud-controller-manager}
+È il componente che incorpora la logica di controllo specifica del cloud. Il \textbf{cloud-controller-manager} consente di collegare il cluster con l'\textbf{API} del provider cloud; separa i componenti che interagiscono con quella piattaforma cloud dai componenti che interagiscono solo con il tuo cluster. Se esegui \textbf{Kubernetes} nei tuoi locali, il cluster non dispone di un \textbf{cloud-controller-manager}.
+\subsubsection{I componenti del nodo}
+I componenti del nodo vengono eseguiti su ogni nodo, mantenendo i pod in esecuzione e fornendo l'ambiente di runtime \textbf{Kubernetes}.
+\paragraph{kubelet}
+È un agente che viene eseguito per ogni nodo del cluster e si assicura che i container stiamo eseguendo un \textbf{POD}.
+\paragraph{kube-proxy} È un proxy di rete che viene eseguito su ogni nodo del cluster, implementando parte del servizio \textbf{Kubernetes}. Mantiene le regole di rete sui nodi. Queste regole di rete consentono la comunicazione di rete ai \textbf{POD} dalle sessioni di rete all'interno o all'esterno del tuo cluster.
 
 \section{Test}
 \subsection{High Availability}
@@ -887,7 +918,7 @@ services:
       - "9094:9094"
       - "29094:29094"
     environment:
-      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka3:19094,EXTERNAL://${DOCKER_HOST_IP:-127.0.0.1}:9094,DOCKER://host.docker.internal:29094
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka3:19094,EXTERNAL://${DOCKER_HOST_IP:-127.0.0.1}:9094, DOCKER://host.docker.internal:29094
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT,DOCKER:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
       KAFKA_ZOOKEEPER_CONNECT: "zoo1:2181"
@@ -1471,12 +1502,12 @@ Utilizzando i seguenti parametri per \textbf{Apache Druid} senza l'utilizzo dell
     \item granularity segment per day;
     \item 800000 max rows in memory;
     \item \textbf{roll up} on (per il datasource con \textbf{roll up});
-    \item query granularity hour.
+    \item query granularity \textbf{hour}.
 \end{itemize}
 Per consentire l'utlizzo degli stessi dati anche in \textbf{PostgresSQL} verrà generato un file *.csv contenente tutti i dati generati.\\
 Il generatore dei dati è il seguente: 
 \begin{lstlisting}[language=Python]
-    from kafka import KafkaProducer  
+from kafka import KafkaProducer  
 import json 
 import random
 import csv
@@ -1492,8 +1523,8 @@ fake = Faker()
 locazione=[[fake.city(), fake.country()] for _ in range(200)]
 
 utenti=list()
-for i in range(150):
-    a=locazione[random.randint(0,99)]
+for i in range(5000):
+    a=locazione[random.randint(0,199)]
     citta=a[0]
     stato=a[1]
     utenti.append([fake.first_name(), fake.last_name(),fake.date_of_birth(minimum_age=18, maximum_age=89).strftime("%Y-%m-%d"), citta, stato, fake.random_element(elements=("Scuola Secondaria", "Laurea triennale", "Laurea Magistrale", "Dottorato")), fake.random_element(elements=("Leggere","Viaggiare","Giocare a calcio","Giocare ai videogiochi","Fare sport")) ] )
@@ -1502,23 +1533,24 @@ for n in range(50):
   
    for j in range(100000):
         accesso=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        nome=utenti[random.randint(0,149)][0]
-        cognome=utenti[random.randint(0,149)][1]
-        datan=utenti[random.randint(0,149)][2]
-        citta=utenti[random.randint(0,149)][3]
-        stato=utenti[random.randint(0,149)][4]
-        istruzione=utenti[random.randint(0,149)][5]
-        hobby=utenti[random.randint(0,149)][6]
+        a=random.randint(0,4999)
+        nome=utenti[a][0]
+        cognome=utenti[a][1]
+        datan=utenti[a][2]
+        citta=utenti[a][3]
+        stato=utenti[a][4]
+        istruzione=utenti[a][5]
+        hobby=utenti[a][6]
         my_data = {"accesso": accesso, "nome": nome, "cognome": cognome, "datan":  datan, "citta": citta, "stato": stato, "istruzione": istruzione,
         "hobby": hobby
         }
-        producer.send("test_rollup", value = my_data) 
+        producer.send("test_rollup11", value = my_data) 
         element=[nome, cognome, citta, stato, datan,istruzione, hobby,accesso]
         volume.append(element)
 with open('data.csv', 'w', newline='') as file:
     writer = csv.writer(file, quoting=csv.QUOTE_NONNUMERIC, delimiter=',')
     writer.writerows(volume) 
-print(utenti)
+
 print("End")
 \end{lstlisting}
 Una volta effettuata l'\textbf{injection} dei dati  verrano efettuate le seguenti query per misurare le perfomance richieste.
@@ -1527,7 +1559,7 @@ Una volta effettuata l'\textbf{injection} dei dati  verrano efettuate le seguent
             FROM accessi
             GROUP BY DATE_TRUNC('day', __time), citta
 
-- query 2: SELECT DATE_TRUNC('year', __time), DATE_TRUNC('month', __time),  stato,  COUNT(*)
+- query 2: SELECT DATE_TRUNC('year', __time), DATE_TRUNC('month', __time),  stato, COUNT(*)
             FROM accessi
             GROUP BY DATE_TRUNC('year', __time), DATE_TRUNC('month', __time),  stato
             ORDER BY 4 DESC
@@ -1555,7 +1587,7 @@ Una volta effettuata l'\textbf{injection} dei dati  verrano efettuate le seguent
     \item In $configure schema$ andare a specificare il campo \textbf{rollup} su \textbf{true} e il campo \textbf{granularity} su \textbf{hour}
     \begin{figure}[H]
         \centering
-        \includegraphics[width=0.5\textwidth]{images/test_rollup.png}
+        \includegraphics[width=0.3\textwidth]{images/test_rollup.png}
         \caption{Attivazione della funzionalità di rollup}
     \end{figure}
 \end{itemize}
@@ -1578,7 +1610,7 @@ Una volta effettuata l'\textbf{injection} dei dati  verrano efettuate le seguent
   \end{tblr}
 \end{center}
 \paragraph{Conclusioni}
-Come riportato dal tabella sovrastante, le misure effettuate sul datasource con \textbf{rollup} sono migliori rispetto a quelle effettuate senza \textbf{rollup}, questo perchè grazie a tale funzionalità si riduce il numero di record da processare. Inoltre si può ancora sottolineare il divario con i database relazionali come \textbf{PostgreSQL}.
+Come riportato dalla tabella sovrastante, le misure effettuate sul datasource con \textbf{rollup} sono migliori rispetto a quelle effettuate senza \textbf{rollup}, questo perchè grazie a tale funzionalità si riduce il numero di record da processare (si passa da 5000000 a 150000 record).
 \subsubsection{Utilizzo delle tabelle di lookup in Apache Druid}
 Le note riportarte in questa sezione si riferiscono alla creazione e utilizzo delle tabelle di \textbf{lookup} in un classico scenario di \textbf{data enrichment}.
 Il modello relazione dei dati generati sarà il seguente: 
@@ -1645,7 +1677,7 @@ In seguito si è andati ad eseguire la seguente query per verificare il corretto
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.5\textwidth]{images/lookup.png}
-    \caption{Risultato della query}
+    \caption{Risultato della query utilizzando la tabella di lookup}
 \end{figure}
 \bibliographystyle{IEEEtran}
 \bibliography{https://Kafka.apache.org/documentation/}
