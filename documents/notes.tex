@@ -743,6 +743,33 @@ Lo stato di un nodo contiene le seguenti informazioni:
         \end{itemize}
     \end{itemize}
 \end{itemize}
+\subsection{Heartbeats}
+Gli \textbf{Heartbeats} o battiti del cuore  aiutano il tuo cluster a determinare la disponibilità di ciascun nodo e ad agire quando vengono rilevati errori.\\
+Per i nodi ci sono 2 forme di battiti del cuore: 
+\begin{itemize}
+    \item aggiornamenti al
+    $.status$ di un nodo;
+    \item allocare oggetti all'interno del $kube-node-lease$ spazio dei nomi; ogni nodo ha un oggetto \textbf{Lease} associato;
+\end{itemize}
+Rispetto agli aggiornamenti $.status$ di un nodo, un lease è una risorsa leggera. L'utilizzo dei lease per gli heartbeat riduce l'impatto sulle prestazioni di questi aggiornamenti per i cluster di grandi dimensioni.\\
+Il \textbf{kubelet} è responsabile della creazione e dell'aggiornamento dei $.status nodi$ e dell'aggiornamento dei relativi $lease$.\\\\\\\\
+In particolare si occupa di: 
+\begin{itemize}
+    \item  aggiorna il nodo $.status$ quando c'è un cambiamento di stato o se non c'è stato alcun aggiornamento per un intervallo configurato (l'intervallo prededfinito è di 5 minuti);
+    \item Il \textbf{Kubelet} crea e quindi aggiorna il suo oggetto \textbf{Lease} ogni 10 secondi; gli aggiornamenti del \textbf{Lease} si verificano indipendentemente dagli aggiornamenti del \textbf{Lease}.
+\end{itemize}
+\subsection{Il controllore del nodo}
+È un componente del \textbf{control pane} che gestisce i vari aspetti del nodo. \\
+I compiti che svolge il controllore sono: 
+\begin{itemize}
+    \item assegnare un blocco CIDR al nodo quando è registrato;
+    \item mantenere aggiornato l'elenco interno dei nodi del controller del nodo con l'elenco delle macchine disponibili del fornitore di servizi cloud;
+    \item monitora la salute dei nodi.
+\end{itemize}
+Per impostazione predefinita, il controller del nodo controlla lo stato di ciascun nodo ogni 5 secondi. 
+\subsection{L'elezione del capo}
+\textbf{Kubernetes} utilizza anche i \textbf{lease} per garantire che solo un'istanza di un componente sia in esecuzione in un dato momento. 
+
 \section{Test}
 \subsection{High Availability}
 Per andare a testare l'alta affidabilità, si è andati a creare un cluster di nodi formato da: 1 nodo Zookeeper, 3 nodi broker (Kafka1, Kafka2, Kafka3) e si è andati ad istanziare un produttore e consumatore collegati al broker Kafka1. Ora per testare l'alta affidabilità basta simulare un malfunzionamento e verificare se i messaggi che il broker Kafka1 non è riuscito ad inviare al consumatore sono accessibili attraverso i server Kafka2 e Kafka3. 
