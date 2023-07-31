@@ -701,7 +701,48 @@ I componenti del nodo vengono eseguiti su ogni nodo, mantenendo i pod in esecuzi
 \paragraph{kubelet}
 È un agente che viene eseguito per ogni nodo del cluster e si assicura che i container stiamo eseguendo un \textbf{POD}.
 \paragraph{kube-proxy} È un proxy di rete che viene eseguito su ogni nodo del cluster, implementando parte del servizio \textbf{Kubernetes}. Mantiene le regole di rete sui nodi. Queste regole di rete consentono la comunicazione di rete ai \textbf{POD} dalle sessioni di rete all'interno o all'esterno del tuo cluster.
-
+\subsection{Il funzionamento}
+\textbf{Kubernetes} esegue i compiti assegnati di lavoro inserendo i container nei \textbf{POD}  per l'esecuzione sui nodi. Un nodo può essere una macchina virtuale o fisica, a seconda del cluster. \\
+Ogni nodo è gestito da un \textbf{control pane} e contiene i servizi necessari per l'esecuzione di un \textbf{POD}. I componenti su un nodo includono  il \textbf{kubelet}, un runtime del container, e il \textbf{kube-proxy}.\\
+Esistono due modi principali  per aggiungere i nodi: \textbf{Server API} 
+\begin{itemize}
+    \item il kubelet su un nodo si registra automaticamente nel piano di controllo;
+    \item viene aggiunto manualmente un oggetto di tipo \textbf{Node}.
+\end{itemize}
+Una volta effettuata la creazione dell'oggetto Nodo o il \textbf{kubelet} su un nodo, il \textbf{control pane} che il nuovo oggetto di tipo \textbf{Node} sia integro ( (ovvero tutti i servizi necessari sono in esecuzione, idoneo ad eseguire un POD). \\
+Un esempio di configurazione di un nodo, in formato Json può essere il seguente: 
+\begin{lstlisting}
+{
+  "kind": "Node",
+  "apiVersion": "v1",
+  "metadata": {
+    "name": "10.240.79.157",
+    "labels": {
+      "name": "my-first-k8s-node"
+    }
+  }
+}
+\end{lstlisting}
+\subsubsection{Unicità del nodo}
+Il nome identifica in modo univoco un nodo. Due nodi non possono avere lo stesso nome, perchè \textbf{Kubernetes} presuppone che due risorse con lo stesso nome rappresentino la stessa risorsa. Se tale condizione non venisse rispettata si verificherebbero delle incoerenze di stato dei nodi. \\
+\textbf{Se il nodo deve essere sostituito o aggiornato in modo significativo, l'oggetto nodo esistente deve essere prima rimosso dal server API e aggiunto nuovamente dopo l'aggiornamento}.
+\subsubsection{Lo stato di un nodo}
+Lo stato di un nodo contiene le seguenti informazioni:
+\begin{itemize}
+    \item Indirizzi: contiene le informazioni: \begin{itemize}
+        \item \textbf{HostName}: il nome host riportato dal kernel del nodo;
+        \item \textbf{ExternalIP}: in genere l'indirizzo IP del nodo che è instradabile esternamente;
+        \item \textbf{InternalIP}: in genere l'indirizzo IP del nodo che è instradabile solo all'interno del cluster.
+    \item le conditions: campo che descrivi lo stato di tutti i nodi attivi;
+        \begin{itemize}
+            \item \textbf{Ready}: Truese il nodo è integro e pronto ad accettare pod, Falsese il nodo non è integro e non accetta pod e Unknownse il controller del nodo non ha ricevuto notizie dal nodo nell'ultimi 40 secondi; 
+            \item \textbf{DiskPressure}: True se la capacità del disco è bassa;
+            \item \textbf{MemoryPressure}: True se la memoria del nodo è bassa;
+            \item \textbf{PIDPressure}: True se ci sono troppi processi sul nodo;
+            \item \textbf{NetworkUnavailable}: True se la rete per il nodo non è configurata correttamente.
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
 \section{Test}
 \subsection{High Availability}
 Per andare a testare l'alta affidabilità, si è andati a creare un cluster di nodi formato da: 1 nodo Zookeeper, 3 nodi broker (Kafka1, Kafka2, Kafka3) e si è andati ad istanziare un produttore e consumatore collegati al broker Kafka1. Ora per testare l'alta affidabilità basta simulare un malfunzionamento e verificare se i messaggi che il broker Kafka1 non è riuscito ad inviare al consumatore sono accessibili attraverso i server Kafka2 e Kafka3. 
