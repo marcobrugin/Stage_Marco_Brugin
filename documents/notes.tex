@@ -756,7 +756,7 @@ Il \textbf{kubelet} è responsabile della creazione e dell'aggiornamento dei $.s
 In particolare si occupa di: 
 \begin{itemize}
     \item  aggiorna il nodo $.status$ quando c'è un cambiamento di stato o se non c'è stato alcun aggiornamento per un intervallo configurato (l'intervallo prededfinito è di 5 minuti);
-    \item Il \textbf{Kubelet} crea e quindi aggiorna il suo oggetto \textbf{Lease} ogni 10 secondi; gli aggiornamenti del \textbf{Lease} si verificano indipendentemente dagli aggiornamenti del \textbf{Lease}.
+    \item Il \textbf{kubelet} crea e quindi aggiorna il suo oggetto \textbf{Lease} ogni 10 secondi; gli aggiornamenti del \textbf{Lease} si verificano indipendentemente dagli aggiornamenti del \textbf{Lease}.
 \end{itemize}
 \subsection{Il controllore del nodo}
 È un componente del \textbf{control pane} che gestisce i vari aspetti del nodo. \\
@@ -779,6 +779,76 @@ Esistono due tipi di eliminazione a cascata:
     \item Eliminazione a cascata in primo piano: l'oggetto in questione entra in una fase di "eliminazione in corso", L'oggetto rimane visibile tramite l'API \textbf{Kubernetes} fino al completamento del processo di eliminazione;
     \item Eliminazione a cascata in background: il server \textbf{API Kubernetes} elimina immediatamente l'oggetto proprietario e il controller pulisce gli oggetti dipendenti in background. Quando Kubernetes elimina un oggetto proprietario, i dipendenti rimasti vengono chiamati oggetti orfani.
 \end{itemize} 
+\subsection{Configurazione}
+In questa sezione viene descritto come eseguire un'app d'esempio su \textbf{Kubernetes}.\\
+Tale esempio presuppone l'esecuzione su singola macchina del cluster e l'utilizzo di \textbf{minikube}.\\
+Gli obbiettivi della seguente demo di esempio sono: 
+\begin{itemize}
+    \item distribuire un'applicazione di esempio su \textbf{minikube};
+    \item eseguire l'applicazione;
+    \item visualizzare i registri dell'applicazione.
+\end{itemize}
+\subsubsection{Svolgimento}
+Prima di tutto assicurarsi di aver configurato \textbf{minikube} sulla propria macchina. \\
+L'installazione può essere effetuata attareverso i seguenti comandi: 
+\begin{lstlisting}
+curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+sudo install minikube-linux-amd64 /usr/local/bin/minikube
+\end{lstlisting}
+\begin{enumerate}
+    \item Creare un cluster \textbf{minikube}
+    \begin{lstlisting}
+        minikube start
+    \end{lstlisting}
+    È possibile abilitare la dashboard dove eseguire operazioni di deployment o creare risorse \textbf{Kubernetes} con il comando 
+    \begin{lstlisting}
+        minikube dashboard
+    \end{lstlisting}
+    \item Un \textbf{POD} rappresenta un gruppo di container, collegati per lo svolgimento di un determinato compito\\
+    Con il comando \textbf{kubectl create}  è possibile creare un deployment che gestisce tale \textbf{POD}. Ed il \textbf{POD} esegue un container sulla immagine fornita
+    \begin{lstlisting}
+        kubectl create deployment hello-node --image=registry.k8s.io/e2e-test-images/agnhost:2.39 -- /agnhost netexec --http-port=8080
+    \end{lstlisting}
+    \item Per visualizzare la distribuzione dei nodi, utilizzare il comando
+    \begin{lstlisting}
+        kubectl get deployments
+    \end{lstlisting}
+    \begin{figure}[h]
+        \centering
+\includegraphics{images/output_get_deployment.png}
+        \caption{get deployment}
+        \label{fig:deployment}
+    \end{figure}
+    \item Per visualizzare il POD utilizzare il comando
+    \begin{lstlisting}
+        kubectl get pods
+    \end{lstlisting}
+    \begin{figure}[h]
+        \centering
+\includegraphics{images/output_pods.png}
+        \caption{Output PODS}
+        \label{fig:output_pods}
+    \end{figure}
+    \item Per visualizzare gli eventi del cluster
+    \begin{lstlisting}
+        kubectl get events
+    \end{lstlisting}
+      \begin{figure}[h]
+        \centering
+\includegraphics[width=0.7\textwidth]{images/get_events.png}
+        \caption{Get events}
+        \label{fig:get_events}
+    \end{figure}
+    \item Per visualizzare le configurazioni kubectl    \begin{lstlisting}
+        kubectl config view
+    \end{lstlisting}
+     \begin{figure}[h]
+        \centering
+\includegraphics[width=0.7\textwidth]{images/get_config_view.png}
+        \caption{Config view}
+        \label{fig:config_view}
+    \end{figure}
+\end{enumerate}
 \section{Test}
 \subsection{High Availability}
 Per andare a testare l'alta affidabilità, si è andati a creare un cluster di nodi formato da: 1 nodo Zookeeper, 3 nodi broker (Kafka1, Kafka2, Kafka3) e si è andati ad istanziare un produttore e consumatore collegati al broker Kafka1. Ora per testare l'alta affidabilità basta simulare un malfunzionamento e verificare se i messaggi che il broker Kafka1 non è riuscito ad inviare al consumatore sono accessibili attraverso i server Kafka2 e Kafka3. 
