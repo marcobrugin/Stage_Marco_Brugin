@@ -894,6 +894,106 @@ current-context: minikube
         \end{itemize}
     \item La sezione contexts specifica una combinazione di un utente e un cluster. \\Inoltre definisce  uno spazio dei nomi predefinito per questa coppia. Il nome del contesto è arbitrario, ma l'utente e il cluster devono essere predefiniti all'interno del \textbf{kubeconfig} file.
 \end{itemize}
+\subsubsection{Configurazione l'accesso a più cluster}
+Per definire l'accesso a più cluster, utilizzando il file di configurazione, procedere nel seguente modo.\\
+Per passare da un cluster ad un altro utilizzare il comando:
+\begin{lstlisting}
+    kubectl config use-context
+\end{lstlisting}
+Supponiamo di avere due cluster, uno per il lavoro di sviluppo e uno per il lavoro di test. I tuoi sviluppatori front-end lavorano in uno spazio dei nomi chiamato frontende i tuoi sviluppatori di storage lavorano in uno spazio dei nomi chiamato storage. Nel tuo testcluster, gli sviluppatori lavorano nello spazio dei nomi predefinito o creano spazi dei nomi ausiliari come meglio credono. L'accesso al cluster di sviluppo richiede l'autenticazione tramite certificato. L'accesso al cluster di test richiede l'autenticazione tramite nome utente e password.\\
+Passi da seguire:
+\begin{enumerate}
+    \item Crea una directory denominata \textbf{config-exercise}, con all'interno un file denominato \textbf{config-demo} con il seguente contenuto
+    \begin{lstlisting}
+apiVersion: v1
+kind: Config
+preferences: {}
+
+clusters:
+- cluster:
+  name: development
+- cluster:
+  name: test
+
+users:
+- name: developer
+- name: experimenter
+
+contexts:
+- context:
+  name: dev-frontend
+- context:
+  name: dev-storage
+- context:
+  name: exp-test
+    \end{lstlisting}
+    \item aggiungere i dettagli del cluster 
+    \begin{lstlisting}
+kubectl config --kubeconfig=config-demo set-cluster development --server=https://1.2.3.4 --certificate-authority=fake-ca-file
+kubectl config --kubeconfig=config-demo set-cluster test --server=https://5.6.7.8 --insecure-skip-tls-verify
+    \end{lstlisting}
+\item aggiungere i dettagli degli utenti
+\begin{lstlisting}
+kubectl config --kubeconfig=config-demo set-credentials developer --client-certificate=fake-cert-file --client-key=fake-key-seefile
+kubectl config --kubeconfig=config-demo set-credentials experimenter --username=exp --password=some-password
+\end{lstlisting}
+\item aggiungere i dettagli del contesto di configurazione
+\begin{lstlisting}
+kubectl config --kubeconfig=config-demo set-context dev-frontend --cluster=development --namespace=frontend --user=developer
+kubectl config --kubeconfig=config-demo set-context dev-storage --cluster=development --namespace=storage --user=developer
+kubectl config --kubeconfig=config-demo set-context exp-test --cluster=test --namespace=default --user=experimenter
+\end{lstlisting}
+\item per visualizzare il risultato finale
+\begin{lstlisting}
+    kubectl config --kubeconfig=config-demo view
+\end{lstlisting}
+    \end{enumerate}
+    \begin{lstlisting}
+apiVersion: v1
+clusters:
+- cluster:
+    certificate-authority: fake-ca-file
+    server: https://1.2.3.4
+  name: development
+- cluster:
+    insecure-skip-tls-verify: true
+    server: https://5.6.7.8
+  name: test
+contexts:
+- context:
+    cluster: development
+    namespace: frontend
+    user: developer
+  name: dev-frontend
+- context:
+    cluster: development
+    namespace: storage
+    user: developer
+  name: dev-storage
+- context:
+    cluster: test
+    namespace: default
+    user: experimenter
+  name: exp-test
+current-context: ""
+kind: Config
+preferences: {}
+users:
+- name: developer
+  user:
+    client-certificate: fake-cert-file
+    client-key: fake-key-file
+- name: experimenter
+  user:
+    # Documentation note (this comment is NOT part of the command output).
+    # Storing passwords in Kubernetes client config is risky.
+    # A better alternative would be to use a credential plugin
+    # and store the credentials separately.
+    # See https://kubernetes.io/docs/reference/access-authn-authz/authentication/#client-go-credential-plugins
+    password: some-password
+    username: exp
+\end{lstlisting}
+    
 \section{Implementazione}
 \subsection{Apache Kafka}
 Le note riportate si riferiscono ad un sistema operativo Linux dove è già stata scaricata una versione di \textbf{Apache Kafka}. I comandi devono essere eseguiti dalla cartella di installazione.
@@ -1887,4 +1987,5 @@ Per andare a verificare la connessione al container a partire da un altro host n
 \bibliography{https://kubernetes.io/docs/concepts/overview/}
 \bibliography{https://kubernetes.io/docs/tutorials/hello-minikube/}
 \bibliography{https://www.redhat.com/sysadmin/kubeconfig}
+\bibliography{https://kubernetes.io/docs/tasks/access-application-cluster/configure-access-multiple-clusters/}  
 \end{document}
