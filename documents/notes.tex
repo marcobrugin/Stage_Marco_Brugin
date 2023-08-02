@@ -779,7 +779,7 @@ Esistono due tipi di eliminazione a cascata:
     \item Eliminazione a cascata in primo piano: l'oggetto in questione entra in una fase di "eliminazione in corso", L'oggetto rimane visibile tramite l'API \textbf{Kubernetes} fino al completamento del processo di eliminazione;
     \item Eliminazione a cascata in background: il server \textbf{API Kubernetes} elimina immediatamente l'oggetto proprietario e il controller pulisce gli oggetti dipendenti in background. Quando Kubernetes elimina un oggetto proprietario, i dipendenti rimasti vengono chiamati oggetti orfani.
 \end{itemize} 
-\subsection{Configurazione}
+\subsection{Configurazione con minikube}
 In questa sezione viene descritto come eseguire un'app d'esempio su \textbf{Kubernetes}.\\
 Tale esempio presuppone l'esecuzione su singola macchina del cluster e l'utilizzo di \textbf{minikube}.\\
 Gli obbiettivi della seguente demo di esempio sono: 
@@ -849,7 +849,51 @@ sudo install minikube-linux-amd64 /usr/local/bin/minikube
         \label{fig:config_view}
     \end{figure}
 \end{enumerate}
-
+\subsection{Configurazione attraverso file kubeconfig}
+Il file \textbf{kubeconfig} viene utilizzato per immagazzinare le informazioni di autenticazione per \textbf{kubectl}. La posizione predefinita del \textbf{kubeconfig} file è  $~/.kube$. \\ In generale invece di utilizzare il nome \textbf{kubeconfig}, il file viene semplicemente denomicato \textbf{config}.
+\subsubsection{Composizione}
+il \textbf{kubeconfig} file è un file YAML contenente tutti i gruppi di \textbf{cluster}, di \textbf{utenti} e di \textbf{contesti}.\\
+\begin{itemize}
+    \item Un \textbf{cluster} è un cluster \textbf{Kubernetes};
+    \item un utente è una credenziale utilizzata per interagire con \textbf{API Kubernetes};
+    \item un \textbf{contesto} è una combinazione di un cluster e un utente, ogni volta che si esegue il comando \textbf{kubectl} si fa riferimento ad un contesto presente all'interno del file \textbf{kubeconfig}.
+\end{itemize}
+\subsection{Esempio di deployment di minikube}
+\begin{lstlisting}
+apiVersion: v1
+kind: Config
+clusters:
+- name: minikube
+ cluster:
+   certificate-authority: /home/hector/.minikube/ca.crt
+   server: https://192.168.39.217:8443
+users:
+- name: minikube
+ user:
+   client-certificate: /home/hector/.minikube/profiles/minikube/client.crt
+   client-key: /home/hector/.minikube/profiles/minikube/client.key
+contexts:
+- name: minikube
+ context:
+   cluster: minikube
+   namespace: default
+   user: minikube
+current-context: minikube
+\end{lstlisting}
+\begin{itemize}
+    \item La sezione cluster elenca tutti i cluster che sono già stati connessi. In questo caso, ce solo minikube (il nome è arbitrario). All'interno del \textbf{cluster} sono presenti due chiavi:
+    \begin{itemize}
+        \item \textbf{certificate-authority}: contiene il certificato per l'autorità di certificazione. Può trattarsi di un certificato di un percorso file o di una stringa Base64 del formato PEM (Privacy Enhanced Mail) del certificato;
+        \item \textbf{server}: è l'indirizzo del server;
+    \end{itemize}
+    \item la sezione utenti elenca tutti gli utenti già utilizzati per connettersi a un cluster. Esistono alcune possibili chiavi per un utente:
+    \begin{itemize}
+        \item \textbf{client-certificate}: contiene un certificato per l'utente firmato dalla CA Kubernetes. È un percorso file o di una stringa Base64 nel formato PEM del certificato;
+        \item \textbf{chiave-client}: contiene la chiave che ha firmato il certificato client;
+        \item \textbf{token}: contiene un token per questo utente quando non è presente alcun certificato;
+        \end{itemize}
+    \item La sezione contexts specifica una combinazione di un utente e un cluster. \\Inoltre definisce  uno spazio dei nomi predefinito per questa coppia. Il nome del contesto è arbitrario, ma l'utente e il cluster devono essere predefiniti all'interno del \textbf{kubeconfig} file.
+\end{itemize}
 \section{Implementazione}
 \subsection{Apache Kafka}
 Le note riportate si riferiscono ad un sistema operativo Linux dove è già stata scaricata una versione di \textbf{Apache Kafka}. I comandi devono essere eseguiti dalla cartella di installazione.
@@ -1125,12 +1169,7 @@ for n in range(500):
         }
         producer.send("accessi", value = my_data) 
         sleep(1)
-
 print("End")
-     
-
-     
-
 \end{lstlisting}
 È possibile notare che è stata applicata una randomici da 4 a 20 sui possibili valori che un attributo può assumere
 \item Successivamente è stati creati i servizi di \textbf{Apache Druid} andando a specificare una \textit{docker network} che permetterà ai contaiener di comunicare.
