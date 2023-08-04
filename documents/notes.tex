@@ -674,7 +674,7 @@ I container sono un buon modo per raggruppare ed eseguire le applicazioni. In un
 \subsection{Architettura}
 \textbf{Kubernetes} viene distribuito in un cluster. \\
 Un cluster è costituito da un insiemee di macchine \textbf{worker}, denominate nodi, che eseguono le applicazioni containerizzate. Ogni cluster ha almeno un nodo \textbf{worker}.\\
-I nodi \textbf{worker} ospitano i \textbf{POD} che rappresentano i componenti di lavoro dell'applicazione. Il \textbf{control pane} gestisce i nodi di lavoro e i \textbf{POD} del cluster. In ambienti di produzione per garantire tolleranza ai guasti e alta disponibilità il \textbf{control pane} e \textbf{POD} sono eseguiti su più calcolatori e un cluster esegue i nodi. 
+I nodi \textbf{worker} ospitano i \textbf{POD}, che rappresentano le minime unità di calcolo, distribuibili e gestibili su \textbf{Kubernetes}. Il \textbf{control pane} gestisce i nodi di lavoro e i \textbf{POD} del cluster. In ambienti di produzione per garantire tolleranza ai guasti e alta disponibilità il \textbf{control pane} e \textbf{POD} sono eseguiti su più calcolatori e un cluster esegue i nodi. 
 \subsubsection{I componenti del control pane}
 I componenti di \textbf{control pane} prendono decisioni globali sul cluster, oltre a rispondere ad eventi del cluster. Per semplicità i componenti di \textbf{control pane} vengono tutti eseguiti sulla stessa macchina.
 \paragraph{kube-apiserver}
@@ -779,6 +779,10 @@ Esistono due tipi di eliminazione a cascata:
     \item Eliminazione a cascata in primo piano: l'oggetto in questione entra in una fase di "eliminazione in corso", L'oggetto rimane visibile tramite l'API \textbf{Kubernetes} fino al completamento del processo di eliminazione;
     \item Eliminazione a cascata in background: il server \textbf{API Kubernetes} elimina immediatamente l'oggetto proprietario e il controller pulisce gli oggetti dipendenti in background. Quando Kubernetes elimina un oggetto proprietario, i dipendenti rimasti vengono chiamati oggetti orfani.
 \end{itemize} 
+\subsection{I service}
+In \textbf{Kubernetes}, un servizio è un metodo per esporre un'applicazione di rete in esecuzione come una o più \textbf{PODS}. 
+\subsection{Il ConfigMap}
+Un \textbf{ConfigMap} è un oggetto API utilizzato per archiviare dati, possono essere utilizzate come variabili d'ambiente.
 \subsection{Configurazione con minikube}
 In questa sezione viene descritto come eseguire un'app d'esempio su \textbf{Kubernetes}.\\
 Tale esempio presuppone l'esecuzione su singola macchina del cluster e l'utilizzo di \textbf{minikube}.\\
@@ -842,12 +846,46 @@ sudo install minikube-linux-amd64 /usr/local/bin/minikube
     \item Per visualizzare le configurazioni kubectl    \begin{lstlisting}
         kubectl config view
     \end{lstlisting}
-     \begin{figure}[h]
+     \begin{figure}[H]
         \centering
 \includegraphics[width=0.7\textwidth]{images/get_config_view.png}
         \caption{Config view}
         \label{fig:config_view}
     \end{figure}
+\end{enumerate}
+Assegnare un \textbf{PODS} a un nodo.
+\begin{enumerate}
+    \item Creare un POD;
+    \begin{lstlisting}
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nome-del-pod
+  labels:
+    app: tua-app
+spec:
+  containers:
+  - name: nome-del-contenitore
+    image: nome-immagine-docker:tag
+    ports:
+    - containerPort: porta-da-esporre
+    \end{lstlisting}
+    Ed eseguire il comando 
+    \begin{lstlisting}
+        kubectl apply -f nome-file-yaml.yaml
+    \end{lstlisting}
+    \item elencare i nodi del nodi del cluster;
+    \begin{lstlisting}
+        kubectl get nodes --show-labels
+    \end{lstlisting}
+    \item scegliere un nodo;
+    \begin{lstlisting}
+        kubectl label nodes <label_del_nodo>
+    \end{lstlisting}
+    Ed eseguire il comando 
+    \begin{lstlisting}
+        kubectl apply -f nome-file-yaml.yaml
+    \end{lstlisting}
 \end{enumerate}
 \subsection{Configurazione attraverso file kubeconfig}
 Il file \textbf{kubeconfig} viene utilizzato per immagazzinare le informazioni di autenticazione per \textbf{kubectl}. La posizione predefinita del \textbf{kubeconfig} file è  $~/.kube$. \\ In generale invece di utilizzare il nome \textbf{kubeconfig}, il file viene semplicemente denomicato \textbf{config}.
@@ -993,7 +1031,184 @@ users:
     password: some-password
     username: exp
 \end{lstlisting}
-    
+Per applicare tale configirazione utilizzare il comando: 
+\begin{lstlisting}
+    kubectl -f nome_file.yml 
+\end{lstlisting}
+\subsection{Esempio di deployments con Apache Druid}
+
+\begin{enumerate}
+    \item Creazione del service \textbf{Zookeeper}
+    \begin{lstlisting}
+apiVersion: v1
+kind: Service
+metadata:
+  name: zk-service
+spec:
+  selector:
+    app: zookeeper
+  ports:
+    - name: client
+      port: 2181
+      targetPort: 2181
+    \end{lstlisting}
+\item definire la \textbf{ConfigMap} per \textbf{Apache Druid} 
+\begin{lstlisting}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: druid-config
+data:
+  druid.common.runtime.properties: |-
+    druid.server.type=historical
+    druid.zk.service.host=zk-service:2181
+    # Altre impostazioni specifiche per il nodo historical
+
+  druid-broker.runtime.properties: |-
+    druid.server.type=broker
+    druid.zk.service.host=zk-service:2181
+    # Altre impostazioni specifiche per il nodo broker
+
+  druid-coordinator.runtime.properties: |-
+    druid.server.type=coordinator
+    druid.zk.service.host=zk-service:2181
+    # Altre impostazioni specifiche per il nodo coordinator
+\end{lstlisting}
+\item definizione dei nodi Historical
+\begin{lstlisting}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: druid-historical
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: druid-historical
+  template:
+    metadata:
+      labels:
+        app: druid-historical
+    spec:
+      containers:
+        - name: druid
+          image: your-druid-image:latest
+          ports:
+            - containerPort: 8083 # Porta per il nodo historical
+          volumeMounts:
+            - name: druid-config-volume
+              mountPath: /opt/druid/conf/druid
+      volumes:
+        - name: druid-config-volume
+          configMap:
+            name: druid-config
+            items:
+              - key: druid.common.runtime.properties
+                path: runtime.properties
+\end{lstlisting}
+\item definizione del nodo \textbf{Broker}
+\begin{lstlisting}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: druid-broker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: druid-broker
+  template:
+    metadata:
+      labels:
+        app: druid-broker
+    spec:
+      containers:
+        - name: druid
+          image: your-druid-image:latest
+          ports:
+            - containerPort: 8082 # Porta per il nodo broker
+          volumeMounts:
+            - name: druid-config-volume
+              mountPath: /opt/druid/conf/druid
+      volumes:
+        - name: druid-config-volume
+          configMap:
+            name: druid-config
+            items:
+              - key: druid-broker.runtime.properties
+                path: runtime.properties
+\end{lstlisting}
+\item definizione del nodo \textbf{Coordinator}
+\begin{lstlisting}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: druid-coordinator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: druid-coordinator
+  template:
+    metadata:
+      labels:
+        app: druid-coordinator
+    spec:
+      containers:
+        - name: druid
+          image: your-druid-image:latest
+          ports:
+            - containerPort: 8081 # Porta per il nodo coordinator
+          volumeMounts:
+            - name: druid-config-volume
+              mountPath: /opt/druid/conf/druid
+      volumes:
+        - name: druid-config-volume
+          configMap:
+            name: druid-config
+            items:
+              - key: druid-coordinator.runtime.properties
+                path: runtime.properties
+\end{lstlisting}
+\item definizione del \textbf{service Druid}
+\begin{lstlisting}
+apiVersion: v1
+kind: Service
+metadata:
+  name: druid-service
+spec:
+  ports:
+    - name: druid-historical
+      port: 8083
+      targetPort: 8083
+      selector:
+        app: druid-historical
+    - name: druid-broker
+      port: 8082
+      targetPort: 8082
+      selector:
+        app: druid-broker
+    - name: druid-coordinator
+      port: 8081
+      targetPort: 8081
+      selector:
+        app: druid-coordinator
+\end{lstlisting}
+\item dopo aver configurato i precedenti file \textbf{YAML} eseguire i seguenti comandi (i nomi dei file sono arbitrari)
+\begin{lstlisting}
+kubectl apply -f druid-configmap.yaml
+kubectl apply -f druid-historical.yaml
+kubectl apply -f druid-broker.yaml
+kubectl apply -f druid-coordinator.yaml
+kubectl apply -f druid-service.yaml
+\end{lstlisting}
+\item per verificare lo stato del cluster, eseguire i seguenti comandi
+\begin{lstlisting}
+kubectl get pods      # Visualizza lo stato dei pod
+kubectl get services  # Visualizza lo stato dei service
+kubectl get configmaps  # Visualizza lo stato dei ConfigMap
+\end{lstlisting}
+\end{enumerate}
 \section{Implementazione}
 \subsection{Apache Kafka}
 Le note riportate si riferiscono ad un sistema operativo Linux dove è già stata scaricata una versione di \textbf{Apache Kafka}. I comandi devono essere eseguiti dalla cartella di installazione.
