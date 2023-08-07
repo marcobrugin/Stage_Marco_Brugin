@@ -113,19 +113,19 @@
 \textbf{Kafka} viene eseguito come un cluster di uno o più server. Alcuni fanno da \textbf{broker}: livello di archiviazione. Altri assolvono il compito di \textbf{\textbf{Kafka} Connect}: importano e esportano i dati sotto forma di  flussi di eventi che permette di interagire con altri sistemi esistenti.
 \subsubsection{Client}
 Consentono di scrivere applicazioni distribuite e microservizi che leggono, scrivono ed elaborano flussi di eventi in parallelo, su larga scala e con fault tollerance anche in caso di problemi di rete o guasti della macchina.
-Esitono molti client per diversi linguaggi di programmazione.
+Esistono molti client per diversi linguaggi di programmazione.
 \subsection{Garanzie di funzionamento}
 In \textbf{Kafka} esistono produttori e consumatori che producono e sottoscrivono eventi. 
-Gli uni sono sono indipendenti l'uno dall'altro, ciò permette di raggiungere alcune delle seguenti garanzie:
+Gli uni  sono indipendenti l'uno dall'altro, ciò permette di raggiungere alcune delle seguenti garanzie:
 \begin{itemize}
-    \item \textbf{Al massimo una volta}: i messaggipossono andare persi ma mai riconsegnati. Infatti si potrebbe verificare un guasto ad un singolo broker o un errore della rete nel momento dell'invio di un messaggio. Il messaggio stesso verrà recapitato una e una sola volta.
-    \item \textbf{Almeno una volta}: i mesaggi non 		vengono mai persi ma possono essere 		riconsegnati;
+    \item \textbf{Al massimo una volta}: i messaggi possono andare persi ma mai riconsegnati. Infatti si potrebbe verificare un guasto ad un singolo broker o un errore della rete nel momento dell'invio di un messaggio. Il messaggio stesso verrà recapitato una e una sola volta.
+    \item \textbf{Almeno una volta}: i messaggi non 		vengono mai persi ma possono essere 		riconsegnati;
     \item \textbf{Una solo volta}: i messaggi non  		vanno persi e sono consegnati una 		sola volta; è la garanzia maggiormente desiderabile.
 \end{itemize}
 \subsection{Gestione degli eventi}
 Gli eventi sono organizzati in topic o argomenti. Gli eventi possono essere letti da più consumatori. 
 Un evento anche se consumato non viene eliminato, può essere impostato un timeout di mantenimento dell'evento.
-I topic sono partizionati su più nodi. Tale partizionamento consente ai client di leggere e scrivere dati da/a molti broker. Quando un nuovo evento viene emesso questo si aggiunge all rispettiva partizione. Sarà \textbf{\textbf{Kafka}} a garantire che gli eventi vengano letti nell'ordine in cui sono stati scritti.
+I topic sono partizionati su più nodi. Tale partizionamento consente ai client di leggere e scrivere dati da/a molti broker. Quando un nuovo evento viene emesso questo si aggiunge alla rispettiva partizione. Sarà \textbf{\textbf{Kafka}} a garantire che gli eventi vengano letti nell'ordine in cui sono stati scritti.
 \subsection{Interfacce presentì}
 \subsubsection{\textbf{Kafka} Producer}
 L’interfaccia Producer permette alle applicazioni di inviare i flussi di dati ai broker di un cluster di Apache per categorizzarli e salvarli (nei topic già citati).
@@ -135,16 +135,16 @@ L’interfaccia Consumer consente ai consumatori di Apache \textbf{Kafka} di  ri
     L’interfaccia Connect  consente di impostare produttori e consumatori riutilizzabili che collegano i topic di \textbf{Kafka} con le applicazioni o le banche dati esistenti.
 \subsection{Replicas}
 Con il termine di \textbf{Kafka Replication} significa disporre di più copie dei dati, distribuite su più server/broker.
-Ciò aiuta a mantenere alti livelli di disponibilità in caso di guasto. \\Le repliche sono permesse  a livello di partizione. kafka ne designa una chimata leader mentre le altre  sono partizioni follower o \textbf{in-sync}. Il numero totale di repliche incluso il leader costituisce il fattore di replicazione.
+Ciò aiuta a mantenere alti livelli di disponibilità in caso di guasto. \\Le repliche sono permesse  a livello di partizione. \textbf{Kafka} ne designa una chimata leader mentre le altre  sono partizioni follower o \textbf{in-sync}. Il numero totale di repliche incluso il leader costituisce il fattore di replicazione.
 Il leader è responsabile della ricezione e dell'invio dei dati, per quella partizione.
-Per mantenere questi cluster e gli argomenti/partizioni all'interno, Kafka ha un servizio centralizzato chiamato \textbf{Zookeeper}.
+Per mantenere questi cluster e gli argomenti/partizioni all'interno, \textbf{Kafka} ha un servizio centralizzato chiamato \textbf{Zookeeper}.
 
 \subsection{Retention}
 Con \textbf{Retention} in \textbf{Kafka} si intende la possibilità di controllare la dimensione dei registri degli argomenti ed evitare di superare le dimensioni del disco esistente.\\La conservazione può essere configurata o controllata in base alla dimensione dei log o in base alla durata configurata.
 Tale configurazione può essere impostata a grana fine o a grana grossa per ogni argomento o per tutti gli argomenti.\\
 \subsubsection{Retention basata sul tempo}
 Una volta raggiunto il tempo di conservazione configurato per il segmento, questo viene contrassegnato per l'eliminazione o la compattazione in base al criterio di pulizia configurato. Il periodo di conservazione predefinito per i segmenti è di 7 giorni.
-In ordine di importanza i parametri configurabili per la    \textbf{Retention} basata sul tempo sono in ordine di importanza e valutazione:
+I parametri configurabili per la    \textbf{Retention} basata sul tempo sono in ordine di importanza e valutazione:
 \begin{enumerate}
     \item log.retention.ms;
     \item log.retention.minutes;
@@ -155,7 +155,7 @@ Nel momento in cui un parametro di livello di priorità superiore non è imposta
 In questo caso si va 
 configurare la dimensione massima di una struttura di dati di registro per una partizione di argomento. Una volta che la dimensione del registro raggiunge questa dimensione, inizia a rimuovere i segmenti dalla sua fine.
 \\
-In ordine di importanza i parametri configurabili per la    \textbf{Retention} basata dimensione sono in ordine di importanza e valutazione:
+I parametri configurabili per la   \textbf{Retention} basata dimensione sono in ordine di importanza e valutazione:
 \begin{enumerate}
     \item log.segment.bytes: la dimensione massima di un singolo file di registro;
     \item log.retention.check.interval.ms: la frequenza in millisecondi con cui la pulizia del registro verifica se un registro è idoneo per l'eliminazione;
@@ -165,9 +165,9 @@ In ordine di importanza i parametri configurabili per la    \textbf{Retention} b
 \textbf{Zookeeper} è un prodotto open-source che si occupa della sincronizzazione tra i cluster distribuiti e ne gestisce le configurazioni, il controllo e la denominazione.\\
 Il protocollo \textbf{Zookeeper Atomic Broadcast (ZAB)} è il cervello dell'intero sistema.\\
 Ogni replica o nodo invia a intervalli regolari un messaggio \textit{ Keep-Alive} a Zookeeper, informando così \textbf{Zookeeper} che è vivo e funzionante. \\
-Se ebtro un tempo prestabilito il messaggio non viene ricevuto si presume che il nodo sia morto e se era un leadere se ne elegge un altro.\\
+Se entro un tempo prestabilito il messaggio non viene ricevuto si presume che il nodo sia morto e se era un leader se ne elegge un altro.\\
 \textbf{Zookeeper} permette di definire dei parametri che consentono di capire quando un nodo è guasto e quanto i nodi follower sono in ritardo rispetto al leader.\\
-Il parametro zookeeper.session.timeout.ms millisecondi è impostato su 6000 per impostazione predefinita: indica che ,se il leader non riceve l'evento \textit{ Keep-Alive} entro quel periodo temporale, detiene che quel nodo sia morto.\\
+Il parametro zookeeper.session.timeout.ms millisecondi è impostato su 6000 per impostazione predefinita: indica che, se il leader non riceve l'evento \textit{ Keep-Alive} entro quel periodo temporale, detiene che quel nodo sia morto.\\
 Il parametro replica.lag.max.messages, decide la differenza consentita tra \textbf{Replica's Offset
 }e \textbf{Leader's Offset}. Se questa differenza è maggiore di replica.lag.max.message-1, il nodo viene considerato in ritardo e viene rimosso dall'elenco dei nodi in sincronizzazione dal leader. \\
 Tutti i nodi che sono attivi e sincronizzati formano l' \textbf{In-Sync Replica Set}(\textbf{ISR}).\\
@@ -204,9 +204,9 @@ Indica l'aggregazione di dati di monitoraggio provenienti da varie fonti per ese
 \subsubsection{Registro commit}
 \textbf{Kafka} può fungere da sorta di log di commit esterno per un sistema distribuito. Il registro aiuta a replicare i dati tra i nodi e funge da meccanismo di risincronizzazione per consentire ai nodi non allineati di ripristinare i propri dati.
 
-\subsection{Apache Kafka VS EDA}
+\subsection{Apache Kafka e  EDA}
 L'emissione di un evento indica che qualcosa è accaduto e può essere visto come un agglomerato di dati atomico in grado di soddisfare l'evento stesso. 
-\textbf{Kafka} è un sistema di streaming di eventi che gestisce un flusso continuo di eventi. Inoltre Kafka memorizza tali in modo duraturo per il successivo recupero, analisi o elaborazione in tempo reale e li inoltri a varie destinazioni secondo necessità.
+\textbf{Kafka} è un sistema di streaming di eventi che gestisce un flusso continuo di eventi. Inoltre \textbf{Kafka} memorizza tali in modo duraturo per il successivo recupero, analisi o elaborazione in tempo reale e li inoltri a varie destinazioni secondo necessità.
 \\
 D'altra parte in una \textbf{EDA} (Event Driven Architecture) viene generati degli eventi che un agente acquisisce e risponde a tale evento.
 per utilizzare \textbf{Kafka} in un sistema \textbf{EDA} la chiave è andare a sfruttare il disaccopiamento: invece di effetuare un polling continuo di verifica della presenza di nuovi dati, basterà ascoltare il verificarsi di un evento per agire. Inoltre grazie all'approcio sviluppato da \textbf{Kafka} un evento una volta soddisfatto non viene eliminato, ma conservato per un periodo ti tempo predeterminato, pertanto un evento potrà essere letto da più consumatori e potrà essere utilizzato per soddisfare una varietà di richieste.
@@ -2248,6 +2248,7 @@ Per andare a verificare la connessione al container a partire da un altro host n
 \bibliographystyle{IEEEtran}
 \bibliography{https://Kafka.apache.org/documentation/}
 \bibliography{https://ably.com/topic/pub-sub#the-pub-sub-model-explained}
+\bibliography{https://druid.apache.org/docs/latest/operations/high-availability.html}
 \bibliography{https://kafka.apache.org/quickstart}
 \bibliography{https://druid.apache.org/docs/latest/ingestion/rollup.html}
 \bibliography{https://kubernetes.io/docs/concepts/overview/}
