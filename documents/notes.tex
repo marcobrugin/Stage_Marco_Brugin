@@ -1194,13 +1194,64 @@ spec:
       selector:
         app: druid-coordinator
 \end{lstlisting}
+\item definire il nodo \textbf{Postgres}
+\begin{lstlisting}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:latest
+          ports:
+            - containerPort: 5432 # Porta predefinita di PostgreSQL
+          env:
+            - name: POSTGRES_USER
+              value: your_username
+            - name: POSTGRES_PASSWORD
+              value: your_password
+            - name: POSTGRES_DB
+              value: your_database_name
+          volumeMounts:
+            - name: postgres-data
+              mountPath: /var/lib/postgresql/data
+      volumes:
+        - name: postgres-data
+          emptyDir: {}
+\end{lstlisting}
+\item definire il service \textbf{Postgres}
+\begin{lstlisting}
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+spec:
+  selector:
+    app: postgres
+  ports:
+    - name: postgres
+      port: 5432
+      targetPort: 5432
+\end{lstlisting}
 \item dopo aver configurato i precedenti file \textbf{YAML} eseguire i seguenti comandi (i nomi dei file sono arbitrari)
 \begin{lstlisting}
-kubectl apply -f druid-configmap.yaml
-kubectl apply -f druid-historical.yaml
-kubectl apply -f druid-broker.yaml
-kubectl apply -f druid-coordinator.yaml
-kubectl apply -f druid-service.yaml
+kubectl apply -f druid-configmap.yml
+kubectl apply -f druid-historical.yml
+kubectl apply -f druid-broker.yml
+kubectl apply -f druid-coordinator.yml
+kubectl apply -f druid-service.yml
+kubectl apply -f postgres-config.yml
+kubectl apply -f postgres-service.yml
 \end{lstlisting}
 \item per verificare lo stato del cluster, eseguire i seguenti comandi
 \begin{lstlisting}
