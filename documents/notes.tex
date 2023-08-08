@@ -228,9 +228,9 @@ L'architettura sottostante ad un \textbf{Middleware} non è altro che una \textb
 La chiave di utilizzo di un \textbf{Middleware} è che fornisce disaccopiamento tra i vari stadi di una \textbf{data-pipeline}.
 \section{Panoramica design pattern architetturali}
 \subsection{Layered-Architecture}
-È un modello architetturale basato su più livelli orrizontali, in cui ciascuno svolge un compito specifico e ha detrminata responsabilità. Sebbene il pattern in sè non indichi il numero di livelli da utilizzare, è usuale creare architetture con al più quattro livelli: presentazione, business, persistenza e database.
+È un modello architetturale basato su più livelli orrizontali, in cui ciascuno svolge un compito specifico e ha determinata responsabilità. Sebbene il pattern in sè non indichi il numero di livelli da utilizzare, è usuale creare architetture con al più quattro livelli: presentazione, business, persistenza e database.
 In tale archittetura ogni livello è del tutto separato dagli altri: le modifiche apportate ad un livello non generano cambiamenti agli altri, per questo si parla di livelli isolati.
-La comunicazione tra i livelli avviene in dall'alto verso il basso e in generale attraverso livelli chiusi: il passaggio delle informazione tra due o più livelli deve attraversare tutti i livelli intermedi.
+In generale la comunicazione avviene attraverso livelli chiusi: il passaggio delle informazione tra due o più livelli deve attraversare tutti i livelli intermedi.
 
 \subsection{Client-server}
 Nel pattern architetturale client-server ci sono due componenti essenziali: il client, che richiede un servizio o una prestazione, e il server che la fornisce. Il client espone porte di richesta, mentre il server espone porte di servizio. In tale architettura vige un tipo di collegamento Request-Response.
@@ -239,7 +239,7 @@ Uno dei principali vantaggi di tale pattern architetturale il calcolo centralizz
 \subsection{Pipe-filter}
 Il modello architetturale \textbf{Pipe-Fileter} è caraterrizzato da trasformazioni successive del flusso di dati.
 \\
-I dati dall'origine vengono inviati dall'origine verso le porte di input del primo filtro, dove viene eseguita la prima elaborazione, quindi il prodotto dell'elaborazione viene fornito dallì'output all'input del filtro successivo e così via.
+I dati dall'origine vengono inviati dall'origine verso le porte di input del primo filtro, dove viene eseguita la prima elaborazione, quindi il prodotto dell'elaborazione viene fornito dall'output all'input del filtro successivo e così via.
 \\
 Il fattore importante in tale pattern architetturale è l'ordine con cui vengono eseguiti tali filtri.
 \subsection{Broker}
@@ -250,13 +250,13 @@ Il pattern è formato da tre agenti:
     \item il server che mette a disposizione del client i propri servizzi attraverso il broker;
     \item il broker: riceve le richieste dai client, le archivia e una volta trovato il server appropiato inoltra la richiesta e trasmette il risultato al client.
 \end{itemize}
-\section{Publisher-Subscriber}
+\subsection{Publisher-Subscriber}
 Il pattern architetturale \textbf{Publisher-Subscriber} è un modello di progettazione software, utilizzato nei sistemi distribuiti, che impiegano una comunicazione asincrona tra i vari componenti.\\
 Sebbene vada ad utilizare tecniche già preesistenti come la sottoscrizione e l'accodamento di messaggi, la  chiave di sucesso di tale pattern è il totale disoccopiamento delle componenti: i componenti non sono a conoscenza dell'identità e della presenza degli altri.\\
-Il modello Pub-SUb è nato dalla necessità del rendere i sistemi ridimensionabili in modo dinamico.
-\subsection{Architettura}
+Il modello Pub-Sub è nato dalla necessità del rendere i sistemi ridimensionabili in modo dinamico.
+\subsubsection{Architettura}
 Il Pub-Sub fornisce un sistema di scambio di messaggi tra editori e sottoscrittori. Lo scambio tra questi ultimi non avviene in modo diretto tra gli agenti appena illustrati, ma viene utilizzato un intermediario che raggruppa i messaggi per argomento e fornisce disaccopiamento tra le componenti.
-\subsection{Vantaggi}
+\subsubsection{Vantaggi}
 \begin{itemize}
     \item \textbf{Debole accopiamento tra le componenti}: che rende il sistema più flessibile e modificabile dinamicamente;
     \item \textbf{Elevata scalabilità}: non esiste limite al numero di publisher e subscriber che possano comunicare;
@@ -271,7 +271,7 @@ Di solito le origini sono molteplici e generano dati ad altissima velocità.
 L'architettura che sta dietro a una \textbf{data-pilenes} consente di consumare, elebaorare, archiviare dati in tempo reale, man mano che vengono generati.
 Tutto ciò consente analisi e reazioni più veloci ad esigenze sorte.
 \\
-In generale nelle pipeline dati tradizionali estraggono, trasformano e caricano i dati prima che possano essere utilizzati.
+In generale le pipeline dati tradizionali estraggono, trasformano e caricano i dati prima che possano essere utilizzati.
 Ma data la enorme mole di dati che le \textbf{Streaming Data pipelines} sono sottoposte, tutto ciò non è possibile.
 \subsection{Architettura}
 Infatti per elaborare dati in streaming provenienti da sistemi come \textbf{Kafka} è necssario creare due livelli per l'elaborazione dati: 
@@ -287,28 +287,28 @@ Infatti per elaborare dati in streaming provenienti da sistemi come \textbf{Kafk
     \item \textbf{Durata e consistenza}: è importante considerare che i dati letti potrebbero essere già modificati o obsoleti, quindi è fondamentale disporre di strumenti di monitoraggio del flusso dati nel tempo;
     \item \textbf{Ordinare}: l'archiettura deve essere in grado di individuare la sequenza dei dati nel flusso;
     \item 
-    \textbf{Tolleranza ai guasti}: lo streaming dei dati non smettono mai di fluire da varie sorgenti e il sitema deve prevenire le interuuzioni di alcuni sorgentii;
+    \textbf{Tolleranza ai guasti}: lo streaming dei dati non smettono mai di fluire da varie sorgenti e il sistema deve prevenire le interuzioni di alcuni sorgenti;
     \item 
     \textbf{Latenza}: data l'enorme mole di dati prodotti, se questi ultimi non vengono gestiti in tempo reale perdono di rillevanza e diventano inutilizzabili.
 \end{itemize}
 \clearpage
 \subsection{Alta affidabilità}
-Il concetto di alta affidabilità è essenzialmente alla capacità di un sistema di funzionare continuamente senza guasti in un detrminato periodo di tempo.\\
+Il concetto di alta affidabilità è essenzialmente legato alla capacità di un sistema di funzionare continuamente senza guasti in un determinato periodo di tempo.\\
 Per garantire tali prestazioni in generale è necessario seguire i seguenti principi:
 \begin{itemize}
-    \item \textbf{Crossover affidabile}: creazione di ridondanza eseguendo l atto di passare dal componente X al componente Y senza perdere dati o influire sulle prestazioni;
+    \item \textbf{Crossover affidabile}: creazione di ridondanza eseguendo l'atto di passare dal componente X al componente Y senza perdere dati o influire sulle prestazioni;
     \item \textbf{Bilancio del carico}:
     tecnica attraverso  la quale si va a ridristribuire
-    il carico di elaborazione da su tutte le risorse del sistema in modo tale che nessuna sia sovraccaricata;
+    il carico di elaborazione su tutte le risorse del sistema in modo tale che nessuna sia sovraccaricata;
     \item \textbf{Rillevazione e gestione automatica dei guasti}:
     i guasti devono essere visibili e i  sistemi devono disporre di un sistema deve essere provvisto di un sistema automatico in grado di gestirli autonomamente.
 \end{itemize}
 \section{Architetture distribuite}
-Con il termine \textbf{distribuito} si va ad intendere un'architettura nella quale i componenti non si trovano su un'unica macchina ma possono cooperare attraverso una rete di comunicazione per raggiungere un detrminato obiettivo.
+Con il termine \textbf{distribuito} si va ad intendere un'architettura nella quale i componenti non si trovano su un'unica macchina ma possono cooperare attraverso una rete di comunicazione per raggiungere un determinato obiettivo.
 \\Le principali caraterristiche che si riscontrano su tale archietettura sono:
 \begin{itemize}
     \item l'elaborazione non è limitata a una sola macchina;
-    \item Il middleware è un'infrastruttura che supporta adeguatamente lo sviluppo e l'esecuzione di applicazioni distribuite, fornendo un buffer tra le applicazioni e la rete. Svolge il ruolo di intermediario del sistema e gestisce o supporta i diversi componenti di un sistema distribuito;
+    \item il \textbf{Middleware} è un'infrastruttura che supporta adeguatamente lo sviluppo e l'esecuzione di applicazioni distribuite, fornendo un buffer tra le applicazioni e la rete. Svolge il ruolo di intermediario del sistema e gestisce o supporta i diversi componenti di un sistema distribuito;
     \item le basi di un'architettura distribuita sono la  trasparenza, affidabilità e disponibilità.
 \end{itemize}
 \subsection{Confronto tra  architetture centralizzate e distribuite}
@@ -320,8 +320,8 @@ Con il termine \textbf{distribuito} si va ad intendere un'architettura nella qua
 \end{figure}
 
 \section{Apache Druid}
-\textbf{Apache Druid} è un database di analisi in tempo reale progettato per analisi rapide, i suoi punti di forza sono le alte prestazioni in esecuzione di query su set di dati di grandi dimensioni.
-\textbf{Druid} è comunemente utilizzato come back-end del database per le GUI di applicazioni analitiche o per API altamente simultanee che richiedono aggregazioni veloci. Mostra le sue migliori prestazioni con dati orientati agli eventi.
+\textbf{Apache Druid}  è uno strumento di analisi \textbf{OLAP} progettato per analisi rapide, i suoi punti di forza sono le alte prestazioni in esecuzione di query su set di dati di grandi dimensioni.
+\textbf{Druid} è comunemente utilizzato come back-end  per le GUI di applicazioni analitiche o per API altamente simultanee che richiedono aggregazioni veloci. Mostra le sue migliori prestazioni con dati orientati agli eventi.
 \subsection{Caratteristiche principali}
 \textbf{Druid} combina le idee provenienti da serie temporali e sistema di ricerca, \textit{data-warehouse}.
 Le caratteristiche principali sono:
@@ -330,13 +330,13 @@ Le caratteristiche principali sono:
     \item sistema distribuito scalabile: le distribuzioni tipiche di Druid si estendono su cluster che vanno da decine a centinaia di server ciò permette di mantenere un tempo di latenza molto basso, al di sotto di pochi secondi;
     \item elaborazione massicciamente parallela: le query vengono elaborate in parallello sull'intero cluster;
     \item injection in tempo reale o batch: \textbf{Druid} è in grado di elaborare sia dati in tempo reale che in batch, i dati acquisiti sono immediatamente disponibili per le successive interrogazioni;
-    \item è dotato di un sistema di autobilanciamento e auto individuazione dei guasti:il cluster Druid si riequilibra automaticamente in background senza tempi di inattività, inoltre se un server \textbf{Druid} si guasta, il sistema instrada automaticamente i dati intorno al danno fino alla risoluzione, infatti \textbf{Druid} è progettato per funzionare senza tempi di inattività;
-    \item l'architettura nativa del cloud è tollerante ai guasti: \textbf{Druid} archivia in modo sicuro una copia dei tuoi dati in un archivio profondo (in genere su su fyle system o sul cloud), tali dati saranno accessibili semopre anche nel momento in cui i server falliscano; ciò permette l'esecuzione di query anche nei momenti di ripristino.
-    \item Indici per filtraggio rapido: \textbf{Druid} utilizza indici bitmap compressi per creare indici che consentano il filtraggio rapido e la ricerca su più colonne;
-    \item Partizionamento basato sul tempo: \textbf{Druid} prima suddivide i dati in base al tempo, è possibile in ogni caso aggiungere altri tipi di filtri;
-   \item  Algoritmi approssimati:
+    \item è dotato di un sistema di autobilanciamento e auto individuazione dei guasti: il cluster Druid si riequilibra automaticamente in background senza tempi di inattività. Inoltre se un server \textbf{Druid} si guasta, il sistema instrada automaticamente i dati intorno al danno fino alla risoluzione, infatti \textbf{Druid} è progettato per funzionare senza tempi di inattività;
+    \item l'architettura nativa del cloud è tollerante ai guasti: \textbf{Druid} archivia in modo sicuro una copia dei tuoi dati in un archivio profondo (in genere su su file system o sul cloud), tali dati saranno accessibili semopre anche nel momento in cui i server falliscano; ciò permette l'esecuzione di query anche nei momenti di ripristino.
+    \item indici per filtraggio rapido: \textbf{Druid} utilizza indici bitmap compressi per creare indici che consentano il filtraggio rapido e la ricerca su più colonne;
+    \item partizionamento basato sul tempo: \textbf{Druid} prima suddivide i dati in base al tempo, è possibile in ogni caso aggiungere altri tipi di filtri;
+   \item  algoritmi approssimati:
    \textbf{Druid} permette l'utilizzo di algoritmi offrono un utilizzo limitato della memoria e sono spesso sostanzialmente più veloci dei calcoli esatti, dove sono richiesti conteggi più esatti \textbf{Druid} offre pure questa funzionalità.
-   \item Riepilogo automatico al momento dell'acquisizione: \textbf{Druid} supporta facoltativamente il riepilogo dei dati al momento dell'acquisizione.
+   \item riepilogo automatico al momento dell'acquisizione: \textbf{Druid} supporta facoltativamente il riepilogo dei dati al momento dell'acquisizione.
 \end{itemize}
 
 \subsection{Funzionamento}
@@ -362,13 +362,14 @@ Druid ha un'architettura distribuita progettata per essere compatibile con il cl
     \caption{Architettura Druid}
     \label{fig:my_label}
 \end{figure}
+\pagebreak
 \subsection{Servizi offerti}
 \subsection{Server principale}
 Un server Master gestisce l'ingestion e la disponibilità dei dati: è responsabile dell'avvio di nuovi job di ingestion e del coordinamento della disponibilità dei dati sui "Data server" descritti di seguito.
 \subsubsection{Servizio di coordinamento}
 Ha il compito di gestire la disponibilità dei dati dei l cluster.
 \textbf{Druid Coordinator} comunica ai processi storici di caricare o rilasciare segmenti in base alle configurazioni.
-Inoltre è responsabile del caricamento di nuovi segmenti, dell'eliminazione di segmenti obsoleti,della garanzia che i segmenti siano "replicati" (ovvero, caricati su più nodi storici diversi) un numero corretto (configurato) di volte e dello spostamento ("bilanciamento") dei segmenti tra Historical nodi per mantenere quest'ultimo caricato uniformemente.
+Inoltre è responsabile del caricamento di nuovi segmenti, dell'eliminazione di segmenti obsoleti, della garanzia che i segmenti siano "replicati" (ovvero, caricati su più nodi storici diversi) un numero corretto (configurato) di volte e dello spostamento ("bilanciamento") dei segmenti tra Historical  per mantenere quest'ultimo caricato uniformemente.
 \textbf{Druid Coordinator} prima di eseguire le varie operazioni valuta lo stato attuale del cluster. Inoltre come gli altri servizzi mantiene una connessione a un cluster \textbf{Zookeeper} per le informazioni sul cluster corrente. Infine il servizio di cooordinamento ha anche una connessione ad un databse contenente l'elenco dei segmenti utilizzati.
 \subsubsection{Servizio di Overlord}
  È responsabile dell'accettazione delle attività, del coordinamento della distribuzione delle attività, della creazione di blocchi attorno alle attività e della restituzione degli stati ai chiamanti. È possibile eseguirlo sia in modalità locale, per flussi di lavoro semplici, che remota nella quale occupa uns server dedicato.
@@ -376,25 +377,27 @@ Inoltre è responsabile del caricamento di nuovi segmenti, dell'eliminazione di 
  Un server di query fornisce gli endpoint con cui interagiscono gli utenti e le applicazioni client, instradando le query ai server di dati o ad altri server di query.
  \subsubsection{Servizio Broker}
 In un cluster distribuito è il servizio a cui instradare le query. Comprende i metadati forniti da \textbf{Zookeeper}, dove ricavare i dati necessari ad elaborare i risultati delle query.\\
-Infine unisce i risultati di tutti i risultati elaborati per fornire un'unica risposta alla query richiesta.
+Infine unisce  tutti i risultati elaborati per fornire un'unica risposta alla query richiesta.
 \subsubsection{Servizio di router (opzionale)}
  È il servizio che ha il compito di instradare le query a diversi processi \textbf{Broker}. Le query vengono instradate in base alle regole di caricamento dei segmenti che vengono applicate. Questa configurazione fornisce l'isolamento delle query in modo tale che le query per i dati più importanti non siano influenzate dalle query per i dati meno importanti.
+ \pagebreak
  \subsection{Server dati}
  Un server di dati esegue processi di acquisizione e archivia dati interrogabili.
  \subsubsection{Servizio storico}
- Ogni servizio  copia o estrae i file di segmento da Deep Storage al disco locale in un'area chiamata \textit{segment cache} e rispondono alle domande su tali segmenti.\\Il coordinatore controlla l'assegnazione dei segmenti agli storici e l'equilibrio dei segmenti tra gli storici.  I servizio di storico non comunicano direttamente tra loro, né comunicano direttamente con il Coordinatore. Invece, il coordinatore crea voci temporanee in \textbf{Zookeeper} in un percorso della coda di caricamento . Ogni processo storico mantiene una connessione con \textbf{Zookeeper}, osservando quei percorsi per le informazioni sui segmenti.
+ Ogni servizio  copia o estrae i file di segmento da Deep Storage al disco locale in un'area chiamata \textit{segment cache} e rispondono alle domande su tali segmenti.\\Il coordinatore controlla l'assegnazione dei segmenti agli storici e l'equilibrio dei segmenti tra gli storici.  I servizi storici non comunicano direttamente tra loro, né comunicano direttamente con il Coordinatore. Invece, il coordinatore crea voci temporanee in \textbf{Zookeeper} in un percorso della coda di caricamento. Ogni processo storico mantiene una connessione con \textbf{Zookeeper}, osservando quei percorsi per le informazioni sui segmenti.
 \subsubsection{Servizio MiddleManager}
-I processi MiddleManager gestiscono l'inserimento di nuovi dati nel cluster. Sono responsabili della lettura da fonti di dati esterne e della pubblicazione di nuovi segmenti Druid.
+Il processo MiddleManager gestisce l'inserimento di nuovi dati nel cluster. È responsabile della lettura da fonti di dati esterne e della pubblicazione di nuovi segmenti Druid.
 \subsubsection{Servizio Peone}
 I servizzi Peon sono motori di esecuzione delle attività generati dai \textbf{MiddleManager}. Ogni \textbf{Peon} esegue una JVM separata ed è responsabile dell'esecuzione di una singola attività. I Peon girano sempre sullo stesso host del \textbf{MiddleManager} che li ha generati.
 \subsubsection{Servizio di indicizzazione}
-In alterenativa ai \textbf{MiddleManger} ed ai \textbf{Peon}.\\
+In alternativa ai \textbf{MiddleManger} ed ai \textbf{Peon}.\\
 Invece di eseguire il fork di processi JVM separati per attività, l'indicizzatore esegue le attività come singoli thread all'interno di un singolo processo JVM.\\
 L'indicizzatore è progettato per essere più facile da configurare e distribuire rispetto al sistema MiddleManager + Peon e per consentire una migliore condivisione delle risorse tra le attività. 
 \subsection{Deep dive}
 \subsubsection{Deep storage}
-Il \textbf{deep storage} è dove vengono archiviati i segmenti. È un mceccanismo non fornito da \textbf{Druid}.\\
+Il \textbf{deep storage} è il sistema nel quale vengono archiviati i segmenti. È un mceccanismo non fornito da \textbf{Druid}.\\
 Fintanto i servizi di \textbf{Druid} possono vedere questa infrastruttura di archiviazione e accedere ai segmenti archiviati su di essa, non  si perdereanno i  dati indipendentemente dal numero di nodi Druid che persi.\\
+\pagebreak
 Il \textbf{deep storage} può essere di due tipi:
 \begin{itemize}
     \item locale: destinato ad un solo server o a più server che hanno  acesso ad un filesystem condiviso;
@@ -412,13 +415,13 @@ Contiene:
 \end{itemize}
 Come servizio predefinito \textbf{Druid} ustilizza \textbf{Derby}, ma archivi più adatti alla produzione sono \textbf{MySQL} e \textbf{PostgreSQL}.
 \paragraph{Tabella dei segmenti}
-Questa tabella memorizza i metadati sui segmenti che dovrebbero essere disponibili nel sistema (chiamati anche segmenti usati).La tabella viene interrogata dal coordinatore per determinare l'insieme di segmenti che dovrebbero essere disponibili per l'interrogazione nel sistema. La tabella ha due colonne funzionali principali, le altre colonne sono a scopo di indicizzazione.\\
+Questa tabella memorizza i metadati sui segmenti che dovrebbero essere disponibili nel sistema (chiamati anche segmenti usati). La tabella viene interrogata dal coordinatore per determinare l'insieme di segmenti che dovrebbero essere disponibili per l'interrogazione nel sistema. La tabella ha due colonne funzionali principali, le altre colonne sono a scopo di indicizzazione.\\
 Il primo valore \textbf{used} indica che il segmento deve essere utilizzato dal cluster, è il mezzo attraverso cui si caricano e scaricano i segmenti dal cluster senza rimuovere i metadati.\\
 La seconda è la  \textbf{payload} che archivia un BLOB JSON che contiene tutti i metadati per il segmento.
 \paragraph{Tabella delle regole}
 È la tabella che memorizza le varie regole su dove allocare e deallocare i segmenti del cluster.
 \paragraph{Tabella di configurazione}
-Hanno los copo di memorizzare  gli oggetti di configurazione di runtime.\\
+Hanno lo scopo di memorizzare  gli oggetti di configurazione di runtime.\\
 In futuro avranno lo scopo di modificare alcuni parametri di configurazione nel cluster in fase di esecuzione.
 \paragraph{Tabella delle attività}
 Si riferiscono alle tabelle create e gestite dall'\textbf{Overlord} e \textbf{MiddleManager}.
@@ -429,34 +432,34 @@ Hanno accesso hai metadati solo: il servizio di indicizzazione, il servizio in t
 \textbf{Apache Druid} utilizza \textbf{Apache ZooKeeper} per la gestione dello stato corrente del cluster.\\
 In \textbf{Zookeeper} avengono le seguenti attività: 
 \begin{itemize}
-    \item Elezione del servizio di coordinamento;
-    \item Protocollo di "pubblicazione" del segmento degli storici;
-    \item Protocollo di caricamento/rilascio del segmento tra Coordinatore e Storico;
+    \item elezione del servizio di coordinamento;
+    \item protocollo di "pubblicazione" del segmento degli storici;
+    \item protocollo di caricamento/rilascio del segmento tra Coordinator e Historical;
     \item elezione del servizio di \textbf{Overlord};
-    \item Gestione delle attività di \textbf{Overlord e MiddleManager};
+    \item gestione delle attività di \textbf{Overlord e MiddleManager};
     
 \end{itemize}
 
 \subsection{Archiviazione dei dati}
-I dati in\textbf{Apache Druid} vengono archiviati in \textit{datasources} tabelle simili a quelle utilizzate dai database relazionali. Ogni tabella viene partizionata in base agli intervalli di tempo. Ogni intervallo di tempo è chiamato blocco. All'interno di un blocco, i dati vengono partizionati in uno o più segmenti . Ogni segmento è un singolo file, che in genere comprende fino a pochi milioni di righe di dati. Si può pensare che i segmenti dati è come vivano in una sequenza temporale.\\
+I dati in \textbf{Apache Druid} vengono archiviati in \textit{datasources} tabelle simili a quelle utilizzate dai database relazionali. Ogni tabella viene partizionata in base agli intervalli di tempo. Ogni intervallo di tempo è chiamato blocco. All'interno di un blocco, i dati vengono partizionati in uno o più segmenti . Ogni segmento è un singolo file, che in genere comprende fino a pochi milioni di righe di dati. Si può pensare che i segmenti dati è come se vivano in una sequenza temporale.\\
 Ogni segmento viene creato da un \textbf{MiddleManager} come mutable e uncommitted.  I dati sono interrogabili non appena vengono aggiunti a un segmento senza commit.\\
 Il processo di creazione del segmento accelera le query successive producendo un file di dati compatto e indicizzato. \\
 Periodicamente i segmenti vengono sottoposti a commit e pubblicati in deep storage diventano immutabili e passano dai MiddleManager ai processi storici. Inoltre nell'archivio dei metadati viene scritta una voce al segmento che lo descrive.\\
-Tali informazioni inidicano al coordinatore quali dati sono presenti nel cluster.
+Tali informazioni indicano al coordinatore quali dati sono presenti nel cluster.
 
 \subsection{I segmenti}
 \textbf{Apache Druid} memorizza i suoi dati e indici in file di segmenti partizionati in base al tempo.
-\textbf{Druid} crea un segmento per ogni intervallo di segmento che contiene dati.
+\textbf{Druid} crea un segmento per ogni intervallo di tempo che contiene dati.
 Affinchè \textbf{Druid} funzioni bene  con un carico di query elevato, è importante che la dimensione del file del segmento rientri nell'intervallo consigliato di 300-700 MB. Se questo non accade si può valutare la possibilità di modifica della granularità dell'intervallo di tempo del segmento.
 \subsubsection{Struttura del file di segmento}
-I file di segmento sono colonnari : i dati per ciascuna colonna sono disposti in strutture di dati separate. Memorizzando ciascuna colonna separatamente, Druid riduce la latenza delle query analizzando solo le colonne effettivamente necessarie per una query. \\
+I file di segmento sono colonnari: i dati per ciascuna colonna sono disposti in strutture di dati separate. Memorizzando ciascuna colonna separatamente, Druid riduce la latenza delle query analizzando solo le colonne effettivamente necessarie per una query. \\
 Una volta che una query identifica le righe da selezionare, le decomprime, estrae le righe pertinenti e applica l'operatore di aggregazione desiderato.  Se una query non richiede una colonna, Druid ignora i dati di quella colonna.
 Le colonne di tìpo dimension supportano le operazioni di filtro e raggrupamento, quindi richiede l'utilizzo delle seguenti tre strutture dati: 
 \begin{itemize}
-    \item Dizionario : esegue il mapping dei valori agli ID interi, consentendo una rappresentazione compatta dell'elenco e dei valori bitmap;
-    \item List : i valori della colonna, codificati utilizzando il dizionario.
+    \item Dizionario: esegue il mapping dei valori agli ID interi, consentendo una rappresentazione compatta dell'elenco e dei valori bitmap;
+    \item List: i valori della colonna, codificati utilizzando il dizionario.
     Questi operatori consentono l'esecuzione di query che aggregano esclusivamente metriche basate su filtri senza accedere all'elenco di valori.
-    \item Bitmap : una bitmap per ogni valore distinto nella colonna, per indicare quali righe contengono tale valore.
+    \item Bitmap: una bitmap per ogni valore distinto nella colonna, per indicare quali righe contengono tale valore.
 \end{itemize}
 Per ogni riga nell'elenco dei dati della colonna, esiste solo una singola bitmap con una voce diversa da zero. Ciò significa che le colonne con cardinalità elevata hanno bitmap estremamente rade e quindi altamente comprimibili. 
 \subsubsection{L'identificazione del segmento}
@@ -479,12 +482,12 @@ Il numero di versione fornisce una forma di controllo della concorrenza multi-ve
 Ogni segmento ha un ciclo di vita che coinvolge le seguenti tre aree principali:
 \begin{itemize}
     \item archivio dei metadati: contiene i metadati del segmento e vengono archiviati nell'archivio dei metadati una volta terminata la costruzione di un segmento.
-    \item Archiviazione profonda: i file di dati del segmento vengono inseriti nell'archiviazione profonda una volta terminata la costruzione di un segmento. Ciò avviene immediatamente prima della pubblicazione dei metadati nell'archivio dei metadati.
-    \item Disponibilità per l'interrogazione: i segmenti sono disponibili per l'interrogazione su alcuni server di dati Druid, come un'attività in tempo reale o un processo storico.
+    \item archiviazione profonda: i file di dati del segmento vengono inseriti nell'archiviazione profonda una volta terminata la costruzione di un segmento. Ciò avviene immediatamente prima della pubblicazione dei metadati nell'archivio dei metadati.
+    \item disponibilità per l'interrogazione: i segmenti sono disponibili per l'interrogazione su alcuni server di dati \textbf{Druid}, come un'attività in tempo reale o un processo storico.
 \end{itemize}
-\pagebreak
+
 \subsubsection{Injection dei dati}
- I principali metodi di ingestione di Druid sono tutti basati su pull e offrono garanzie transazionali (verrà caricato o tutto o niente).
+ I principali metodi di injection  di Druid sono tutti basati su pull e offrono garanzie transazionali (verrà caricato o tutto o niente).
  \begin{itemize}
     \item Metodi di ingestione "seekable-stream" supervisionati come Kafka e Kinesis . Con questi metodi, Druid esegue il commit degli offset del flusso nel proprio archivio di metadati insieme ai metadati del segmento, nella stessa transazione, in questo caso \textbf{Apache Druid}  pubblica i segmenti prima che tutti i dati per un blocco temporale siano stati ricevuti;
     \item Inserimento batch basato su Hadoop; Ogni attività pubblica tutti i metadati del segmento in un'unica transazione. 
@@ -520,7 +523,7 @@ A differenza di altri database di serie temporali, \textbf{Druid} fornisce una s
 \textbf{Apache Druid} viene utilizzato per accelerare l'esecuzione di query e potenziare le applicazioni. È progettato per un'elevata concorrenza e query in meno di un secondo, alimentando l'esplorazione interattiva dei dati attraverso un'interfaccia utente. Ciò fornisce una migliore soluzione interattiva con l'utente. Permette di effettuare analisi interattive su garbdi moli di dati.
 \subsection{Modello dei dati}
 Druid memorizza i dati in \textit{datasources} molto simili alle tabelle di un tradizionale database relazione e alle serie temporali.
-Il modello di dati di \textbf{Druid} presenta essenzialmnente le seguenti componenti:
+Il modello di dati di \textbf{Druid} presenta essenzialmente le seguenti componenti:
 \begin{itemize}
     \item Timestamp principale: Gli schemi Druid devono sempre includere un timestamp primario. Viene utilizzato per partizionare ed ordinare i dati. Inoltre il timestamp viene utilizzato per recuperare rapidamente i dati all'interno di un detrminato intervallo di tempo.
     \item Dimension: sono colonne che Druid memorizza "così come sono". Si possono utilizzare per qualsiasi scopo: filtrare, applicare aggregatori e così via.
@@ -537,10 +540,10 @@ Le dimensioni sono colonne che Druid memorizza "così come sono". Le dimensioni 
 \begin{itemize}
    
 
- \item nell'importazione dei dati \textbf{Druid} con o senza rollup: aggregando parzialmente i tuoi dati durante l'importazione, riducendo potenzialmente il numero di righe, diminuendo l'impronta di archiviazione e migliorando le prestazioni delle query. Mentre senza rollup \textbf{Druid} archivia una riga per ogni riga di input.
- \item ogni riga in Druid deve avere un timestamp, tale informazione potrà essere utilizzata per successivi grappamenti.
- \item tutte le colonne del modello di archiviazione di     \textbf{Druid} sono metriche ad eccezione del timestamp
- \item le colonne dimensione vengono archiviate così come sono
+ \item nell'importazione dei dati \textbf{Druid} con o senza rollup: aggregando parzialmente i tuoi dati durante l'importazione, riducendo potenzialmente il numero di righe, diminuendo l'impronta di archiviazione e migliorando le prestazioni delle query. Mentre senza rollup \textbf{Druid} archivia una riga per ogni riga di input;
+ \item ogni riga in \textbf{Druid} deve avere un timestamp, tale informazione potrà essere utilizzata per successivi grappamenti;
+ \item tutte le colonne del modello di archiviazione di     \textbf{Druid} sono dimension o metriche ad eccezione del timestamp;
+ \item le colonne dimensione vengono archiviate così come sono;
  \item le colonne delle metriche vengono archiviate preaggregate , quindi possono essere aggregate solo al momento della query.
 \end{itemize}
 \subsubsection{Modello relazionale}
@@ -554,17 +557,17 @@ Nel momento in cui si vanno ad inserire dati \textbf{Druid} non li memorizza dir
 Gli schemi \textbf{Druid} devono sempre includere un timestamp primario. Il timestamp principale viene utilizzato per partizionare e ordinare i dati, quindi dovrebbe essere il timestamp su cui filtrerai più spesso. Druid è in grado di identificare e recuperare rapidamente i dati corrispondenti agli intervalli di tempo della colonna timestamp primaria.
 Se lo schema lo richiede è possibile importare anche timestamp secondari.
 \subsubsection{Autorillevamento del tipo}
-È possibile fare in modo che \textbf{Druid} deduca lo schema e i tipi per i tuoi dati parzialmente o completamente impostando. \\
+È possibile fare in modo che \textbf{Druid} deduca lo schema e i tipi per i tuoi dati, in modo automatico o attraverso l'intervento umano.\\
 Nella deduzione del tipo \textbf{Druid} sceglie il tipo nativo più appropiato.\\
 Per le colonne di tipo misto vengono archiviate nel tipo meno restrittivo che può rappresentare tutti i valori nella colonna.
 \subsection{Data rollup}\label{subsection:rollup}
 Al momento dell'acquisizione dei dati \textbf{Apache Druid} può eseguire operazioni di raggrupamento sui dati per ridurre la quantità di dati grezzi da archiviare. \\
-Da questo punto di vista il \textbf{rollup} non è altro che una forma di riepilogo e preaggregamento dei dati finalizzato a ridurre lìordine di grandezza delle righe da archiviare.\\
+Da questo punto di vista il \textbf{rollup} non è altro che una forma di riepilogo e preaggregamento dei dati finalizzato a ridurre l'ordine di grandezza delle righe da archiviare.\\
 Il \textbf{rollup} se da un lato porta una riduzione drastica degli eventi da analizzare, dall'altro non permette più di interrogare i singoli eventi.\\
 Al momento dell'\textbf{injection} il \textbf{rollup} è abilitato di default: \textbf{Apache Druid} raggrupa in automatico gli eventi caratterizzati da stesso valore di \textbf{timestamp} e stesso valore per le \textbf{Dimension}. \\
 Se il \textbf{rollup} è disabilitato, \textbf{Apache Druid} caricherà gli eventi così come sono stati generati.senza alcun riepilogo.
 \subsubsection{Casi d'uso}
-È convenienete andare ad utilizzare il \textbf{rollup} se si desiderano prestazioni ottimali e vicoli di spazio rigorosi o quando non si ha necessità di avere a disposizione dati grezzi con alta cadrdianlità. \\
+È convenienete andare ad utilizzare il \textbf{rollup} se si desiderano prestazioni ottimali e vicoli di spazio rigorosi o quando non si ha necessità di avere a disposizione dati grezzi con alta cardinalità. \\
 Mentre se si ha bisogno di risultati per righe, l'utilizzo del \textbf{rollup} non è la scelta più adatta; è necessario in quel caso efettuare delle operazionui di \textbf{GROUP BY} a query time.
 \\
 In ogni caso, per soddisfare entrambi i casi d'uso appena citati è possibile andare a configurare 2 datasource: uno con \textbf{rollup} attivo, con il riepilogo degli eventi generati, e uno con \textbf{rollup} disabilitato contenente tutti i dati grezzi.
@@ -574,11 +577,11 @@ A seconda del metodo di importazione, \textbf{Apache Druid} presenta due metodi 
     \item rollup perfetto: \textbf{Apache Druid} aggrega perefettamenete i dati a injection time;
     \item Best-effort rollup: \textbf{Apache Druid} potrebbe non riuscire ad aggregare perfettamente di input pertanto si potrebbe verificare che più segmenti dati contengano dati con stesso timestamp e stesso valore di Dimension.
 \end{itemize}
-In generale I metodi di inserimento che garantiscono un rollup perfetto utilizzano un ulteriore passaggio di pre-elaborazione per determinare gli intervalli e il partizionamento prima dell'inserimento dei dati. Questa fase di pre-elaborazione esegue la scansione dell'intero set di dati di input. Anche se questo passaggio aumenta il tempo necessario per l'inserimento, fornisce le informazioni necessarie per un rollup perfetto.\\
-Mentre i metodi che garantiscono il \textbf{Best-effort rollup} lo fanno per i seguenti motivi: 
+In generale i metodi di inserimento che garantiscono un rollup perfetto utilizzano un ulteriore passaggio di pre-elaborazione per determinare gli intervalli e il partizionamento prima dell'inserimento dei dati. Questa fase di pre-elaborazione esegue la scansione dell'intero set di dati di input. Anche se questo passaggio aumenta il tempo necessario per l'inserimento, fornisce le informazioni necessarie per un rollup perfetto.\\
+Mentre le caratteristiche che garantiscono il \textbf{Best-effort rollup} lo fanno per i seguenti motivi: 
 \begin{itemize}
     \item la parallelizzazione dell'inserimento avviene senza un passaggio di mescolamento necessario per il \textbf{rollup} perfetto;
-    \item Il metodo di importazione utilizza la pubblicazione incrementale , il che significa che finalizza e pubblica i segmenti prima che tutti i dati per un blocco temporale siano stati ricevuti, tutti i tipi di importazione di streaming vengono eseguiti in questa modalità.
+    \item Il metodo di importazione utilizza la pubblicazione incrementale, il che significa che finalizza e pubblica i segmenti prima che tutti i dati per un blocco temporale siano stati ricevuti, tutti i tipi di importazione di streaming vengono eseguiti in questa modalità.
 \end{itemize}
 \subsection{Le lookups}
 In \textbf{Apache Druid} le \textbf{lookup} sono una funzionalità che consentono di sostituire i valori delle \textbf{Dimension} con nuovi valori. Tale cocetto può essere paragonato alla unione di tabelle in un \textbf{data warehouse}.\\
@@ -606,53 +609,7 @@ Nel momento in cui si creano tabelle di \textbf{lookup} iniettive \textbf{Apache
 Le tabelle di \textbf{lookup} sono particolarmente utili nei processi di \textbf{Data enrichment}.\\
 Inoltre posssono andare a risolvere anche essere una possibile soluzione al problema degli aggiornamenti. In questo caso ogni aggiornamento di stato viene visto come un nuovo evento e viene aggiunto al \textbf{datasource} originale.\\
 Per estrarre sempre il dato più recente si utilizza una \textbf{lookup} iniettiva che mappa ogni chiave con il valore dell'attributo richiesto. Essendo le tabelle di \textbf{lookup} indipendenti dagli intervalli temporali, verrà reatsituito il valore più recente. 
-\subsection{Confronto Apache Druid e PostgreSQL}
-Per andare ad eveidenziare pregi e diffetti di \textbf{Apache Druid} è stato scelto di confrontarlo con un database relazionale come \textbf{PostgreSQL}, nella esecuzione di query su un dataset di 1 milione di righe.\\
-Il test effettuato non usufruisce della cache.\\
-Lo schema logico del dataset è il seguente:
-\begin{lstlisting}[language=SQL]
-    CREATE TABLE transazione
-(
-    __time timestamp,
-    cliente text,
-    prodotto text,
-    quantita int,
-    gradimento int
-)
 
-\end{lstlisting}
-
-\subsubsection{Query}
-\begin{lstlisting}[language=SQL]
-    query1: 
-    SELECT * FROM transazione
-    query2: 
-    SELECT DATA_TRUNC('MINUTE',__time), cliente, prodotto, COUNT(*) 
-    FROM transazione 
-    WHERE gradimento>3 
-    GROUP BY DATA_TRUNC('MINUTE',__time), cliente, prodotto
-    query3: 
-    SELECT DATA_TRUNC('HOUR',__time), cliente, prodotto, gradimento 
-    FROM transazione 
-    WHERE gradimento>3 
-    GROUP BY DATA_TRUNC('HOUR',__time), cliente, prodotto, gradimento
-\end{lstlisting}
-\begin{center}
-    \begin{tblr}{
-  colspec={XXX},
-  row{odd}={bg=lightgray},  
-  row{1}={bg=black,fg=white},
-}
-\centering
-  & \centering Apache Druid [s] & \centering PostgreSQL [s] \\\hline 
-  \centering
-  query1 &  \centering 0.007  & \centering 0.77 \\ \hline
-  \centering
-  query2 &  \centering 0.45 &  \centering 0.57 \\ \hline 
-  \centering
-  query3 & \centering 0.30 & \centering 0.60 \\ \hline
-  \end{tblr}
-\end{center}
 \section{Kubernetes}
 \subsection{Panoramica e caratteristiche principali}
 \textbf{Kubernetes} è una piattaforma open source utilizzata per l'orchestrazione e la gestione dei nodi.\\
@@ -752,11 +709,11 @@ Per i nodi ci sono 2 forme di battiti del cuore:
     \item allocare oggetti all'interno del $kube-node-lease$ spazio dei nomi; ogni nodo ha un oggetto \textbf{Lease} associato;
 \end{itemize}
 Rispetto agli aggiornamenti $.status$ di un nodo, un lease è una risorsa leggera. L'utilizzo dei lease per gli heartbeat riduce l'impatto sulle prestazioni di questi aggiornamenti per i cluster di grandi dimensioni.\\
-Il \textbf{kubelet} è responsabile della creazione e dell'aggiornamento dei $.status nodi$ e dell'aggiornamento dei relativi $lease$.\\\\\\\\
+Il \textbf{kubelet} è responsabile della creazione e dell'aggiornamento dei $.status nodi$ e dell'aggiornamento dei relativi $lease$.\\
 In particolare si occupa di: 
 \begin{itemize}
-    \item  aggiorna il nodo $.status$ quando c'è un cambiamento di stato o se non c'è stato alcun aggiornamento per un intervallo configurato (l'intervallo prededfinito è di 5 minuti);
-    \item Il \textbf{kubelet} crea e quindi aggiorna il suo oggetto \textbf{Lease} ogni 10 secondi; gli aggiornamenti del \textbf{Lease} si verificano indipendentemente dagli aggiornamenti del \textbf{Lease}.
+    \item  aggiorna il nodo $.status$ quando c'è un cambiamento di stato o se non c'è stato alcun aggiornamento per un intervallo configurato (l'intervallo predefinito è di 5 minuti);
+    \item Il \textbf{kubelet} crea e quindi aggiorna il suo oggetto \textbf{Lease} ogni 10 secondi.
 \end{itemize}
 \subsection{Il controllore del nodo}
 È un componente del \textbf{control pane} che gestisce i vari aspetti del nodo. \\
@@ -839,7 +796,7 @@ sudo install minikube-linux-amd64 /usr/local/bin/minikube
     \end{lstlisting}
       \begin{figure}[h]
         \centering
-\includegraphics[width=0.7\textwidth]{images/get_events.png}
+\includegraphics[width=0.5\textwidth]{images/get_events.png}
         \caption{Get events}
         \label{fig:get_events}
     \end{figure}
@@ -848,7 +805,7 @@ sudo install minikube-linux-amd64 /usr/local/bin/minikube
     \end{lstlisting}
      \begin{figure}[H]
         \centering
-\includegraphics[width=0.7\textwidth]{images/get_config_view.png}
+\includegraphics[width=0.5\textwidth]{images/get_config_view.png}
         \caption{Config view}
         \label{fig:config_view}
     \end{figure}
@@ -1052,6 +1009,7 @@ spec:
       port: 2181
       targetPort: 2181
     \end{lstlisting}
+\pagebreak
 \item definire la \textbf{ConfigMap} per \textbf{Apache Druid} 
 \begin{lstlisting}
 apiVersion: v1
@@ -1442,6 +1400,53 @@ for message in consumer:
     \caption{Iniezione dei dati}
     \label{fig:my_label}
 \end{figure} 
+\subsection{Confronto Apache Druid e PostgreSQL}
+Per andare ad eveidenziare pregi e diffetti di \textbf{Apache Druid} è stato scelto di confrontarlo con un database relazionale come \textbf{PostgreSQL}, nella esecuzione di query su un dataset di 1 milione di righe.\\
+Il test effettuato non usufruisce della cache.\\
+Lo schema logico del dataset è il seguente:
+\begin{lstlisting}[language=SQL]
+    CREATE TABLE transazione
+(
+    __time timestamp,
+    cliente text,
+    prodotto text,
+    quantita int,
+    gradimento int
+)
+
+\end{lstlisting}
+
+\subsubsection{Query}
+\begin{lstlisting}[language=SQL]
+    query1: 
+    SELECT * FROM transazione
+    query2: 
+    SELECT DATA_TRUNC('MINUTE',__time), cliente, prodotto, COUNT(*) 
+    FROM transazione 
+    WHERE gradimento>3 
+    GROUP BY DATA_TRUNC('MINUTE',__time), cliente, prodotto
+    query3: 
+    SELECT DATA_TRUNC('HOUR',__time), cliente, prodotto, gradimento 
+    FROM transazione 
+    WHERE gradimento>3 
+    GROUP BY DATA_TRUNC('HOUR',__time), cliente, prodotto, gradimento
+\end{lstlisting}
+\begin{center}
+    \begin{tblr}{
+  colspec={XXX},
+  row{odd}={bg=lightgray},  
+  row{1}={bg=black,fg=white},
+}
+\centering
+  & \centering Apache Druid [s] & \centering PostgreSQL [s] \\\hline 
+  \centering
+  query1 &  \centering 0.007  & \centering 0.77 \\ \hline
+  \centering
+  query2 &  \centering 0.45 &  \centering 0.57 \\ \hline 
+  \centering
+  query3 & \centering 0.30 & \centering 0.60 \\ \hline
+  \end{tblr}
+\end{center}
 \subsection{Creazione di una data pipeline con Apache Kafka, Apache Druid e Docker Compose}
 Le noto riportate in questa sezione illustrano la costruzione e un test di prestazione di una data pipeline containerizzata ed eseguita con \textbf{Docker Compose}.
 \subsubsection{Svolgimento}
