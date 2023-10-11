@@ -1,0 +1,38 @@
+CREATE TABLE accessi(__time timestamp, nome text, cognome text, citta text, stato text,
+datan date, istruzione text, hobby text);
+COPY accessi(__time, nome, cognome, citta, stato,
+datan, istruzione, hobby)
+From '/data.csv'
+Delimiter ','
+csv header;
+5000000 records
+segment raggrupati per day 
+Max rows in memory a 800000
+con roll up su minute 
+
+- query 1: SELECT DATE_TRUNC('day', __time) as "Giorno", citta, COUNT(*) AS "Accessi"
+           FROM accessi
+           GROUP BY DATE_TRUNC('day', __time), citta
+DRUID_rollup: 0.3s   Druid_no_rollup:0.7s           POSTGRES: 0.8s 
+
+- query 2: SELECT DATE_TRUNC('year', __time) as "Anno", DATE_TRUNC('month', __time),  stato,  COUNT(*)
+           FROM accessi
+           GROUP BY DATE_TRUNC('year', __time), DATE_TRUNC('month', __time),  stato
+           ORDER BY 4 DESC
+DRUID_rollup:0.2s    Druid_no_rollup: 0.75s            POSTGRES: 1.1s
+
+
+- query 3: SELECT DATE_TRUNC('year', __time), DATE_TRUNC('month', __time), DATE_TRUNC('day', __time), stato, citta, COUNT(*) 
+        FROM accessi
+        GROUP BY DATE_TRUNC('year', __time), DATE_TRUNC('month', __time), DATE_TRUNC('day', __time), stato, citta
+        ORDER BY 5 DESC
+
+DRUID_rollup:0.25s   Druid_no_rollup: 0.74s         POSTGRES: 1.5s 
+
+- query 4: SELECT DATE_TRUNC('year', __time), DATE_TRUNC('month', __time), DATE_TRUNC('day', __time), 
+    DATE_TRUNC('hour', __time), stato, citta, COUNT(*) 
+            FROM accessi
+            GROUP BY DATE_TRUNC('year', __time), DATE_TRUNC('month', __time), DATE_TRUNC('day', __time), DATE_TRUNC('hour', __time), stato, citta
+            ORDER BY 5 DESC
+
+DRUID_rollup:0.16s   Druid_no_rollup: 0.8s              POSTGRES:1.6s 
